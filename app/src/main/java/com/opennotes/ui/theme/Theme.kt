@@ -35,7 +35,7 @@ fun OpenNotesTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // Use AMOLED for dark mode instead of DarkGray
+
     val colorScheme = if (darkTheme) AmoledColorScheme else LightColorScheme
 
     MaterialTheme(
