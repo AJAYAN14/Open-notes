@@ -38,9 +38,7 @@ fun TransParentHintTextField(
                 }
         )
 
-        // The alternative logic:
-        // Render the hint only if the text is empty AND isHintVisible is true.
-        // This is a simple defense against the initial overlap.
+
         if (isHintVisible && text.isEmpty()) {
             Text(text = hint, style = textStyle, color = Color.DarkGray)
         }

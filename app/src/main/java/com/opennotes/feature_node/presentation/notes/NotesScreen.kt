@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
 
 
@@ -73,7 +75,13 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
-                        placeholder = { Text("Search notes") },
+                        shape=RoundedCornerShape(28.dp),
+                        leadingIcon= {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search Notes"
+                            )
+                        },
                         singleLine = true
                     )
 
