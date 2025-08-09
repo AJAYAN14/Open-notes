@@ -82,6 +82,7 @@ fun NotesScreen(
                                 contentDescription = "Search Notes"
                             )
                         },
+                        placeholder={Text("Search Notes")},
                         singleLine = true
                     )
 

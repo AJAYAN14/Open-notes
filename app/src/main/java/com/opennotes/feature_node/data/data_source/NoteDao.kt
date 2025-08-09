@@ -26,4 +26,8 @@ interface NoteDao {
     fun searchNotes(query: String): Flow<List<Note>>
 
 
+    @Insert(onConflict=OnConflictStrategy.REPLACE)
+    suspend fun insertAll(notes:List<Note>)
+
+
 }

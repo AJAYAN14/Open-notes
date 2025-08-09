@@ -3,12 +3,16 @@ package com.opennotes.di
 import android.app.Application
 import androidx.room.Room
 import com.opennotes.feature_node.data.data_source.NoteDatabase
+import com.opennotes.feature_node.data.repository.JsonHandler
 import com.opennotes.feature_node.data.repository.NoteRepositoryImpl
+import com.opennotes.feature_node.data.repository.jsonHandler
 import com.opennotes.feature_node.domain.repository.NoteRepository
 import com.opennotes.feature_node.domain.use_case.AddNote
 import com.opennotes.feature_node.domain.use_case.DeleteNote
+import com.opennotes.feature_node.domain.use_case.ExportUseCases
 import com.opennotes.feature_node.domain.use_case.GetNote
 import com.opennotes.feature_node.domain.use_case.GetNotes
+import com.opennotes.feature_node.domain.use_case.ImportUseCases
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
 import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
 import com.opennotes.feature_node.presentation.notes.NotesEvent
@@ -42,13 +46,20 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideJsonHandler(): jsonHandler {
+        return JsonHandler()
+    }
+    @Provides
+    @Singleton
     fun provideNoteUseCaseId(repository: NoteRepository): NoteUseCases {
         return NoteUseCases(
             getNotes= GetNotes(repository),
             deleteNote= DeleteNote(repository),
             addNote = AddNote(repository),
             getNote = GetNote(repository),
-            searchNotes= SearchNotesUseCase(repository)
+            searchNotes= SearchNotesUseCase(repository),
+            importNotes= ImportUseCases(repository,jsonHandler,fileHandler),
+            exportNotes= ExportUseCases(repository,jsonHandler,fileHandler)
         )
     }
 

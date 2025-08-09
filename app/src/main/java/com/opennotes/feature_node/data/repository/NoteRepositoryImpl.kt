@@ -30,5 +30,8 @@ private val dao: NoteDao
     override fun searchNotes(query: String): Flow<List<Note>> {
         return dao.searchNotes(query)
     }
+    override suspend fun insertNotes(notes:List<Note>) {
+        dao.insertAll(notes)
+    }
 
 }
