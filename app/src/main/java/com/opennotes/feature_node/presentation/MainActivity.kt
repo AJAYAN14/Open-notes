@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.opennotes.feature_node.presentation.add_edit_note.AddEditNoteScreen
 import com.opennotes.feature_node.presentation.notes.NotesScreen
+import com.opennotes.feature_node.presentation.settings.SettingsScreen
 import com.opennotes.feature_node.presentation.util.Screen
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +57,11 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 noteColor = color
                             )
+                        }
+
+
+                        composable(route=Screen.SettingsScreen.route){
+                            SettingsScreen(navController=navController)
                         }
                     }
                 }

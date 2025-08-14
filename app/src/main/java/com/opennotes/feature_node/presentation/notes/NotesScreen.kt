@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
 
 
@@ -98,6 +99,19 @@ fun NotesScreen(
                             Icon(
                                 imageVector = Icons.Default.Sort,
                                 contentDescription = "Sort"
+                            )
+
+
+
+                        }
+                        IconButton(
+                            onClick={
+                                navController.navigate(Screen.SettingsScreen.route)
+                            }
+                        ) {
+                            Icon(
+                                imageVector=Icons.Default.Settings,
+                                contentDescription = "Settings"
                             )
                         }
                     }
