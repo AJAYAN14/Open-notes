@@ -2,7 +2,7 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-files-path
         name="notes_backups"
-        path="notes_backups"
+        path="Documents/notes_backups"
         />
 
 </paths>
