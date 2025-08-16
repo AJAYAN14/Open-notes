@@ -105,7 +105,7 @@ private var currentNoteId:Int ? = null
                                 title = noteTitle.value.text,
                                 content = noteContent.value.text,
                                 color = noteColor.value,
-                                timestamp = System.currentTimeMillis().toString(),
+                                timestamp = System.currentTimeMillis(),
                                 id = currentNoteId,
                             )
                         )

@@ -11,7 +11,7 @@ private val dao: NoteDao
 
 
 {
-    override fun getNotes(): Flow<List<Note>> {
+    override fun getAllNotes(): Flow<List<Note>> {
         return dao.getNotes()
     }
 

@@ -16,7 +16,6 @@ interface FileHandler{
     suspend fun saveToFile(filename:String,content:String):Uri?
 
 
-
 }
 
 
@@ -30,9 +29,18 @@ class AndroidFileHandler(private val application: Application):FileHandler{
 
     override suspend fun  saveToFile(filename:String,content:String):Uri?=withContext(Dispatchers.IO)
     {
-        val notesDir= File(application.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),"notes_backup")
-        if(!notesDir.exists()) notesDir.mkdirs()
+        val notesDir = application.getExternalFilesDir(null)
 
+
+        if(notesDir==null){
+            return@withContext null
+        }
+
+
+
+        if(!notesDir.exists() && !notesDir.mkdirs()){
+            return@withContext null
+        }
 
         val file=File(notesDir,filename)
         file.writeText(content)

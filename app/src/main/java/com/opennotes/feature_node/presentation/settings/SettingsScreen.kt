@@ -1,6 +1,7 @@
 
 package com.opennotes.feature_node.presentation.settings
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun SettingsScreen(
@@ -30,7 +32,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()) {
 
     val snackbarHostState = remember { SnackbarHostState() }
-
+    val context= LocalContext.current
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -47,6 +49,20 @@ fun SettingsScreen(
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = event.message)
+                }
+
+                is SettingsViewModel.UiEvent.ShowShareDialog -> {
+                    snackbarHostState.showSnackbar(
+                        message="Notes exported successfully!"
+                    )
+
+
+                    val shareIntent= Intent(Intent.ACTION_SEND).apply{
+                        putExtra(Intent.EXTRA_STREAM,event.uri)
+                        type="application/json"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent,"Save notes to ..."))
                 }
             }
         }

@@ -30,6 +30,7 @@ class SettingsViewModel @Inject constructor(
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
+        data class ShowShareDialog(val uri:Uri):UiEvent()
     }
 
 
@@ -37,7 +38,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO){
             when (val result = noteUseCases.exportNotes()) {
                 is ExportResult.Success -> {
-                    _uiEvent.send(UiEvent.ShowSnackbar(message = "Notes exported successfully!"))
+                    _uiEvent.send(UiEvent.ShowShareDialog(uri=result.uri))
                 }
 
                 is ExportResult.Error -> {

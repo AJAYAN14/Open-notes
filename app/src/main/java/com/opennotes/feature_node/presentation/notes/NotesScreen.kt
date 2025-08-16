@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.opennotes.feature_node.domain.util.NoteOrder
 import com.opennotes.feature_node.presentation.notes.components.NoteItem
 import com.opennotes.feature_node.presentation.notes.components.OrderSection
 import com.opennotes.feature_node.presentation.util.Screen
@@ -37,14 +39,19 @@ fun NotesScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(
+            ExtendedFloatingActionButton(
                 onClick = {
                     navController.navigate(Screen.AddEditNoteScreen.route)
                 },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
-            }
+                containerColor = MaterialTheme.colorScheme.primary,
+                icon={
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "New note")
+                },
+                text={
+                    Text("New Note")
+                }
+            )
+
         }
     ) { paddingValues ->
         Surface(
@@ -75,6 +82,8 @@ fun NotesScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(60.dp)
+                            .width(200.dp)
                             .padding(bottom = 8.dp),
                         shape=RoundedCornerShape(28.dp),
                         leadingIcon= {
@@ -85,6 +94,8 @@ fun NotesScreen(
                         },
                         placeholder={Text("Search Notes")},
                         singleLine = true
+
+
                     )
 
                     Row(

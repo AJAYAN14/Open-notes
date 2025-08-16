@@ -1,6 +1,7 @@
 package com.opennotes.feature_node.data.repository
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 // In your data/repository directory
 
@@ -13,7 +14,7 @@ interface JsonHandler {
 }
 
 class GsonJsonHandler : JsonHandler {
-    private val gson = Gson()
+    private val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
 
     override fun <T> toJson(data: T): String {
         return gson.toJson(data)
