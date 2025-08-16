@@ -7,17 +7,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
-
-
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -51,7 +49,6 @@ fun NotesScreen(
                     Text("New Note")
                 }
             )
-
         }
     ) { paddingValues ->
         Surface(
@@ -69,11 +66,7 @@ fun NotesScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Text(
-                        text = "Your notes",
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
+
 
                     OutlinedTextField(
                         value = state.searchQuery,
@@ -83,19 +76,22 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .width(200.dp)
                             .padding(bottom = 8.dp),
-                        shape=RoundedCornerShape(28.dp),
-                        leadingIcon= {
+                        shape = RoundedCornerShape(28.dp),
+                        leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search Notes"
                             )
                         },
-                        placeholder={Text("Search Notes")},
-                        singleLine = true
-
-
+                        placeholder = { Text("Search Notes") },
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        )
                     )
 
                     Row(
@@ -111,23 +107,19 @@ fun NotesScreen(
                                 imageVector = Icons.Default.Sort,
                                 contentDescription = "Sort"
                             )
-
-
-
                         }
                         IconButton(
-                            onClick={
+                            onClick = {
                                 navController.navigate(Screen.SettingsScreen.route)
                             }
                         ) {
                             Icon(
-                                imageVector=Icons.Default.Settings,
+                                imageVector = Icons.Default.Settings,
                                 contentDescription = "Settings"
                             )
                         }
                     }
                 }
-
 
                 AnimatedVisibility(
                     visible = state.isOrderSectionVisible,
@@ -178,5 +170,4 @@ fun NotesScreen(
             }
         }
     }
-
 }
