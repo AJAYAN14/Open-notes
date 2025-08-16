@@ -26,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,6 +45,7 @@ fun SettingsScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context= LocalContext.current
+    val scope= rememberCoroutineScope()
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -58,14 +61,17 @@ fun SettingsScreen(
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = event.message)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(message = event.message)
+                    }
                 }
 
                 is SettingsViewModel.UiEvent.ShowShareDialog -> {
-                    snackbarHostState.showSnackbar(
-                        message="Notes exported successfully!"
-                    )
-
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Notes exported successfully!"
+                        )
+                    }
 
                     val shareIntent= Intent(Intent.ACTION_SEND).apply{
                         putExtra(Intent.EXTRA_STREAM,event.uri)
