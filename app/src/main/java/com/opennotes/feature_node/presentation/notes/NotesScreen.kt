@@ -156,7 +156,8 @@ fun NotesScreen(
                                 scope.launch {
                                     val result = snackbarHostState.showSnackbar(
                                         message = "Note deleted",
-                                        actionLabel = "Undo"
+                                        actionLabel = "Undo",
+                                        duration=SnackbarDuration.Short
                                     )
                                     if (result == SnackbarResult.ActionPerformed) {
                                         viewModel.onEvent(NotesEvent.RestoreNote)
