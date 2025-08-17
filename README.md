@@ -2,28 +2,6 @@
 
 **OpenNotes** is a modern, lightweight, and privacy-respecting note-taking app built with **Jetpack Compose**, following **MVVM** and **Clean Architecture** principles. The app is 100% offline and open source.
 
----
-
-## 🚀 Tech Stack
-
-### 🧱 Architecture
-
-- **MVVM (Model-View-ViewModel):** Clean separation between UI, business logic, and data layers.
-- **Clean Architecture:** Modular layer-based design — UI → Domain → Data.
-
-### 🛠 Core Technologies
-
-| Technology            | Purpose                                                   |
-|-----------------------|------------------------------------------------------------|
-| **Kotlin**            | Modern Android development language                        |
-| **Jetpack Compose**   | Declarative UI toolkit for building modern UIs             |
-| **Room**              | Local database abstraction over SQLite                     |
-| **Hilt (Dagger)**     | Dependency injection for modular and testable code         |
-| **Kotlin Coroutines** | Asynchronous and background task handling                  |
-| **Kotlin Flow**       | Reactive stream handling between data and UI               |
-| **Navigation**        | Type-safe, stateful screen transitions                     |
-
----
 
 ## ✨ Features
 
@@ -32,7 +10,7 @@
 - 🌙 AMOLED dark theme & Material You dynamic theming  
 - 🔐 Fully offline — no cloud, no tracking  
 - 🚫 No ads, no analytics  
-- 💉 Built using scalable Clean Architecture & Dependency Injection  
+
 
 ---
 
