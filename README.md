@@ -4,11 +4,15 @@
 
 ## ✨ Features
 
-- ✅ Create, edit, and delete notes  
-- 🔍 Search notes by title and content  
-- 🌙 AMOLED dark theme & Material You dynamic theming  
-- 🔐 Fully offline — no cloud, no tracking  
-- 🚫 No ads, no analytics  
+- Create and edit notes with a clean, modern interface
+- Organize your thoughts with a user-friendly design
+- Built with Jetpack Compose for a smooth user experience
+- Lightweight and fast performance
+- Open source and privacy-focused
+- No ads or tracking
+- Offline functionality - your notes stay on your device
+
+Perfect for students, professionals, and anyone who needs to jot down ideas, reminders, or important information quickly and easily. The app is completely open source, ensuring transparency and allowing community contributions to improve the experience for everyone.  
 
 ---
 
