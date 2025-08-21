@@ -2,7 +2,6 @@
 
 **OpenNotes** is a modern, lightweight, and privacy-respecting note-taking app built with **Jetpack Compose**, following **MVVM** and **Clean Architecture** principles. The app is 100% offline and open source.
 
-
 ## ✨ Features
 
 - ✅ Create, edit, and delete notes  
@@ -11,12 +10,16 @@
 - 🔐 Fully offline — no cloud, no tracking  
 - 🚫 No ads, no analytics  
 
-
 ---
 
 ## 📦 Installation
 
-- 📥 Download the latest `.apk` from the [Releases](https://github.com/Fandroid745/Open-notes/releases) page.
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.opennotes)
+
+- 📱 **F-Droid**: <img src="https://f-droid.org/assets/fdroid-logo.svg" alt="F-Droid" width="16" height="16"> Install from [F-Droid](https://f-droid.org/packages/com.opennotes)
+- 📥 **GitHub Releases**: Download the latest `.apk` from the [Releases](https://github.com/Fandroid745/Open-notes/releases) page
 
 ---
 
@@ -40,3 +43,4 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
