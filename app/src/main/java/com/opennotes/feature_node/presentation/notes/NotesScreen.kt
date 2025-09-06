@@ -98,16 +98,7 @@ fun NotesScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        IconButton(
-                            onClick = {
-                                viewModel.onEvent(NotesEvent.ToggleOrderSection)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Sort,
-                                contentDescription = "Sort"
-                            )
-                        }
+
                         IconButton(
                             onClick = {
                                 navController.navigate(Screen.SettingsScreen.route)
