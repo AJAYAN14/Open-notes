@@ -1,6 +1,7 @@
 Open Notes is a simple and intuitive note-taking application for Android, built with modern technologies including Jetpack Compose.
 
 Features:
+
 - Create and edit notes with a clean, modern interface
 - Organize your thoughts with a user-friendly design
 - Built with Jetpack Compose for a smooth user experience
