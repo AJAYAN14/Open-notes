@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,9 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,12 +34,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -51,43 +52,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SettingsScaffold(
-    title: String,
-    onBackNavClicked: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackNavClicked) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, // Fixed: Use AutoMirrored version
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            content()
-        }
-    }
-}
 
 @Composable
 fun SettingItem(
@@ -169,6 +133,8 @@ fun SettingsScreen(
         }
     )
 
+    val settings by viewModel.settings.collectAsState()
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
@@ -212,10 +178,13 @@ fun SettingsScreen(
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                )
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) } // Fixed: Proper snackbar integration
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -224,7 +193,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-
             item {
                 Text(
                     text = "Backup & Restore",
@@ -256,11 +224,9 @@ fun SettingsScreen(
                 )
             }
 
-            // Add spacing between sections
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
-
 
             item {
                 Text(
@@ -270,25 +236,25 @@ fun SettingsScreen(
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
                 )
             }
-
             item {
                 SettingItem(
-                    title = "Theme",
-                    subtitle = "Choose your preferred theme",
+                    title = "Dark Theme",
+                    subtitle = if (settings.darkTheme) "Enabled" else "Disabled",
                     icon = Icons.Default.Palette,
-                    onClick = { /* Navigate to theme settings */ },
+                    onClick = {
+                        viewModel.updateSettings { it.copy(darkTheme = !it.darkTheme) }
+                    },
                     isFirst = true
                 )
             }
 
 
 
+
+
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
-
-
-            }
         }
     }
-
+}

@@ -64,7 +64,7 @@ fun NotesScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 30.dp)
                 ) {
 
 
@@ -76,7 +76,7 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .padding(bottom = 8.dp),
+                            .padding(bottom = 8.dp,),
                         shape = RoundedCornerShape(28.dp),
                         leadingIcon = {
                             Icon(

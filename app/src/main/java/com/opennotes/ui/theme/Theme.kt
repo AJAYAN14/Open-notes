@@ -7,6 +7,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.google.android.material.color.utilities.DynamicColor
+import com.opennotes.feature_node.presentation.settings.Settings
 
 
 // AMOLED Color Scheme
@@ -32,9 +34,16 @@ private val AppShapes = Shapes()
 
 @Composable
 fun OpenNotesTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    settings: Settings = Settings(),
     content: @Composable () -> Unit
 ) {
+    val systemInDarkTheme = isSystemInDarkTheme()
+
+
+    val darkTheme = when {
+        settings.automaticTheme -> systemInDarkTheme
+        else -> settings.darkTheme
+    }
 
     val colorScheme = if (darkTheme) AmoledColorScheme else LightColorScheme
 
