@@ -42,8 +42,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/DataStoreRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/DataStoreRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/Settings.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/Settings.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/SettingsViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/SettingsViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/ui/theme/Theme.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/ui/theme/Theme.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +59,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=7cb09fa2)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -352,12 +358,12 @@
         </entry>
         <entry key="com.opennotes">
           <value>
-            <CheckInfo lastCheckTimestamp="1755368169678" />
+            <CheckInfo lastCheckTimestamp="1759068212119" />
           </value>
         </entry>
         <entry key="com.opennotes.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1755368169679" />
+            <CheckInfo lastCheckTimestamp="1759068212119" />
           </value>
         </entry>
         <entry key="com.plcoding.cleanarchitecturenoteapp">

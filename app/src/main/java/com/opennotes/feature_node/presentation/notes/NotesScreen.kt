@@ -8,9 +8,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Sort
+
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -60,29 +62,40 @@ fun NotesScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .padding(top = 12.dp) 
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 30.dp)
+                        .padding(horizontal = 16.dp)
                 ) {
-
-
                     OutlinedTextField(
                         value = state.searchQuery,
                         onValueChange = {
                             viewModel.onEvent(NotesEvent.SearchNote(it))
                         },
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp),
-
-                        shape = RoundedCornerShape(28.dp),
+                            .width(400.dp)
+                            .padding(bottom = 12.dp),
+                        shape = RoundedCornerShape(48.dp),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search Notes"
                             )
+                        },
+                        trailingIcon = {
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Screen.SettingsScreen.route)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings"
+                                )
+                            }
                         },
                         placeholder = { Text("Search Notes") },
                         singleLine = true,
@@ -100,44 +113,17 @@ fun NotesScreen(
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-
-                        IconButton(
-                            onClick = {
-                                navController.navigate(Screen.SettingsScreen.route)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings"
-                            )
-                        }
-                    }
                 }
 
-                AnimatedVisibility(
-                    visible = state.isOrderSectionVisible,
-                    enter = fadeIn() + slideInVertically(),
-                    exit = fadeOut() + slideOutVertically()
+
+
+                Spacer(modifier = Modifier.height(12.dp)) // Slightly reduced spacer
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp), // CHANGE: Added horizontal padding to LazyColumn for consistent margins
+                    verticalArrangement = Arrangement.spacedBy(12.dp) // CHANGE: Used spacedBy instead of individual Spacers for better performance
                 ) {
-                    OrderSection(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        noteOrder = state.noteOrder,
-                        onOrderChange = {
-                            viewModel.onEvent(NotesEvent.Order(it))
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(state.notes) { note ->
                         NoteItem(
                             note = note,
@@ -155,7 +141,7 @@ fun NotesScreen(
                                     val result = snackbarHostState.showSnackbar(
                                         message = "Note deleted",
                                         actionLabel = "Undo",
-                                        duration=SnackbarDuration.Short
+                                        duration = SnackbarDuration.Short
                                     )
                                     if (result == SnackbarResult.ActionPerformed) {
                                         viewModel.onEvent(NotesEvent.RestoreNote)
@@ -163,7 +149,6 @@ fun NotesScreen(
                                 }
                             }
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }

@@ -13,25 +13,31 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val dataStoreRepository: DataStoreRepository // Assuming this repository has getSettings() and saveSettings(Settings)
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    private val _settings = MutableStateFlow(Settings()) // Initialize with default Settings
-    val settings: StateFlow<Settings> = _settings.asStateFlow()
-
+    // Directly expose the DataStore Flow - no need for MutableStateFlow
+    val settings: StateFlow<Settings> = dataStoreRepository.getSettingsFlow()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Settings() // Default settings while loading
+        )
 
     private val _isLoaded = MutableStateFlow(false)
     val isLoaded: StateFlow<Boolean> = _isLoaded.asStateFlow()
-
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -42,21 +48,19 @@ class SettingsViewModel @Inject constructor(
     }
 
     init {
+        // Just mark as loaded once the flow is set up
         viewModelScope.launch {
-            // Load initial settings from DataStore
-            // Assuming dataStoreRepository.getSettings() is a suspend function that returns Settings
-            // Or use dataStoreRepository.getSettingsFlow().first() if it returns a Flow
-            _settings.value = dataStoreRepository.getSettings()
+            // Wait a moment for the flow to emit its first value
+            settings.first()
             _isLoaded.value = true
         }
     }
 
     /**
      * Toggles the theme setting through System -> Light -> Dark -> System.
-     * This manipulates the `automaticTheme` and `darkTheme` booleans in the Settings object.
      */
     fun onThemeToggle() {
-        val currentSettings = _settings.value
+        val currentSettings = settings.value
         val newSettings = when {
             // Current is System (automatic is true) -> Next is Light
             currentSettings.automaticTheme -> {
@@ -68,23 +72,22 @@ class SettingsViewModel @Inject constructor(
             }
             // Current is Dark (automatic is false, darkTheme is true) -> Next is System
             !currentSettings.automaticTheme && currentSettings.darkTheme -> {
-                currentSettings.copy(automaticTheme = true, darkTheme = false) // When going to system, darkTheme can be false
+                currentSettings.copy(automaticTheme = true, darkTheme = false)
             }
-            // Fallback to a default state (e.g., System) if current state is unexpected
+            // Fallback to System
             else -> {
                 currentSettings.copy(automaticTheme = true, darkTheme = false)
             }
         }
-        _settings.value = newSettings
+
         viewModelScope.launch {
             dataStoreRepository.saveSettings(newSettings)
         }
     }
 
-    /** Generic update function for any setting - can be used by other settings if needed */
+    /** Generic update function for any setting */
     fun updateSettings(update: (Settings) -> Settings) {
-        val newSettings = update(_settings.value)
-        _settings.value = newSettings
+        val newSettings = update(settings.value)
         viewModelScope.launch {
             dataStoreRepository.saveSettings(newSettings)
         }

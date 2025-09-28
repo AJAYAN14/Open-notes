@@ -46,23 +46,25 @@ class DataStoreRepository @Inject constructor(
                 } else throw exception
             }
             .map { prefs ->
+                val defaultSettings = Settings() // Use Settings class defaults
                 Settings(
-                    darkTheme = prefs[DARK_THEME] ?: false,
-                    automaticTheme = prefs[AUTOMATIC_THEME] ?: false,
-                    dynamicTheme = prefs[DYNAMIC_THEME] ?: false
+                    darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
+                    automaticTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.automaticTheme,
+                    dynamicTheme = prefs[DYNAMIC_THEME] ?: defaultSettings.dynamicTheme
                 )
             }
     }
 
     /**
-     * Read Settings once (non-Flow)
+     * Read Settings once (non-Flow) - Alternative approach
      */
     suspend fun getSettings(): Settings {
         val prefs = dataStore.data.first()
+        val defaultSettings = Settings() // Use Settings class defaults
         return Settings(
-            darkTheme = prefs[DARK_THEME] ?: false,
-            automaticTheme = prefs[AUTOMATIC_THEME] ?: false,
-            dynamicTheme = prefs[DYNAMIC_THEME] ?: false
+            darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
+            automaticTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.automaticTheme,
+            dynamicTheme = prefs[DYNAMIC_THEME] ?: defaultSettings.dynamicTheme
         )
     }
 
