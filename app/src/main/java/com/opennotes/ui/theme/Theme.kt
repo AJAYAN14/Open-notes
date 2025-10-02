@@ -47,7 +47,7 @@ fun OpenNotesTheme(
     val systemInDarkTheme = isSystemInDarkTheme()
 
     val darkTheme = when {
-        settings.automaticTheme -> systemInDarkTheme
+        settings.lightTheme -> systemInDarkTheme
         else -> settings.darkTheme
     }
 

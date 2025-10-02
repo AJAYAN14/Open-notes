@@ -44,9 +44,9 @@ class MainActivity : ComponentActivity() {
             // Debug: Track settings changes
             LaunchedEffect(currentSettings) {
                 android.util.Log.d("MainActivity",
-                    "Settings: automaticTheme=${currentSettings.automaticTheme}, " +
+                    "Settings: systemTheme=${currentSettings.systemTheme}, " +
                             "darkTheme=${currentSettings.darkTheme}, " +
-                            "dynamicTheme=${currentSettings.dynamicTheme}")
+                            "lightTheme=${currentSettings.lightTheme}")
             }
 
             OpenNotesTheme(settings = currentSettings) {

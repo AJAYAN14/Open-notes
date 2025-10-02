@@ -21,9 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.opennotes.feature_node.domain.util.NoteOrder
 import com.opennotes.feature_node.presentation.notes.components.NoteItem
-import com.opennotes.feature_node.presentation.notes.components.OrderSection
 import com.opennotes.feature_node.presentation.util.Screen
 import kotlinx.coroutines.launch
 
@@ -43,7 +41,7 @@ fun NotesScreen(
                 onClick = {
                     navController.navigate(Screen.AddEditNoteScreen.route)
                 },
-                containerColor = MaterialTheme.colorScheme.primary,
+                shape= RoundedCornerShape(50.dp),
                 icon={
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "New note")
                 },

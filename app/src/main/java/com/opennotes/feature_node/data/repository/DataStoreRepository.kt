@@ -21,7 +21,7 @@ class DataStoreRepository @Inject constructor(
     companion object {
         private val DARK_THEME = booleanPreferencesKey("dark_theme")
         private val AUTOMATIC_THEME = booleanPreferencesKey("automatic_theme")
-        private val DYNAMIC_THEME = booleanPreferencesKey("dynamic_theme")
+        private val  LIGHT_THEME = booleanPreferencesKey("LIGHT_THEME")
     }
 
     /**
@@ -30,8 +30,8 @@ class DataStoreRepository @Inject constructor(
     suspend fun saveSettings(settings: Settings) {
         dataStore.edit { prefs ->
             prefs[DARK_THEME] = settings.darkTheme
-            prefs[AUTOMATIC_THEME] = settings.automaticTheme
-            prefs[DYNAMIC_THEME] = settings.dynamicTheme
+            prefs[AUTOMATIC_THEME] = settings.systemTheme
+            prefs[LIGHT_THEME] = settings.lightTheme
         }
     }
 
@@ -49,8 +49,8 @@ class DataStoreRepository @Inject constructor(
                 val defaultSettings = Settings() // Use Settings class defaults
                 Settings(
                     darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
-                    automaticTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.automaticTheme,
-                    dynamicTheme = prefs[DYNAMIC_THEME] ?: defaultSettings.dynamicTheme
+                    systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
+                    lightTheme = prefs[LIGHT_THEME] ?: defaultSettings.lightTheme
                 )
             }
     }
@@ -63,8 +63,8 @@ class DataStoreRepository @Inject constructor(
         val defaultSettings = Settings() // Use Settings class defaults
         return Settings(
             darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
-            automaticTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.automaticTheme,
-            dynamicTheme = prefs[DYNAMIC_THEME] ?: defaultSettings.dynamicTheme
+            systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
+            lightTheme = prefs[LIGHT_THEME] ?: defaultSettings.lightTheme
         )
     }
 

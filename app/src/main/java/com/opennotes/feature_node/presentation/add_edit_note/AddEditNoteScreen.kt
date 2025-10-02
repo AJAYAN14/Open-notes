@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,6 +26,7 @@ import com.opennotes.feature_node.presentation.add_edit_note.components.TransPar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditNoteScreen(
     navController: NavController,
@@ -60,15 +63,33 @@ fun AddEditNoteScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    viewModel.onEvent(AddEditNoteEvent.SaveNote)
+        topBar = {
+            TopAppBar(
+                title = { Text("") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
                 },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(imageVector = Icons.Default.Save, contentDescription = "Save Note")
-            }
+                actions = {
+                    IconButton(
+                        onClick = {
+                            viewModel.onEvent(AddEditNoteEvent.SaveNote)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Save Note"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = noteBackgroundAnimatable.value
+                )
+            )
         }
     ) { paddingValues ->
 
@@ -79,6 +100,7 @@ fun AddEditNoteScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+            // Color selection row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -63,20 +63,20 @@ class SettingsViewModel @Inject constructor(
         val currentSettings = settings.value
         val newSettings = when {
             // Current is System (automatic is true) -> Next is Light
-            currentSettings.automaticTheme -> {
-                currentSettings.copy(automaticTheme = false, darkTheme = false)
+            currentSettings.systemTheme -> {
+                currentSettings.copy(systemTheme = false, darkTheme = false)
             }
             // Current is Light (automatic is false, darkTheme is false) -> Next is Dark
-            !currentSettings.automaticTheme && !currentSettings.darkTheme -> {
-                currentSettings.copy(automaticTheme = false, darkTheme = true)
+            !currentSettings.systemTheme && !currentSettings.darkTheme -> {
+                currentSettings.copy(systemTheme = false, darkTheme = true)
             }
             // Current is Dark (automatic is false, darkTheme is true) -> Next is System
-            !currentSettings.automaticTheme && currentSettings.darkTheme -> {
-                currentSettings.copy(automaticTheme = true, darkTheme = false)
+            !currentSettings.systemTheme && currentSettings.darkTheme -> {
+                currentSettings.copy(systemTheme = true, darkTheme = false)
             }
             // Fallback to System
             else -> {
-                currentSettings.copy(automaticTheme = true, darkTheme = false)
+                currentSettings.copy(systemTheme = true, darkTheme = false)
             }
         }
 

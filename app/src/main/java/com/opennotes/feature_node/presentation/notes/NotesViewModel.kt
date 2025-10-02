@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
 import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
-import com.opennotes.feature_node.domain.util.NoteOrder
-import com.opennotes.feature_node.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -29,19 +27,11 @@ class NotesViewModel @Inject constructor
         private var recentlyDeletedNote: Note? = null
         private var getNotesJob: Job? = null
 
-        init {
-                getNotes(NoteOrder.Date(OrderType.Descending))
-        }
+
 
         fun onEvent(event: NotesEvent) {
                 when (event) {
-                        is NotesEvent.Order -> {
-                                if (state.value.noteOrder::class == event.noteOrder::class && state.value.noteOrder.orderType == event.noteOrder.orderType
-                                ) {
-                                        return
-                                }
-                                getNotes(event.noteOrder)
-                        }
+
 
                         is NotesEvent.DeleteNote -> {
                                 viewModelScope.launch {
@@ -59,12 +49,7 @@ class NotesViewModel @Inject constructor
                                 }
                         }
 
-                        is NotesEvent.ToggleOrderSection -> {
-                                _state.value = state.value.copy(
-                                        isOrderSectionVisible = !state.value.isOrderSectionVisible
-                                )
 
-                        }
 
                         is NotesEvent.SearchNote -> {
                                 _state.value=state.value.copy(searchQuery=event.query)
@@ -75,19 +60,6 @@ class NotesViewModel @Inject constructor
                 }
         }
 
-        private fun getNotes(noteOrder: NoteOrder) {
-                getNotesJob?.cancel()
-                getNotesJob = noteUseCases.getNotes(noteOrder)
-                        .onEach { notes ->
-                                _state.value = state.value.copy(
-                                        notes = notes,
-                                        noteOrder = noteOrder
-                                )
-                        }
-                        .launchIn(viewModelScope)
-
-
-        }
 
 
         private fun searchNotes(query: String) {
