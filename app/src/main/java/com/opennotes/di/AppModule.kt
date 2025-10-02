@@ -14,6 +14,7 @@ import com.opennotes.feature_node.domain.use_case.DeleteNote
 import com.opennotes.feature_node.domain.use_case.ExportUseCases
 import com.opennotes.feature_node.domain.use_case.GetNote
 import androidx.room.Room
+import com.opennotes.feature_node.domain.use_case.GetNotes
 import com.opennotes.feature_node.domain.use_case.ImportUseCases
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
 import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
@@ -71,6 +72,7 @@ object AppModule {
             deleteNote = DeleteNote(repository),
             addNote = AddNote(repository),
             getNote = GetNote(repository),
+            getNotes = GetNotes(repository),
             searchNotes = SearchNotesUseCase(repository),
             importNotes = ImportUseCases(repository, fileHandler,jsonHandler),
             exportNotes = ExportUseCases(repository, fileHandler,jsonHandler)

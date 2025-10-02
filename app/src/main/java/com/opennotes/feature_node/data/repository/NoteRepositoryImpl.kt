@@ -15,7 +15,7 @@ private val dao: NoteDao
         return dao.getNotes()
     }
 
-    override suspend fun getNodeById(id: Int): Note? {
+    override suspend fun getNoteById(id: Int): Note? {
         return dao.getNoteById(id)
     }
 
