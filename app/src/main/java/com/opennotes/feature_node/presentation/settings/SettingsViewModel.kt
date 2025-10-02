@@ -1,71 +1,116 @@
 package com.opennotes.feature_node.presentation.settings
 
 import android.net.Uri
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+// androidx.compose.runtime.State // Not needed if exposing StateFlow directly
+// import androidx.compose.runtime.mutableStateOf // Not needed if exposing StateFlow directly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.opennotes.feature_node.data.repository.DataStoreRepository
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
 import com.opennotes.feature_node.domain.util.ExportResult
 import com.opennotes.feature_node.domain.util.ImportResult
-import com.opennotes.feature_node.presentation.add_edit_note.AddEditNoteViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val noteUseCases: NoteUseCases
-): ViewModel() {
+    private val noteUseCases: NoteUseCases,
+    private val dataStoreRepository: DataStoreRepository
+) : ViewModel() {
 
+    // Directly expose the DataStore Flow - no need for MutableStateFlow
+    val settings: StateFlow<Settings> = dataStoreRepository.getSettingsFlow()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Settings() // Default settings while loading
+        )
+
+    private val _isLoaded = MutableStateFlow(false)
+    val isLoaded: StateFlow<Boolean> = _isLoaded.asStateFlow()
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-
-
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        data class ShowShareDialog(val uri:Uri):UiEvent()
+        data class ShowShareDialog(val uri: Uri) : UiEvent()
+    }
+
+    init {
+        // Just mark as loaded once the flow is set up
+        viewModelScope.launch {
+            // Wait a moment for the flow to emit its first value
+            settings.first()
+            _isLoaded.value = true
+        }
+    }
+
+    /**
+     * Toggles the theme setting through System -> Light -> Dark -> System.
+     */
+    fun onThemeToggle() {
+        val currentSettings = settings.value
+        val newSettings = when {
+            // Current is System (automatic is true) -> Next is Light
+            currentSettings.systemTheme -> {
+                currentSettings.copy(systemTheme = false, darkTheme = false)
+            }
+            // Current is Light (automatic is false, darkTheme is false) -> Next is Dark
+            !currentSettings.systemTheme && !currentSettings.darkTheme -> {
+                currentSettings.copy(systemTheme = false, darkTheme = true)
+            }
+            // Current is Dark (automatic is false, darkTheme is true) -> Next is System
+            !currentSettings.systemTheme && currentSettings.darkTheme -> {
+                currentSettings.copy(systemTheme = true, darkTheme = false)
+            }
+            // Fallback to System
+            else -> {
+                currentSettings.copy(systemTheme = true, darkTheme = false)
+            }
+        }
+
+        viewModelScope.launch {
+            dataStoreRepository.saveSettings(newSettings)
+        }
+    }
+
+    /** Generic update function for any setting */
+    fun updateSettings(update: (Settings) -> Settings) {
+        val newSettings = update(settings.value)
+        viewModelScope.launch {
+            dataStoreRepository.saveSettings(newSettings)
+        }
     }
 
 
     fun onExportClick() {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             when (val result = noteUseCases.exportNotes()) {
-                is ExportResult.Success -> {
-                    _uiEvent.send(UiEvent.ShowShareDialog(uri=result.uri))
-                }
-
-                is ExportResult.Error -> {
-                    _uiEvent.send(UiEvent.ShowSnackbar(message = result.message))
-                }
+                is ExportResult.Success -> _uiEvent.send(UiEvent.ShowShareDialog(result.uri))
+                is ExportResult.Error -> _uiEvent.send(UiEvent.ShowSnackbar(result.message))
             }
         }
     }
-
 
     fun onImportClick(fileUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = noteUseCases.importNotes(fileUri)) {
-                is ImportResult.Success -> {
-                    _uiEvent.send(UiEvent.ShowSnackbar(message = "notes imported"))
-                }
-
-                is ImportResult.Error -> {
-                    _uiEvent.send(UiEvent.ShowSnackbar(message = result.message))
-                }
-
-
+                is ImportResult.Success ->
+                    _uiEvent.send(UiEvent.ShowSnackbar("Notes imported"))
+                is ImportResult.Error ->
+                    _uiEvent.send(UiEvent.ShowSnackbar(result.message))
             }
         }
     }
-
-
-
-
 }

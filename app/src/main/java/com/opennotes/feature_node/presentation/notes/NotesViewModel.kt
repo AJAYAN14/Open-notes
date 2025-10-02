@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
 import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
-import com.opennotes.feature_node.domain.util.NoteOrder
-import com.opennotes.feature_node.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -19,37 +17,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor
-(
+        (
         private val noteUseCases: NoteUseCases
-
-
 ): ViewModel() {
         private val _state = mutableStateOf(NotesState())
         val state: State<NotesState> = _state
         private var recentlyDeletedNote: Note? = null
         private var getNotesJob: Job? = null
 
-        init {
-                getNotes(NoteOrder.Date(OrderType.Descending))
+        init{
+                getNotes()
         }
 
         fun onEvent(event: NotesEvent) {
                 when (event) {
-                        is NotesEvent.Order -> {
-                                if (state.value.noteOrder::class == event.noteOrder::class && state.value.noteOrder.orderType == event.noteOrder.orderType
-                                ) {
-                                        return
-                                }
-                                getNotes(event.noteOrder)
-                        }
-
                         is NotesEvent.DeleteNote -> {
                                 viewModelScope.launch {
                                         noteUseCases.deleteNote(event.note)
                                         recentlyDeletedNote = event.note
-
                                 }
-
                         }
 
                         is NotesEvent.RestoreNote -> {
@@ -59,15 +45,8 @@ class NotesViewModel @Inject constructor
                                 }
                         }
 
-                        is NotesEvent.ToggleOrderSection -> {
-                                _state.value = state.value.copy(
-                                        isOrderSectionVisible = !state.value.isOrderSectionVisible
-                                )
-
-                        }
-
                         is NotesEvent.SearchNote -> {
-                                _state.value=state.value.copy(searchQuery=event.query)
+                                _state.value = state.value.copy(searchQuery = event.query)
                                 searchNotes(event.query)
                         }
 
@@ -75,24 +54,19 @@ class NotesViewModel @Inject constructor
                 }
         }
 
-        private fun getNotes(noteOrder: NoteOrder) {
+
+        private fun getNotes() {
                 getNotesJob?.cancel()
-                getNotesJob = noteUseCases.getNotes(noteOrder)
+                getNotesJob = noteUseCases.getNotes()
                         .onEach { notes ->
-                                _state.value = state.value.copy(
-                                        notes = notes,
-                                        noteOrder = noteOrder
-                                )
+                                _state.value = state.value.copy(notes = notes)
                         }
                         .launchIn(viewModelScope)
-
-
         }
-
 
         private fun searchNotes(query: String) {
                 getNotesJob?.cancel()
-                getNotesJob = noteUseCases.searchNotes(query) // ✅ use the injected use case
+                getNotesJob = noteUseCases.searchNotes(query)
                         .onEach { notes ->
                                 _state.value = state.value.copy(notes = notes)
                         }

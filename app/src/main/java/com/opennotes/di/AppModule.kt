@@ -1,7 +1,7 @@
 package com.opennotes.di
 
 import android.app.Application
-import androidx.room.Room
+
 import com.opennotes.feature_node.data.data_source.NoteDatabase
 import com.opennotes.feature_node.data.repository.AndroidFileHandler
 import com.opennotes.feature_node.data.repository.FileHandler
@@ -13,6 +13,7 @@ import com.opennotes.feature_node.domain.use_case.AddNote
 import com.opennotes.feature_node.domain.use_case.DeleteNote
 import com.opennotes.feature_node.domain.use_case.ExportUseCases
 import com.opennotes.feature_node.domain.use_case.GetNote
+import androidx.room.Room
 import com.opennotes.feature_node.domain.use_case.GetNotes
 import com.opennotes.feature_node.domain.use_case.ImportUseCases
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
@@ -58,7 +59,7 @@ object AppModule {
         return GsonJsonHandler()
     }
 
-    // CORRECTED: Now takes all necessary dependencies as parameters
+
     @Provides
     @Singleton
     fun provideNoteUseCaseId(
@@ -67,12 +68,12 @@ object AppModule {
         fileHandler: FileHandler
     ): NoteUseCases {
         return NoteUseCases(
-            getNotes = GetNotes(repository),
+
             deleteNote = DeleteNote(repository),
             addNote = AddNote(repository),
             getNote = GetNote(repository),
+            getNotes = GetNotes(repository),
             searchNotes = SearchNotesUseCase(repository),
-
             importNotes = ImportUseCases(repository, fileHandler,jsonHandler),
             exportNotes = ExportUseCases(repository, fileHandler,jsonHandler)
         )
