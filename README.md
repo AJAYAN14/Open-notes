@@ -1,4 +1,5 @@
-# 📝 OpenNotes
+
+# 📝 OpenNotes   [<img src="https://shields.rbtlog.dev/simple/com.opennotes" alt="RB Status" height="80">](https://shields.rbtlog.dev/com.opennotes)
 
 **OpenNotes** is a modern, lightweight, and privacy-respecting note-taking app built with **Jetpack Compose**, following **MVVM** and **Clean Architecture** principles. The app is 100% offline and open source.
 
@@ -16,13 +17,13 @@ Perfect for students, professionals, and anyone who needs to jot down ideas, rem
 
 ---
 
-## 📦 Installation
+## 📥 Get It From
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/com.opennotes)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.opennotes)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.opennotes)
 
-- 📱 **F-Droid**: <img src="https://f-droid.org/assets/fdroid-logo.svg" alt="F-Droid" width="16" height="16"> Install from [F-Droid](https://f-droid.org/packages/com.opennotes)
+
+
 - 📥 **GitHub Releases**: Download the latest `.apk` from the [Releases](https://github.com/Fandroid745/Open-notes/releases) page
 
 ---
@@ -31,10 +32,6 @@ Perfect for students, professionals, and anyone who needs to jot down ideas, rem
 Contributions are welcome! Your help in making OpenNotes better is appreciated.
 Please open an issue before submitting a pull request that adds a new feature, so it can be discussed first.
 All changes should be committed to the dev branch, not master.
-
-
-
-
 
 ## 🛡️ License
 
