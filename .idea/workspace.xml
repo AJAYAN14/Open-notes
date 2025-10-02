@@ -42,14 +42,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
+      <change afterPath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_20251002-153634.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_20251002-153651.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_20251002-153731.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/di/AppModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/di/AppModule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/NoteRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/NoteRepositoryImpl.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/repository/NoteRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/repository/NoteRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/use_case/GetNote.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/use_case/GetNote.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/use_case/NoteUseCases.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/use_case/NoteUseCases.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesEvent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/ui/theme/Theme.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/ui/theme/Theme.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image3.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +59,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/home/dhanush/.android/avd/Pixel_7_Pro.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=7cb09fa2)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -358,12 +358,12 @@
         </entry>
         <entry key="com.opennotes">
           <value>
-            <CheckInfo lastCheckTimestamp="1759226855651" />
+            <CheckInfo lastCheckTimestamp="1759382008071" />
           </value>
         </entry>
         <entry key="com.opennotes.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1759226855654" />
+            <CheckInfo lastCheckTimestamp="1759382008071" />
           </value>
         </entry>
         <entry key="com.plcoding.cleanarchitecturenoteapp">

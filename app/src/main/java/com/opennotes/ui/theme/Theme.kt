@@ -51,7 +51,7 @@ fun OpenNotesTheme(
         else -> settings.darkTheme
     }
 
-    // TEMP: Force dynamic colors for testing
+
     val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     } else {
