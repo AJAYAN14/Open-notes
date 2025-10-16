@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import com.opennotes.feature_node.domain.model.Note
+import com.opennotes.ui.theme.PureBlack
 
 @Composable
 fun NoteItem(
@@ -67,7 +68,7 @@ fun NoteItem(
             Text(
                 text = note.title,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = PureBlack,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -76,7 +77,7 @@ fun NoteItem(
             Text(
                 text = note.content,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = PureBlack,
                 maxLines = 10,
                 overflow = TextOverflow.Ellipsis
             )
@@ -89,7 +90,7 @@ fun NoteItem(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete note",
-                tint = MaterialTheme.colorScheme.onSurface
+                tint = PureBlack
             )
         }
     }
