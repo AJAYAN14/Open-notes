@@ -42,6 +42,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -351,12 +352,12 @@
         </entry>
         <entry key="com.opennotes">
           <value>
-            <CheckInfo lastCheckTimestamp="1759382008071" />
+            <CheckInfo lastCheckTimestamp="1760444211351" />
           </value>
         </entry>
         <entry key="com.opennotes.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1759382008071" />
+            <CheckInfo lastCheckTimestamp="1760444211350" />
           </value>
         </entry>
         <entry key="com.plcoding.cleanarchitecturenoteapp">

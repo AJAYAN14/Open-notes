@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.presentation.add_edit_note.components.TransParentHintTextField
+import com.opennotes.ui.theme.PureBlack
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -70,7 +71,8 @@ fun AddEditNoteScreen(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = "Go back",
+                            tint=PureBlack
                         )
                     }
                 },
@@ -82,7 +84,9 @@ fun AddEditNoteScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Save Note"
+                            contentDescription = "Save Note",
+                            tint=PureBlack
+              
                         )
                     }
                 },
@@ -100,7 +104,7 @@ fun AddEditNoteScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Color selection row
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

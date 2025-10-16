@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val currentSettings by settingsViewModel.settings.collectAsState()
 
-            // Debug: Track settings changes
+
             LaunchedEffect(currentSettings) {
                 android.util.Log.d("MainActivity",
                     "Settings: systemTheme=${currentSettings.systemTheme}, " +
