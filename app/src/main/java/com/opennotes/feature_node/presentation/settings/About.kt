@@ -31,7 +31,7 @@ fun AboutScreen(navController: NavController, settingsViewModel: SettingsViewMod
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About") },
+                title = { Text("About App") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")

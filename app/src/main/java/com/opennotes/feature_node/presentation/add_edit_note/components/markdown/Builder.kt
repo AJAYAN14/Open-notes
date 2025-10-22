@@ -48,7 +48,7 @@ fun splitByDelimiter(input: String, delimiter: String): List<Pair<Int, Int>> {
     while (delimiterIndex != -1) {
         if (startIndex != delimiterIndex) {
             segments.add(Pair(startIndex, delimiterIndex))
-        } else {
+    A    } else {
             segments.add(Pair(startIndex, startIndex))
         }
         startIndex = delimiterIndex + delimiter.length
