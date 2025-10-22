@@ -48,33 +48,31 @@ class SettingsViewModel @Inject constructor(
     }
 
     init {
-        // Just mark as loaded once the flow is set up
+
         viewModelScope.launch {
-            // Wait a moment for the flow to emit its first value
+
             settings.first()
             _isLoaded.value = true
         }
     }
 
-    /**
-     * Toggles the theme setting through System -> Light -> Dark -> System.
-     */
+
     fun onThemeToggle() {
         val currentSettings = settings.value
         val newSettings = when {
-            // Current is System (automatic is true) -> Next is Light
+
             currentSettings.systemTheme -> {
                 currentSettings.copy(systemTheme = false, darkTheme = false)
             }
-            // Current is Light (automatic is false, darkTheme is false) -> Next is Dark
+
             !currentSettings.systemTheme && !currentSettings.darkTheme -> {
                 currentSettings.copy(systemTheme = false, darkTheme = true)
             }
-            // Current is Dark (automatic is false, darkTheme is true) -> Next is System
+
             !currentSettings.systemTheme && currentSettings.darkTheme -> {
                 currentSettings.copy(systemTheme = true, darkTheme = false)
             }
-            // Fallback to System
+
             else -> {
                 currentSettings.copy(systemTheme = true, darkTheme = false)
             }
@@ -85,7 +83,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    /** Generic update function for any setting */
+
     fun updateSettings(update: (Settings) -> Settings) {
         val newSettings = update(settings.value)
         viewModelScope.launch {

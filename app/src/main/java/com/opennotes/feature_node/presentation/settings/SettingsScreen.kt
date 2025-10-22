@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -243,6 +244,22 @@ fun SettingsScreen(
                     icon = Icons.Default.Palette,
                     onClick = {
                         viewModel.updateSettings { it.copy(darkTheme = !it.darkTheme) }
+                    },
+                    isFirst = true
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            item {
+                SettingItem(
+                    title = "About ",
+                    subtitle="Version . Developers .License",
+                    icon= Icons.Default.Info,
+                            onClick = {
+
                     },
                     isFirst = true
                 )
