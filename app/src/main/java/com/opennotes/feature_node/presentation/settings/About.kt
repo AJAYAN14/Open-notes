@@ -57,14 +57,12 @@ fun AboutScreen(navController: NavController, settingsViewModel: SettingsViewMod
                 )
             }
 
-
-
             item {
                 SettingItem(
                     title = "Source Code",
                     icon = Icons.Filled.Language,
                     onClick = {
-                        uriHandler.openUri("")
+                        uriHandler.openUri("https://github.com/Fandroid745/Open-notes.git")
                     },
                     isLast = true
                 )
