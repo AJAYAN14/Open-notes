@@ -72,48 +72,148 @@ fun isInSegments(index: Int, segments: List<Pair<Int, Int>>): Boolean {
     return segments.any { segment -> index in segment.first until segment.second }
 }
 
-fun buildString(input: String, defaultFontWeight: FontWeight = FontWeight.Normal): AnnotatedString {
+fun buildAnnotatedMarkdownString(
+    input: String,
+    defaultFontWeight: FontWeight = FontWeight.Normal
+): AnnotatedString {
+    // Early return for empty or very long strings
+    if (input.isBlank()) return AnnotatedString(input)
+    if (input.length > 5000) { // Reduced limit for better performance
+        return AnnotatedString(input)
+    }
+
+    // Removed the URL check that was preventing all formatting for text with URLs
+
     val textStyleSegments: List<TextStyleSegment> = listOf(
         BoldSegment(),
+        CodeSegment(), // Process code first to avoid conflicts with other formatting
         ItalicSegment(),
         HighlightSegment(),
         Strikethrough(),
-        Underline(),
-        CodeSegment()
+        Underline()
     )
 
-    val allSegments = textStyleSegments.associateWith { splitByDelimiter(input, it.delimiter) }
+    return buildAnnotatedString {
+        var currentText = input
+        val styleRanges = mutableListOf<Triple<Int, Int, SpanStyle>>()
 
-    fun getSpanStyle(index: Int): SpanStyle {
-        val styles = textStyleSegments.filter { segment -> isInSegments(index, allSegments[segment]!!) }
-        return styles.fold(SpanStyle(fontWeight = defaultFontWeight)) { acc, segment -> acc.merge(segment.getSpanStyle()) }
-    }
+        // Process each formatting type in order with safety limits
+        for (segment in textStyleSegments) {
+            val delimiter = segment.delimiter
+            if (!currentText.contains(delimiter)) continue // Skip if delimiter not present
 
-    val annotatedString = buildAnnotatedString {
-        val iterator = BreakIterator.getWordInstance()
-        iterator.setText(input)
+            var offset = 0
+            var iterations = 0
+            val maxIterations = 20 // Reduced iterations to prevent freezing
 
-        var start = iterator.first()
-        var end = iterator.next()
+            while (iterations < maxIterations) {
+                val startIndex = currentText.indexOf(delimiter, offset)
+                if (startIndex == -1) break
 
-        while (end != BreakIterator.DONE) {
-            val substring = input.substring(start, end)
+                val endDelimiterStart =
+                    currentText.indexOf(delimiter, startIndex + delimiter.length)
+                if (endDelimiterStart == -1) break
 
-            // Skip delimiters and check Arabic substrings
-            val isDelimiter = textStyleSegments.any { segment ->
+                // Extract the content between delimiters
+                val contentStart = startIndex + delimiter.length
+                val contentEnd = endDelimiterStart
 
-                segment.delimiter == substring
-            }
-
-            if (!isDelimiter) {
-                withStyle(style = getSpanStyle(start)) {
-                    append(substring) // Append full words or graphemes
+                if (contentStart < contentEnd && (contentEnd - contentStart) < 500) { // Reduced segment length limit
+                    // Add style range for this content
+                    styleRanges.add(
+                        Triple(
+                            startIndex,
+                            endDelimiterStart + delimiter.length,
+                            segment.getSpanStyle()
+                        )
+                    )
                 }
-            }
 
-            start = end
-            end = iterator.next()
+                offset = endDelimiterStart + delimiter.length
+                iterations++
+            }
+        }
+
+        // Sort ranges by start position with size limit
+        val sortedRanges = styleRanges.sortedBy { it.first }.take(50) // Reduced limit
+
+        // Remove overlapping ranges (keep the first one)
+        val nonOverlappingRanges = mutableListOf<Triple<Int, Int, SpanStyle>>()
+        for (range in sortedRanges) {
+            val overlaps = nonOverlappingRanges.any { existing ->
+                range.first < existing.second && range.second > existing.first
+            }
+            if (!overlaps) {
+                nonOverlappingRanges.add(range)
+            }
+        }
+
+        // Build the final string by removing delimiters and applying styles
+        var processedText = currentText
+
+        // Process ranges in reverse order to maintain correct indices
+        for ((start, end, style) in nonOverlappingRanges.sortedByDescending { it.first }) {
+            try {
+                if (start >= processedText.length || end > processedText.length) continue
+
+                val originalSegment = processedText.substring(start, end)
+
+                // Find delimiter length by checking the segment
+                val delimiter = textStyleSegments.find { segment ->
+                    originalSegment.startsWith(segment.delimiter) && originalSegment.endsWith(
+                        segment.delimiter
+                    )
+                }?.delimiter ?: continue
+
+                // Extract content without delimiters
+                val content = originalSegment.substring(
+                    delimiter.length,
+                    originalSegment.length - delimiter.length
+                )
+
+                // Replace the segment with just the content
+                processedText =
+                    processedText.substring(0, start) + content + processedText.substring(end)
+            } catch (e: Exception) {
+                // Skip problematic ranges
+                continue
+            }
+        }
+
+        // Apply default style to entire text
+        withStyle(SpanStyle(fontWeight = defaultFontWeight)) {
+            append(processedText)
+        }
+
+        // Calculate and apply styles to the processed text
+        var adjustmentOffset = 0
+        for ((originalStart, originalEnd, style) in nonOverlappingRanges.sortedBy { it.first }) {
+            try {
+                val originalSegment = input.substring(originalStart, originalEnd)
+
+                // Find delimiter
+                val delimiter = textStyleSegments.find { segment ->
+                    originalSegment.startsWith(segment.delimiter) && originalSegment.endsWith(
+                        segment.delimiter
+                    )
+                }?.delimiter ?: continue
+
+                val contentLength = originalSegment.length - (2 * delimiter.length)
+                if (contentLength > 0) {
+                    val adjustedStart = originalStart - adjustmentOffset
+                    val adjustedEnd = adjustedStart + contentLength
+
+                    if (adjustedStart >= 0 && adjustedEnd <= processedText.length && adjustedStart < adjustedEnd) {
+                        addStyle(style, adjustedStart, adjustedEnd)
+                    }
+
+                    // Update adjustment for removed delimiters
+                    adjustmentOffset += (2 * delimiter.length)
+                }
+            } catch (e: Exception) {
+                // Skip problematic styles
+                continue
+            }
         }
     }
-    return annotatedString
 }

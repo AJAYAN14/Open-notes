@@ -1,13 +1,17 @@
 package com.opennotes.feature_node.presentation.settings
 
+import android.R.attr.versionCode
 import android.widget.Toast
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
@@ -20,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,10 +33,13 @@ fun AboutScreen(navController: NavController, settingsViewModel: SettingsViewMod
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
+    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionName = packageInfo.versionName ?: "Unknown"
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About App") },
+                title = { Text("About") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -48,27 +56,31 @@ fun AboutScreen(navController: NavController, settingsViewModel: SettingsViewMod
             item {
                 SettingItem(
                     title = "App Version",
-                    subtitle = "1.0.0",
+                    subtitle = versionName,
                     icon = Icons.Filled.Info,
                     onClick = {
-                        Toast.makeText(context, "App Version 1.0.0", Toast.LENGTH_SHORT).show()
                     },
-                    isFirst = true
+                    isFirst = true,
+                    trailing = {}
                 )
+            }
+
+            item{
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             item {
                 SettingItem(
                     title = "Source Code",
-                    icon = Icons.Filled.Language,
+                    subtitle = "",
+                    icon = Icons.Filled.Download,
                     onClick = {
                         uriHandler.openUri("https://github.com/Fandroid745/Open-notes.git")
                     },
-                    isLast = true
+                    isLast = true,
+                    trailing = {}
                 )
             }
         }
     }
 }
-
-

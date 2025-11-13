@@ -5,7 +5,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.opennotes.feature_node.presentation.settings.Settings
+import com.opennotes.feature_node.presentation.settings.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -19,9 +21,14 @@ class DataStoreRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     companion object {
+        // New theme settings
+        private val THEME_MODE = stringPreferencesKey("theme_mode")
+        private val BLACK_THEME = booleanPreferencesKey("black_theme")
+
+        // Legacy settings for backward compatibility
         private val DARK_THEME = booleanPreferencesKey("dark_theme")
         private val AUTOMATIC_THEME = booleanPreferencesKey("automatic_theme")
-        private val  LIGHT_THEME = booleanPreferencesKey("LIGHT_THEME")
+        private val LIGHT_THEME = booleanPreferencesKey("LIGHT_THEME")
     }
 
     /**
@@ -29,9 +36,29 @@ class DataStoreRepository @Inject constructor(
      */
     suspend fun saveSettings(settings: Settings) {
         dataStore.edit { prefs ->
-            prefs[DARK_THEME] = settings.darkTheme
-            prefs[AUTOMATIC_THEME] = settings.systemTheme
-            prefs[LIGHT_THEME] = settings.lightTheme
+            prefs[THEME_MODE] = settings.themeMode.name
+            prefs[BLACK_THEME] = settings.blackTheme
+
+            // Also update legacy fields for compatibility
+            when (settings.themeMode) {
+                ThemeMode.SYSTEM -> {
+                    prefs[AUTOMATIC_THEME] = true
+                    prefs[DARK_THEME] = false
+                    prefs[LIGHT_THEME] = false
+                }
+
+                ThemeMode.LIGHT -> {
+                    prefs[AUTOMATIC_THEME] = false
+                    prefs[DARK_THEME] = false
+                    prefs[LIGHT_THEME] = true
+                }
+
+                ThemeMode.DARK -> {
+                    prefs[AUTOMATIC_THEME] = false
+                    prefs[DARK_THEME] = true
+                    prefs[LIGHT_THEME] = false
+                }
+            }
         }
     }
 
@@ -46,8 +73,26 @@ class DataStoreRepository @Inject constructor(
                 } else throw exception
             }
             .map { prefs ->
-                val defaultSettings = Settings() // Use Settings class defaults
+                val defaultSettings = Settings()
+
+                // Try to read new theme mode first
+                val themeModeString = prefs[THEME_MODE]
+                val themeMode = if (themeModeString != null) {
+                    try {
+                        ThemeMode.valueOf(themeModeString)
+                    } catch (e: IllegalArgumentException) {
+                        // If migration needed from legacy settings
+                        migrateLegacyThemeMode(prefs, defaultSettings)
+                    }
+                } else {
+                    // Migration from legacy settings
+                    migrateLegacyThemeMode(prefs, defaultSettings)
+                }
+
                 Settings(
+                    themeMode = themeMode,
+                    blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
+                    // Legacy fields for compatibility
                     darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
                     systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
                     lightTheme = prefs[LIGHT_THEME] ?: defaultSettings.lightTheme
@@ -55,13 +100,41 @@ class DataStoreRepository @Inject constructor(
             }
     }
 
+    private fun migrateLegacyThemeMode(prefs: Preferences, defaultSettings: Settings): ThemeMode {
+        val systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme
+        val darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme
+        val lightTheme = prefs[LIGHT_THEME] ?: defaultSettings.lightTheme
+
+        return when {
+            systemTheme -> ThemeMode.SYSTEM
+            lightTheme -> ThemeMode.LIGHT
+            darkTheme -> ThemeMode.DARK
+            else -> ThemeMode.SYSTEM
+        }
+    }
+
     /**
      * Read Settings once (non-Flow) - Alternative approach
      */
     suspend fun getSettings(): Settings {
         val prefs = dataStore.data.first()
-        val defaultSettings = Settings() // Use Settings class defaults
+        val defaultSettings = Settings()
+
+        val themeModeString = prefs[THEME_MODE]
+        val themeMode = if (themeModeString != null) {
+            try {
+                ThemeMode.valueOf(themeModeString)
+            } catch (e: IllegalArgumentException) {
+                migrateLegacyThemeMode(prefs, defaultSettings)
+            }
+        } else {
+            migrateLegacyThemeMode(prefs, defaultSettings)
+        }
+
         return Settings(
+            themeMode = themeMode,
+            blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
+            // Legacy fields for compatibility
             darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
             systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
             lightTheme = prefs[LIGHT_THEME] ?: defaultSettings.lightTheme

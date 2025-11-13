@@ -22,19 +22,34 @@ data class Quote(val level: Int, val text: String) : MarkdownElement {
     }
 }
 
-data class ListItem(val text: String) : MarkdownElement {
+data class ListItem(
+    val text: String,
+    val isNumbered: Boolean = false,
+    val number: Int? = null
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
-        builder.append("- ${text}\n")
+        if (isNumbered && number != null) {
+            builder.append("$number. $text\n")
+        } else {
+            builder.append("- $text\n")
+        }
     }
 }
 
-data class CodeBlock(val code: String, val isEnded: Boolean = false, val firstLine : String) : MarkdownElement {
+data class CodeBlock(
+    val code: String,
+    val isEnded: Boolean = false,
+    val firstLine: String,
+    val language: String? = null
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("```")
-        isEnded.let {
-            builder.append(it)
+        language?.let { builder.append(it) }
+        builder.append("\n$code")
+        if (isEnded) {
+            builder.append("```")
         }
-        builder.append("\n$code\n```\n")
+        builder.append("\n")
     }
 }
 

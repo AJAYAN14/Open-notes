@@ -28,7 +28,7 @@ data class Strikethrough(override val delimiter: String = "~~") : TextStyleSegme
     override fun getSpanStyle() = SpanStyle(textDecoration = TextDecoration.LineThrough)
 }
 
-data class Underline(override val delimiter: String = "_") : TextStyleSegment {
+data class Underline(override val delimiter: String = "++") : TextStyleSegment {
     override fun getSpanStyle() = SpanStyle(textDecoration = TextDecoration.Underline)
 }
 

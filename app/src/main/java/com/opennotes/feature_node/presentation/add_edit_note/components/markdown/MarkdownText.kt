@@ -1,6 +1,5 @@
 package com.opennotes.feature_node.presentation.add_edit_note.components.markdown
 
-import android.graphics.fonts.FontFamily
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,17 +17,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
@@ -39,7 +42,7 @@ import com.opennotes.feature_node.presentation.settings.SettingsViewModel
 
 @Composable
 fun MarkdownCodeBlock(
-    color: androidx.compose.ui.graphics.Color,
+    color: Color,
     text: @Composable (() -> Unit)
 ) {
     Box(
@@ -60,20 +63,25 @@ fun MarkdownCodeBlock(
 
 @Composable
 fun MarkdownQuote(content: String, fontSize: TextUnit) {
-    Row(horizontalArrangement = Arrangement.Center) {
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier.padding(vertical = 4.dp)
+    ) {
         Box(
             modifier = Modifier
                 .height(22.dp)
                 .width(6.dp)
                 .background(
-                    MaterialTheme.colorScheme.surfaceContainerLow,
+                    MaterialTheme.colorScheme.primary,
                     RoundedCornerShape(16.dp)
                 )
         )
-        Spacer(modifier = Modifier.width(6.dp))
+        Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = buildString(" $content"),
-            fontSize = fontSize
+            text = content,
+            fontSize = fontSize,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
         )
     }
 }
@@ -81,15 +89,21 @@ fun MarkdownQuote(content: String, fontSize: TextUnit) {
 @Composable
 fun MarkdownCheck(content: @Composable () -> Unit, checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?) {
     Row(
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 2.dp)
     ) {
         Checkbox(
             checked = checked,
             onCheckedChange = onCheckedChange,
             modifier = Modifier
-                .padding(end = 12.dp)
-                .size(20.dp)
+                .padding(end = 8.dp)
+                .size(24.dp),
+            colors = CheckboxDefaults.colors(
+                checkmarkColor = MaterialTheme.colorScheme.onPrimary,
+                checkedColor = MaterialTheme.colorScheme.primary,
+                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         )
         content()
     }
@@ -108,9 +122,9 @@ fun MarkdownText(
     onContentChange: (String) -> Unit = {},
     settingsViewModel: SettingsViewModel? = null
 ) {
-    if (!isEnabled) {
+    if (!isEnabled || markdown.isBlank()) {
         StaticMarkdownText(
-            markdown = markdown,
+            markdown = if (markdown.isBlank()) "Start typing..." else markdown,
             modifier = modifier,
             weight = weight,
             fontSize = fontSize
@@ -118,29 +132,64 @@ fun MarkdownText(
         return
     }
 
-    val lines = markdown.lines()
-    val lineProcessors = listOf(
-        HeadingProcessor(),
-        ListItemProcessor(),
-        CodeBlockProcessor(),
-        QuoteProcessor(),
-        ImageInsertionProcessor(),
-        CheckboxProcessor(),
-        LinkProcessor(),
-        HorizontalRuleProcessor()
-    )
-    val markdownBuilder = MarkdownBuilder(lines, lineProcessors)
-    markdownBuilder.parse()
+    // Safety check - use simple text rendering for potentially problematic content
+    val hasComplexContent = remember(markdown) {
+        markdown.length > 5000 || // Increased limit to allow more content with links
+                markdown.count { it == '*' } > 50 || // Increased to allow reasonable formatting
+                markdown.count { it == '[' } > 20 || // Increased to allow reasonable links
+                // Only consider multiple URLs on same line problematic, not single URLs
+                (markdown.contains("http://") && markdown.lines().any { line ->
+                    line.indexOf("http://", line.indexOf("http://") + 1) != -1
+                }) ||
+                (markdown.contains("https://") && markdown.lines().any { line ->
+                    line.indexOf("https://", line.indexOf("https://") + 1) != -1
+                })
+    }
+
+    if (hasComplexContent) {
+        // Use simple text rendering for complex content to prevent freezing
+        Text(
+            text = markdown,
+            fontSize = fontSize,
+            fontWeight = weight,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = modifier
+        )
+        return
+    }
+
+    // Cache expensive markdown parsing
+    val parsedContent = remember(markdown) {
+        try {
+            val lines = markdown.lines()
+            val lineProcessors = listOf(
+                HeadingProcessor(),
+                ListItemProcessor(),
+                CodeBlockProcessor(),
+                QuoteProcessor(),
+                ImageInsertionProcessor(),
+                CheckboxProcessor(),
+                LinkProcessor(),
+                HorizontalRuleProcessor()
+            )
+            val markdownBuilder = MarkdownBuilder(lines, lineProcessors)
+            markdownBuilder.parse()
+            markdownBuilder.content
+        } catch (e: Exception) {
+            // Fallback to normal text if parsing fails
+            listOf(NormalText(markdown))
+        }
+    }
 
     MarkdownContent(
         radius = radius,
         isPreview = isPreview,
-        content = markdownBuilder.content,
+        content = parsedContent,
         modifier = modifier,
         spacing = spacing,
         weight = weight,
         fontSize = fontSize,
-        lines = lines,
+        lines = markdown.lines(),
         onContentChange = onContentChange
     )
 }
@@ -156,6 +205,10 @@ fun StaticMarkdownText(
         text = markdown,
         fontSize = fontSize,
         fontWeight = weight,
+        color = if (markdown == "Start typing...")
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        else
+            MaterialTheme.colorScheme.onSurface,
         modifier = modifier
     )
 }
@@ -172,6 +225,17 @@ fun MarkdownContent(
     lines: List<String>,
     onContentChange: (String) -> Unit
 ) {
+    if (content.isEmpty()) {
+        Text(
+            text = "Start typing...",
+            fontSize = fontSize,
+            fontWeight = weight,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = modifier
+        )
+        return
+    }
+
     if (isPreview) {
         Column(modifier = modifier) {
             content.take(4).forEachIndexed { index, _ ->
@@ -185,13 +249,18 @@ fun MarkdownContent(
                     isPreview = true,
                     onContentChange = onContentChange
                 )
+                if (index < content.size - 1 && index < 3) {
+                    Spacer(modifier = Modifier.height(spacing))
+                }
             }
         }
     } else {
         SelectionContainer {
-            LazyColumn(modifier = modifier) {
+            LazyColumn(
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(spacing)
+            ) {
                 items(content.size) { index ->
-                    Spacer(modifier = Modifier.height(spacing))
                     RenderMarkdownElement(
                         radius = radius,
                         content = content,
@@ -220,149 +289,201 @@ fun RenderMarkdownElement(
     onContentChange: (String) -> Unit
 ) {
     val element = content[index]
-    Row {
-        when (element) {
-            is Heading -> {
+
+    when (element) {
+        is Heading -> {
+            Text(
+                text = buildAnnotatedMarkdownString(element.text, weight),
+                fontSize = when (element.level) {
+                    1 -> (fontSize.value + 8).sp
+                    2 -> (fontSize.value + 6).sp
+                    3 -> (fontSize.value + 4).sp
+                    4 -> (fontSize.value + 2).sp
+                    5 -> (fontSize.value + 1).sp
+                    6 -> fontSize
+                    else -> fontSize
+                },
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+        }
+
+        is CheckboxItem -> {
+            MarkdownCheck(
+                content = {
+                    Text(
+                        text = buildAnnotatedMarkdownString(element.text, weight),
+                        fontSize = fontSize,
+                        fontWeight = weight,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                checked = element.checked,
+                onCheckedChange = if (isPreview) null else { newChecked ->
+                    val newMarkdown = lines.toMutableList().apply {
+                        this[element.index] = if (newChecked) {
+                            "[X] ${element.text}"
+                        } else {
+                            "[ ] ${element.text}"
+                        }
+                    }
+                    onContentChange(newMarkdown.joinToString("\n"))
+                }
+            )
+        }
+
+        is ListItem -> {
+            val prefix = if (element.isNumbered && element.number != null) {
+                "${element.number}. "
+            } else {
+                "• "
+            }
+            Text(
+                text = buildAnnotatedMarkdownString("$prefix${element.text}", weight),
+                fontSize = fontSize,
+                fontWeight = weight,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+
+        is Quote -> {
+            MarkdownQuote(content = element.text, fontSize = fontSize)
+        }
+
+        is CodeBlock -> {
+            if (element.isEnded) {
+                MarkdownCodeBlock(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    Column {
+                        // Show language label if present
+                        element.language?.let { lang ->
+                            Text(
+                                text = lang.uppercase(),
+                                fontSize = (fontSize.value - 2).sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                        Text(
+                            text = element.code.trimEnd(),
+                            fontSize = (fontSize.value - 1).sp,
+                            fontWeight = weight,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(8.dp),
+                        )
+                    }
+                }
+            } else {
                 Text(
-                    text = buildString(element.text, weight),
-                    fontSize = when (element.level) {
-                        in 1..6 -> (28 - (2 * element.level) - fontSize.value/3).sp
-                        else -> fontSize
-                    },
+                    text = buildAnnotatedMarkdownString(element.firstLine, weight),
                     fontWeight = weight,
-                    modifier = Modifier.padding(vertical = 10.dp)
+                    fontSize = fontSize,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
+        }
 
-            is CheckboxItem -> {
-                MarkdownCheck(
-                    content = {
-                        Text(
-                            text = buildString(element.text, weight),
-                            fontSize = fontSize,
-                            fontWeight = weight,
-                        )
-                    },
-                    checked = element.checked,
-                    onCheckedChange = if (isPreview) null else { newChecked ->
-                        val newMarkdown = lines.toMutableList().apply {
-                            this[element.index] = if (newChecked) {
-                                "[X] ${element.text}"
-                            } else {
-                                "[ ] ${element.text}"
+        is Link -> {
+            val context = LocalContext.current
+            val linkColor = MaterialTheme.colorScheme.primary
+
+            val annotatedString = remember(element.fullText, element.urlRanges) {
+                buildAnnotatedString {
+                    try {
+                        val fullText = element.fullText
+                        var lastIndex = 0
+
+                        val safeRanges = element.urlRanges
+                            .take(3)
+                            .filter { (url, range) ->
+                                url.isNotEmpty() &&
+                                        range.first >= 0 &&
+                                        range.last < fullText.length &&
+                                        range.first <= range.last
+                            }
+                            .sortedBy { it.second.first }
+
+                        for ((url, range) in safeRanges) {
+                            val safeStart = maxOf(0, minOf(range.first, fullText.length))
+                            val safeEnd = maxOf(safeStart, minOf(range.last + 1, fullText.length))
+
+                            if (safeStart > lastIndex && lastIndex < fullText.length) {
+                                val textBefore = fullText.substring(lastIndex, safeStart)
+                                withStyle(SpanStyle(fontWeight = weight)) {
+                                    append(textBefore)
+                                }
+                            }
+
+                            if (safeStart < safeEnd && url.length <= 200) {
+                                pushStringAnnotation("URL", url)
+                                withStyle(SpanStyle(color = linkColor, fontWeight = weight)) {
+                                    append(url)
+                                }
+                                pop()
+                            }
+
+                            lastIndex = safeEnd
+                        }
+
+                        if (lastIndex < fullText.length) {
+                            val textAfter = fullText.substring(lastIndex)
+                            withStyle(SpanStyle(fontWeight = weight)) {
+                                append(textAfter)
                             }
                         }
-                        onContentChange(newMarkdown.joinToString("\n"))
+                    } catch (e: Exception) {
+                        withStyle(SpanStyle(fontWeight = weight)) {
+                            append(element.fullText)
+                        }
                     }
-                )
-            }
-
-            is ListItem -> {
-                Text(
-                    text = buildString("• ${element.text}", weight),
-                    fontSize = fontSize,
-                    fontWeight = weight,
-                )
-            }
-
-            is Quote -> {
-                MarkdownQuote(content = element.text, fontSize = fontSize)
-            }
-
-
-
-            is CodeBlock -> {
-                if (element.isEnded) {
-                    MarkdownCodeBlock(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                        Text(
-                            text = element.code.dropLast(1),
-                            fontSize = fontSize,
-                            fontWeight = weight,
-                            modifier = Modifier.padding(6.dp),
-                        )
-                    }
-                } else {
-                    Text(
-                        text = buildString(element.firstLine, weight),
-                        fontWeight = weight,
-                        fontSize = fontSize,
-                    )
                 }
             }
 
-            is Link -> {
-                val context = LocalContext.current
-                val annotatedString = buildAnnotatedString {
-                    val fullText = element.fullText
-                    var lastIndex = 0
-
-                    // Sort ranges to ensure correct order
-                    val sortedRanges = element.urlRanges.sortedBy { it.second.first }
-
-                    for ((url, range) in sortedRanges) {
-                        // Add text before the URL
-                        if (range.first > lastIndex) {
-                            val textBefore = fullText.substring(lastIndex, range.first)
-                            append(buildString(textBefore, weight))
-                        }
-
-                        // Add the URL with a different style and tag for clickability
-                        pushStringAnnotation("URL", url)
-                        val linkColor: Color = Color(0xFF0000EE)
-                        withStyle(SpanStyle(color = linkColor, fontWeight = weight)) {
-                            append(url)
-                        }
-                        pop()
-
-                        lastIndex = range.last + 1
-                    }
-
-                    // Add any remaining text after the last URL
-                    if (lastIndex < fullText.length) {
-                        val textAfter = fullText.substring(lastIndex)
-                        append(buildString(textAfter, weight))
-                    }
-                }
-
-                ClickableText(
-                    text = annotatedString,
-                    onClick = { offset: Int ->
+            ClickableText(
+                text = annotatedString,
+                onClick = { offset: Int ->
+                    try {
                         annotatedString.getStringAnnotations("URL", offset, offset)
                             .firstOrNull()?.let { annotation ->
-                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW)
+                                val intent =
+                                    android.content.Intent(android.content.Intent.ACTION_VIEW)
                                 intent.data = android.net.Uri.parse(annotation.item)
                                 context.startActivity(intent)
                             }
-                    },
-                    style = androidx.compose.ui.text.TextStyle(
-                        fontSize = fontSize,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    } catch (e: Exception) {
+                    }
+                },
+                style = androidx.compose.ui.text.TextStyle(
+                    fontSize = fontSize,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-            }
-
-            is HorizontalRule -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
-                )
-            }
-
-            is NormalText -> {
-                Text(text = buildString(element.text, weight), fontSize = fontSize)
-            }
-
-            else -> {}
-        }
-        // Add new line to selectionContainer but don't render it
-        if (content.lastIndex != index) {
-            Text(
-                text = "\n",
-                maxLines = 1
             )
+        }
+
+        is HorizontalRule -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .height(1.dp)
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
+            )
+        }
+
+        is NormalText -> {
+            Text(
+                text = buildAnnotatedMarkdownString(element.text, weight),
+                fontSize = fontSize,
+                fontWeight = weight,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        else -> {
+            // Handle any other types
         }
     }
 }

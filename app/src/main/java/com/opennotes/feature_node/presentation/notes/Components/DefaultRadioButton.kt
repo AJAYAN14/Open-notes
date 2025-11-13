@@ -1,4 +1,4 @@
-package com.opennotes.feature_node.presentation.notes.components
+package com.opennotes.feature_node.presentation.notes.Components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

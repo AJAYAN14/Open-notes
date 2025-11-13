@@ -56,36 +56,22 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-
-    fun onThemeToggle() {
-        val currentSettings = settings.value
-        val newSettings = when {
-
-            currentSettings.systemTheme -> {
-                currentSettings.copy(systemTheme = false, darkTheme = false)
-            }
-
-            !currentSettings.systemTheme && !currentSettings.darkTheme -> {
-                currentSettings.copy(systemTheme = false, darkTheme = true)
-            }
-
-            !currentSettings.systemTheme && currentSettings.darkTheme -> {
-                currentSettings.copy(systemTheme = true, darkTheme = false)
-            }
-
-            else -> {
-                currentSettings.copy(systemTheme = true, darkTheme = false)
-            }
-        }
-
+    fun updateSettings(update: (Settings) -> Settings) {
+        val newSettings = update(settings.value)
         viewModelScope.launch {
             dataStoreRepository.saveSettings(newSettings)
         }
     }
 
+    fun updateThemeMode(themeMode: ThemeMode) {
+        val newSettings = settings.value.copy(themeMode = themeMode)
+        viewModelScope.launch {
+            dataStoreRepository.saveSettings(newSettings)
+        }
+    }
 
-    fun updateSettings(update: (Settings) -> Settings) {
-        val newSettings = update(settings.value)
+    fun updateBlackTheme(blackTheme: Boolean) {
+        val newSettings = settings.value.copy(blackTheme = blackTheme)
         viewModelScope.launch {
             dataStoreRepository.saveSettings(newSettings)
         }

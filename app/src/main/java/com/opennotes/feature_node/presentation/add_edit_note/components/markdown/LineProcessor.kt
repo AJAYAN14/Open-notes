@@ -11,6 +11,7 @@ class CodeBlockProcessor : MarkdownLineProcessor {
     }
 
     override fun processLine(line: String, builder: MarkdownBuilder) {
+        val language = line.removePrefix("```").trim().takeIf { it.isNotEmpty() }
         val codeBlock = StringBuilder()
         var index = builder.lineIndex + 1
         var isEnded = false
@@ -26,7 +27,7 @@ class CodeBlockProcessor : MarkdownLineProcessor {
             index++
         }
 
-        builder.add(CodeBlock(codeBlock.toString(), isEnded, line))
+        builder.add(CodeBlock(codeBlock.toString(), isEnded, line, language))
     }
 }
 
@@ -66,7 +67,8 @@ class ListItemProcessor : MarkdownLineProcessor {
         val trimmed = line.trim()
         return trimmed.startsWith("- ") ||
                 trimmed.startsWith("+ ") ||
-                trimmed.startsWith("* ")
+                trimmed.startsWith("* ") ||
+                trimmed.matches(Regex("^\\d+\\. .*"))
     }
 
     override fun processLine(line: String, builder: MarkdownBuilder) {
@@ -75,9 +77,19 @@ class ListItemProcessor : MarkdownLineProcessor {
             trimmed.startsWith("- ") -> trimmed.removePrefix("- ").trim()
             trimmed.startsWith("+ ") -> trimmed.removePrefix("+ ").trim()
             trimmed.startsWith("* ") -> trimmed.removePrefix("* ").trim()
-            else -> trimmed // Shouldn't happen due to canProcessLine check
+            trimmed.matches(Regex("^\\d+\\. .*")) -> {
+                trimmed.substringAfter(". ").trim()
+            }
+
+            else -> trimmed
         }
-        builder.add(ListItem(text))
+
+        val isNumbered = trimmed.matches(Regex("^\\d+\\. .*"))
+        val number = if (isNumbered) {
+            trimmed.substringBefore(".").toIntOrNull() ?: 1
+        } else null
+
+        builder.add(ListItem(text, isNumbered, number))
     }
 }
 
@@ -93,25 +105,61 @@ class ImageInsertionProcessor : MarkdownLineProcessor {
 }
 
 class LinkProcessor : MarkdownLineProcessor {
-    private val urlPattern = Regex("(https?://[\\w-]+(\\.[\\w-]+)+[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])")
-
     override fun canProcessLine(line: String): Boolean {
-        return urlPattern.containsMatchIn(line)
+        // Simple, fast check for URLs without regex
+        return line.contains("http://") || line.contains("https://")
     }
 
     override fun processLine(line: String, builder: MarkdownBuilder) {
-        val matches = urlPattern.findAll(line)
-        val urlRanges = mutableListOf<Pair<String, IntRange>>()
+        try {
+            // Simple URL detection without regex to prevent freezing
+            val urlRanges = mutableListOf<Pair<String, IntRange>>()
+            var searchIndex = 0
+            var urlCount = 0
+            val maxUrls = 3 // Limit URLs per line to prevent performance issues
 
-        for (match in matches) {
-            val url = match.value
-            val range = match.range
-            urlRanges.add(Pair(url, range))
-        }
+            while (urlCount < maxUrls && searchIndex < line.length) {
+                val httpIndex = line.indexOf("http://", searchIndex)
+                val httpsIndex = line.indexOf("https://", searchIndex)
 
-        if (urlRanges.isNotEmpty()) {
-            builder.add(Link(line, urlRanges))
-        } else {
+                val startIndex = when {
+                    httpIndex != -1 && httpsIndex != -1 -> minOf(httpIndex, httpsIndex)
+                    httpIndex != -1 -> httpIndex
+                    httpsIndex != -1 -> httpsIndex
+                    else -> -1
+                }
+
+                if (startIndex == -1) break
+
+                // Find end of URL - stop at first space, newline, or end of string
+                var endIndex = startIndex
+                while (endIndex < line.length &&
+                    line[endIndex] != ' ' &&
+                    line[endIndex] != '\n' &&
+                    line[endIndex] != '\t' &&
+                    line[endIndex] != ')' &&
+                    line[endIndex] != ']'
+                ) {
+                    endIndex++
+                }
+
+                // Extract URL - limit length to prevent issues
+                val url = line.substring(startIndex, minOf(endIndex, startIndex + 200))
+                if (url.length > 10) { // Only include reasonable URLs
+                    urlRanges.add(Pair(url, startIndex until endIndex))
+                    urlCount++
+                }
+
+                searchIndex = endIndex
+            }
+
+            if (urlRanges.isNotEmpty()) {
+                builder.add(Link(line, urlRanges))
+            } else {
+                builder.add(NormalText(line))
+            }
+        } catch (e: Exception) {
+            // Always fallback to normal text if there's any issue
             builder.add(NormalText(line))
         }
     }
