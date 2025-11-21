@@ -5,17 +5,18 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,9 @@ fun AddEditNoteScreen(
             Color(if (noteColor != -1) noteColor else viewModel.noteColor.value)
         )
     }
+
+    val contentFocusRequester = remember { FocusRequester() }
+    val titleFocusRequester = remember { FocusRequester() }
 
     val scope = rememberCoroutineScope()
 
@@ -72,7 +76,7 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back",
-                            tint=PureBlack
+                            tint = PureBlack
                         )
                     }
                 },
@@ -85,8 +89,7 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "Save Note",
-                            tint=PureBlack
-              
+                            tint = PureBlack
                         )
                     }
                 },
@@ -96,7 +99,6 @@ fun AddEditNoteScreen(
             )
         }
     ) { paddingValues ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -104,7 +106,7 @@ fun AddEditNoteScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-
+            // Color picker
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,6 +141,7 @@ fun AddEditNoteScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+
             TransParentHintTextField(
                 text = titleState.text,
                 hint = titleState.hint,
@@ -148,28 +151,39 @@ fun AddEditNoteScreen(
                 onFocusChange = {
                     viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it))
                 },
-                isHintVisible = titleState.isHintVisible,
                 singleLine = true,
                 textStyle = MaterialTheme.typography.headlineSmall,
+                focusRequester = titleFocusRequester,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            TransParentHintTextField(
-                text = contentState.text,
-                hint = contentState.hint,
-                onValueChange = {
-                    viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
-                },
-                onFocusChange = {
-                    viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it))
-                },
-                isHintVisible = contentState.isHintVisible,
-                singleLine = false,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxSize()
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        contentFocusRequester.requestFocus()
+                    }
+            ) {
+                TransParentHintTextField(
+                    text = contentState.text,
+                    hint = contentState.hint,
+                    onValueChange = {
+                        viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
+                    },
+                    onFocusChange = {
+                        viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it))
+                    },
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    singleLine = false,
+                    focusRequester = contentFocusRequester,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

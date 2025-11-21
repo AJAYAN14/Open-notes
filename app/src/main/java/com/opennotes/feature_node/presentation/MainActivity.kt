@@ -5,6 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.opennotes.feature_node.presentation.add_edit_note.AddEditNoteScreen
 import com.opennotes.feature_node.presentation.notes.NotesScreen
+import com.opennotes.feature_node.presentation.settings.AboutScreen
 import com.opennotes.feature_node.presentation.settings.SettingsScreen
 import com.opennotes.feature_node.presentation.settings.SettingsViewModel
 import com.opennotes.feature_node.presentation.util.Screen
@@ -41,21 +47,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             val currentSettings by settingsViewModel.settings.collectAsState()
 
-
-            LaunchedEffect(currentSettings) {
-                android.util.Log.d("MainActivity",
-                    "Settings: systemTheme=${currentSettings.systemTheme}, " +
-                            "darkTheme=${currentSettings.darkTheme}, " +
-                            "lightTheme=${currentSettings.lightTheme}")
-            }
-
             OpenNotesTheme(settings = currentSettings) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
 
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.NotesScreen.route
+                        startDestination = Screen.NotesScreen.route,
+
                     ) {
                         composable(route = Screen.NotesScreen.route) {
                             NotesScreen(navController = navController)
@@ -86,6 +85,13 @@ class MainActivity : ComponentActivity() {
                                 viewModel = settingsViewModel
                             )
                         }
+                        composable(route = Screen.AboutScreen.route) {
+                            AboutScreen(
+                                navController = navController,
+                                settingsViewModel = settingsViewModel
+                            )
+                        }
+
                     }
                 }
             }

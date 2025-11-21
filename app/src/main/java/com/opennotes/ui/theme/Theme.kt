@@ -14,29 +14,66 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.material.color.utilities.DynamicColor
 import com.opennotes.feature_node.presentation.settings.Settings
+import com.opennotes.feature_node.presentation.settings.ThemeMode
 
 
-// AMOLED Color Scheme
+// AMOLED Color Scheme - preserves Material Design colors with black background
 private val AmoledColorScheme = darkColorScheme(
-    primary = Color.White,
-    background = PureBlack,
+    primary = Color(0xFFBB86FC),
+    onPrimary = Color.Black,
+    primaryContainer = Color(0xFF3700B3),
+    onPrimaryContainer = Color(0xFFE1BEFF),
+    secondary = Color(0xFF03DAC6),
+    onSecondary = Color.Black,
+    secondaryContainer = Color(0xFF005047),
+    onSecondaryContainer = Color(0xFF70F2E8),
+    tertiary = Color(0xFFCF6679),
+    onTertiary = Color.Black,
+    background = Color.Black,
     onBackground = Color.White,
-    surface = PureBlack,
-    onSurface = Color.White
+    surface = Color.Black,
+    onSurface = Color.White,
+    surfaceVariant = Color(0xFF111111),
+    onSurfaceVariant = Color(0xFFCAC4D0),
+    surfaceContainer = Color(0xFF111111),
+    surfaceContainerHigh = Color(0xFF1A1A1A),
+    surfaceContainerHighest = Color(0xFF262626),
+    surfaceContainerLow = Color(0xFF0A0A0A),
+    surfaceContainerLowest = Color.Black,
+    outline = Color(0xFF938F99),
+    outlineVariant = Color(0xFF49454F),
+    error = Color(0xFFCF6679),
+    onError = Color.Black,
+    errorContainer = Color(0xFF93000A),
+    onErrorContainer = Color(0xFFFFDAD6)
+)
+
+// Regular Dark Color Scheme
+private val DarkColorScheme = darkColorScheme(
+    primary = Color.White,
+    background = Color(0xFF121212),
+    onBackground = Color.White,
+    surface = Color(0xFF1E1E1E),
+    onSurface = Color.White,
+    surfaceContainer = Color(0xFF2A2A2A),
+    surfaceContainerHigh = Color(0xFF333333),
+    surfaceContainerHighest = Color(0xFF3A3A3A)
 )
 
 // Light theme
 private val LightColorScheme = lightColorScheme(
-    primary = DarkGray,
+    primary = Color(0xFF333333),
     background = Color.White,
-    onBackground = DarkGray,
-    surface = Color.LightGray,
-    onSurface = Color.Black
+    onBackground = Color(0xFF333333),
+    surface = Color(0xFFF5F5F5),
+    onSurface = Color.Black,
+    surfaceContainer = Color(0xFFEEEEEE),
+    surfaceContainerHigh = Color(0xFFE8E8E8),
+    surfaceContainerHighest = Color(0xFFE0E0E0)
 )
 
 private val AppTypography = Apptypography
 private val AppShapes = Shapes()
-
 
 @Composable
 fun OpenNotesTheme(
@@ -46,22 +83,52 @@ fun OpenNotesTheme(
     val context = LocalContext.current
     val systemInDarkTheme = isSystemInDarkTheme()
 
-    val darkTheme = when {
-        settings.lightTheme -> systemInDarkTheme
-        else -> settings.darkTheme
+    // Determine if dark theme should be used based on ThemeMode
+    val isDarkTheme = when (settings.themeMode) {
+        ThemeMode.SYSTEM -> systemInDarkTheme
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
     }
 
+    val colorScheme = when {
+        // Use dynamic colors on Android 12+ if available
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val baseColorScheme = if (isDarkTheme) {
+                dynamicDarkColorScheme(context)
+            } else {
+                dynamicLightColorScheme(context)
+            }
 
-    val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    } else {
-        if (darkTheme) darkColorScheme() else lightColorScheme()
+            // Apply black theme modifications while keeping Material colors
+            if (isDarkTheme && settings.blackTheme) {
+                baseColorScheme.copy(
+                    background = Color.Black,
+                    surface = Color.Black,
+                    surfaceVariant = Color(0xFF111111),
+                    surfaceContainer = Color(0xFF111111),
+                    surfaceContainerLow = Color(0xFF0A0A0A),
+                    surfaceContainerLowest = Color.Black,
+                    surfaceContainerHigh = Color(0xFF1A1A1A),
+                    surfaceContainerHighest = Color(0xFF262626)
+                )
+            } else {
+                baseColorScheme
+            }
+        }
+        // Fallback to custom colors on older Android versions
+        else -> {
+            when {
+                isDarkTheme && settings.blackTheme -> AmoledColorScheme
+                isDarkTheme -> DarkColorScheme
+                else -> LightColorScheme
+            }
+        }
     }
-
-    android.util.Log.d("DynamicColors", "Using dynamic colors on Android ${Build.VERSION.SDK_INT}")
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = AppTypography,
+        shapes = AppShapes,
         content = content
     )
 }

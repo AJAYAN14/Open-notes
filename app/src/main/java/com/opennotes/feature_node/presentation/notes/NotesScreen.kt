@@ -1,27 +1,22 @@
 package com.opennotes.feature_node.presentation.notes
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-
-
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.opennotes.feature_node.presentation.notes.components.NoteItem
+import com.opennotes.feature_node.presentation.notes.Components.NoteItem
 import com.opennotes.feature_node.presentation.util.Screen
 import kotlinx.coroutines.launch
 
@@ -41,11 +36,14 @@ fun NotesScreen(
                 onClick = {
                     navController.navigate(Screen.AddEditNoteScreen.route)
                 },
-                shape= RoundedCornerShape(50.dp),
-                icon={
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = "New note")
+                shape = RoundedCornerShape(50.dp),
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "New note"
+                    )
                 },
-                text={
+                text = {
                     Text("New Note")
                 }
             )
@@ -60,7 +58,7 @@ fun NotesScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(top = 12.dp) 
+                    .padding(top = 12.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -83,7 +81,6 @@ fun NotesScreen(
                             )
                         },
                         trailingIcon = {
-
                             IconButton(
                                 onClick = {
                                     navController.navigate(Screen.SettingsScreen.route)
@@ -113,26 +110,28 @@ fun NotesScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(12.dp))
 
-
-                Spacer(modifier = Modifier.height(12.dp)) // Slightly reduced spacer
-
-                LazyColumn(
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2),
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp), // CHANGE: Added horizontal padding to LazyColumn for consistent margins
-                    verticalArrangement = Arrangement.spacedBy(12.dp) // CHANGE: Used spacedBy instead of individual Spacers for better performance
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalItemSpacing = 8.dp
                 ) {
-                    items(state.notes) { note ->
+                    items(
+                        items = state.notes,
+                        key = { note -> note.id ?: 0 }
+                    ) { note ->
                         NoteItem(
                             note = note,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    navController.navigate(
-                                        Screen.AddEditNoteScreen.route +
-                                                "?noteId=${note.id}&noteColor=${note.color}"
-                                    )
-                                },
+                            modifier = Modifier.fillMaxWidth(),
+                            onNoteClick = {
+                                navController.navigate(
+                                    Screen.AddEditNoteScreen.route +
+                                            "?noteId=${note.id}&noteColor=${note.color}"
+                                )
+                            },
                             onDeleteClick = {
                                 viewModel.onEvent(NotesEvent.DeleteNote(note))
                                 scope.launch {

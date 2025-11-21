@@ -14,12 +14,12 @@ import com.opennotes.ui.theme.Violet
 data class Note(
     @Expose val title:String,
     @Expose val content:String,
-   @Expose val timestamp: Long,
+    @Expose val timestamp: Long,
     @Expose val color:Int,
     @PrimaryKey val id:Int?=null
 ){
     companion object{
-        val noteColors=listOf(RedOrange, LightGreen, Violet, BabyBlue, RedPink)
+        val noteColors = listOf(RedOrange, LightGreen, Violet, BabyBlue, RedPink)
     }
 }
 

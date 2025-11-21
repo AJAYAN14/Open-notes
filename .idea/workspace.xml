@@ -43,7 +43,7 @@
   <component name="ChangeListManager">
     <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,11 +63,11 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Interface" />
-        <option value="Kotlin File" />
         <option value="valueResourceFile" />
         <option value="resourceFile" />
         <option value="Kotlin Object" />
         <option value="Kotlin Class" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
@@ -78,6 +78,11 @@
     <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
@@ -113,7 +118,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.notifications&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.firebender.androidstudiocopilot.settings.FirebenderSettingsConfigurable&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -138,6 +143,11 @@
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="com.plcoding.cleanarchitecturenoteapp.feature_node.domain.util" />
+    </key>
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.opennotes.feature_node.presentation.settings" />
+      <recent name="com.opennotes.feature_node.presentation.settings.model" />
+      <recent name="com.opennotes.feature_node.presentation.notes.components" />
     </key>
   </component>
   <component name="RunManager" selected="Android App.app">
@@ -313,6 +323,17 @@
     <option name="localTasksCounter" value="3" />
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="chore:&quot;Fix directory nane&quot;" />
     <option name="LAST_COMMIT_MESSAGE" value="chore:&quot;Fix directory nane&quot;" />
@@ -352,12 +373,12 @@
         </entry>
         <entry key="com.opennotes">
           <value>
-            <CheckInfo lastCheckTimestamp="1760444211351" />
+            <CheckInfo lastCheckTimestamp="1763568493476" />
           </value>
         </entry>
         <entry key="com.opennotes.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1760444211350" />
+            <CheckInfo lastCheckTimestamp="1763568493477" />
           </value>
         </entry>
         <entry key="com.plcoding.cleanarchitecturenoteapp">
