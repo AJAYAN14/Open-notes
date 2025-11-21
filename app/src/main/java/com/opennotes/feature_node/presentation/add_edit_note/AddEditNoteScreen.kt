@@ -141,7 +141,7 @@ fun AddEditNoteScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Title field
+
             TransParentHintTextField(
                 text = titleState.text,
                 hint = titleState.hint,
