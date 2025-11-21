@@ -1,5 +1,6 @@
 package com.opennotes.feature_node.presentation.settings
 
+import ThemePicker
 import android.R.attr.onClick
 import android.content.Intent
 import android.net.Uri
@@ -64,125 +65,6 @@ import com.opennotes.feature_node.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@Composable
-fun SettingItem(
-    title: String,
-    subtitle: String? = null,
-    icon: ImageVector,
-    onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
-    trailing: @Composable (() -> Unit)? = null,
-    isFirst: Boolean = false,
-    isLast: Boolean = false
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (onClick != null) Modifier.clickable { onClick() }
-                else Modifier
-            ),
-        shape = when {
-            isFirst && isLast -> RoundedCornerShape(12.dp)
-            isFirst -> RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-            isLast -> RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-            else -> RectangleShape
-        },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                if (subtitle != null) {
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-
-            if (trailing != null) {
-                trailing()
-            } else {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = "Navigate",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ThemePicker(
-    currentTheme: ThemeMode,
-    onThemeSelected: (ThemeMode) -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text("Choose Theme")
-        },
-        text = {
-            Column {
-                ThemeMode.values().forEach { theme ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = currentTheme == theme,
-                                onClick = { onThemeSelected(theme) }
-                            )
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = currentTheme == theme,
-                            onClick = { onThemeSelected(theme) }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = when (theme) {
-                                ThemeMode.SYSTEM -> "System default"
-                                ThemeMode.LIGHT -> "Light"
-                                ThemeMode.DARK -> "Dark"
-                            },
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Done")
-            }
-        }
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -358,7 +240,7 @@ fun SettingsScreen(
             item {
                 SettingItem(
                     title = "About ",
-                    subtitle="Version . Developers .License",
+                    subtitle="",
                     icon= Icons.Default.Info,
                     onClick = { navController.navigate(Screen.AboutScreen.route)
                     },
