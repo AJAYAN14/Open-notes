@@ -1,1 +1,1 @@
-Simple and open note-taking app for Android
+Private,Minimal note taking app.
