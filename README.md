@@ -19,6 +19,7 @@
 
 Perfect for students, professionals, and anyone who needs to jot down ideas, reminders, or important information quickly and easily. The app is completely open source, ensuring transparency and allowing community contributions to improve the experience for everyone.  
 
+
 ---
 
 ## Get from
