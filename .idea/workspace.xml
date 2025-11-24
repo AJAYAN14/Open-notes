@@ -41,7 +41,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;" />
+    <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
+      <change afterPath="$PROJECT_DIR$/resize.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image1.png" beforeDir="false" afterPath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image2.png" beforeDir="false" afterPath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image3.png" beforeDir="false" afterPath="$PROJECT_DIR$/fastlane/metadata/android/en-US/images/phoneScreenshots/image3.png" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
