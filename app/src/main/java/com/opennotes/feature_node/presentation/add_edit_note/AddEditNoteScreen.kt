@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.presentation.add_edit_note.components.TransParentHintTextField
+import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.MarkdownText
 import com.opennotes.ui.theme.PureBlack
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,6 +41,9 @@ fun AddEditNoteScreen(
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // State to toggle between edit and preview mode
+    var isPreviewMode by remember { mutableStateOf(false) }
 
     val noteBackgroundAnimatable = remember {
         Animatable(
@@ -81,6 +87,17 @@ fun AddEditNoteScreen(
                     }
                 },
                 actions = {
+                    // Toggle preview/edit mode
+                    IconButton(
+                        onClick = { isPreviewMode = !isPreviewMode }
+                    ) {
+                        Icon(
+                            imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
+                            tint = PureBlack
+                        )
+                    }
+
                     IconButton(
                         onClick = {
                             viewModel.onEvent(AddEditNoteEvent.SaveNote)
@@ -141,7 +158,7 @@ fun AddEditNoteScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
+            // Title field (always in edit mode)
             TransParentHintTextField(
                 text = titleState.text,
                 hint = titleState.hint,
@@ -158,31 +175,57 @@ fun AddEditNoteScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Content field with markdown support
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        contentFocusRequester.requestFocus()
-                    }
             ) {
-                TransParentHintTextField(
-                    text = contentState.text,
-                    hint = contentState.hint,
-                    onValueChange = {
-                        viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
-                    },
-                    onFocusChange = {
-                        viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it))
-                    },
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    singleLine = false,
-                    focusRequester = contentFocusRequester,
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (isPreviewMode) {
+                    // Preview mode - render markdown
+                    MarkdownText(
+                        radius = 8,
+                        markdown = contentState.text.ifBlank { "No content to preview" },
+                        isPreview = false,
+                        isEnabled = true,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        onContentChange = {
+                            // Update content when checkboxes are toggled
+                            viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
+                        },
+                        settingsViewModel = null
+                    )
+                } else {
+                    // Edit mode - regular text field
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                contentFocusRequester.requestFocus()
+                            }
+                    ) {
+                        TransParentHintTextField(
+                            text = contentState.text,
+                            hint = contentState.hint,
+                            onValueChange = {
+                                viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
+                            },
+                            onFocusChange = {
+                                viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it))
+                            },
+                            textStyle = MaterialTheme.typography.bodyLarge,
+                            singleLine = false,
+                            focusRequester = contentFocusRequester,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
             }
         }
     }
