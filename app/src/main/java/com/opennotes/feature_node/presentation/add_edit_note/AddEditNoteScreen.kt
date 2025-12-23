@@ -1,11 +1,14 @@
 package com.opennotes.feature_node.presentation.add_edit_note
 
+import android.R.attr.singleLine
+import android.R.attr.textStyle
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -20,13 +23,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.presentation.add_edit_note.components.TransParentHintTextField
 import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.MarkdownText
+import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.PureBlack
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,21 +39,45 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddEditNoteScreen(
     navController: NavController,
-    noteColor: Int,
+    noteColor: Int?,
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // State to toggle between edit and preview mode
+
     var isPreviewMode by remember { mutableStateOf(false) }
 
-    val noteBackgroundAnimatable = remember {
-        Animatable(
-            Color(if (noteColor != -1) noteColor else viewModel.noteColor.value)
-        )
+    val fallbackColorInt = MaterialTheme.colorScheme.surface.toArgb()
+
+    val resolvedColorInt = remember(noteColor, viewModel.noteColor.value, fallbackColorInt) {
+        noteColor
+            ?: viewModel.noteColor.value
+            ?: fallbackColorInt
     }
+
+    val noteBackgroundAnimatable = remember(resolvedColorInt) {
+        Animatable(Color(resolvedColorInt))
+    }
+
+
+    val backgroundColor = noteBackgroundAnimatable.value
+
+    val contentColor = remember(backgroundColor) {
+        if (backgroundColor.luminance() < 0.6f) {
+            Color.White.copy(alpha = 0.85f)
+        } else {
+            Color.Black
+        }
+    }
+
+    val noteColors = if (isSystemInDarkTheme()) {
+        NoteColorPalette.Dark
+    } else {
+        NoteColorPalette.Light
+    }
+
 
     val contentFocusRequester = remember { FocusRequester() }
     val titleFocusRequester = remember { FocusRequester() }
@@ -82,7 +110,7 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back",
-                            tint = PureBlack
+                            tint = contentColor
                         )
                     }
                 },
@@ -94,7 +122,7 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
-                            tint = PureBlack
+                            tint = contentColor
                         )
                     }
 
@@ -106,7 +134,7 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "Save Note",
-                            tint = PureBlack
+                            tint = contentColor
                         )
                     }
                 },
@@ -130,7 +158,9 @@ fun AddEditNoteScreen(
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Note.noteColors.forEach { color ->
+
+
+                noteColors.forEach { color ->
                     val colorInt = color.toArgb()
                     Box(
                         modifier = Modifier
@@ -158,7 +188,8 @@ fun AddEditNoteScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Title field (always in edit mode)
+
+
             TransParentHintTextField(
                 text = titleState.text,
                 hint = titleState.hint,
@@ -169,10 +200,13 @@ fun AddEditNoteScreen(
                     viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it))
                 },
                 singleLine = true,
-                textStyle = MaterialTheme.typography.headlineSmall,
+                textStyle = MaterialTheme.typography.headlineSmall.copy(
+                    color = contentColor
+                ),
                 focusRequester = titleFocusRequester,
                 modifier = Modifier.fillMaxWidth()
             )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -183,7 +217,7 @@ fun AddEditNoteScreen(
                     .weight(1f)
             ) {
                 if (isPreviewMode) {
-                    // Preview mode - render markdown
+
                     MarkdownText(
                         radius = 8,
                         markdown = contentState.text.ifBlank { "No content to preview" },
@@ -193,13 +227,13 @@ fun AddEditNoteScreen(
                             .fillMaxSize()
                             .padding(8.dp),
                         onContentChange = {
-                            // Update content when checkboxes are toggled
+
                             viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
                         },
                         settingsViewModel = null
                     )
                 } else {
-                    // Edit mode - regular text field
+
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -219,14 +253,18 @@ fun AddEditNoteScreen(
                             onFocusChange = {
                                 viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it))
                             },
-                            textStyle = MaterialTheme.typography.bodyLarge,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                color = contentColor
+                            ),
                             singleLine = false,
                             focusRequester = contentFocusRequester,
                             modifier = Modifier.fillMaxSize()
                         )
+
                     }
                 }
             }
         }
     }
+
 }
