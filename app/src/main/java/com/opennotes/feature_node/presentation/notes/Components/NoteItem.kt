@@ -15,10 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.opennotes.feature_node.domain.model.Note
+import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.MarkdownText
 
 @Composable
 fun NoteItem(
@@ -79,12 +81,17 @@ fun NoteItem(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 if (note.content.isNotBlank()) {
-                    Text(
-                        text = note.content,
+                    MarkdownText(
+                        radius = cornerRadius.value.toInt(),
+                        markdown = note.content,
+                        isPreview = true,
+                        isEnabled = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 180.dp),
                         fontSize = 14.sp,
-                        maxLines = 8,
-                        overflow = TextOverflow.Ellipsis,
-                        color = textColor
+                        spacing = 1.dp,
+                        textColor = textColor
                     )
                 }
             }

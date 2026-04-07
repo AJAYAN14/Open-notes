@@ -11,11 +11,13 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.presentation.notes.Components.NoteItem
 import com.opennotes.feature_node.presentation.util.Screen
 import kotlinx.coroutines.launch
@@ -28,6 +30,47 @@ fun NotesScreen(
     val state = viewModel.state.value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val notePendingDeleteState = remember { mutableStateOf<Note?>(null) }
+
+    notePendingDeleteState.value?.let { noteToDelete ->
+        AlertDialog(
+            onDismissRequest = { notePendingDeleteState.value = null },
+            title = {
+                Text(
+                    text = "Delete note?",
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            text = {
+                Text("This action cannot be undone.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        notePendingDeleteState.value = null
+                        viewModel.onEvent(NotesEvent.DeleteNote(noteToDelete))
+                        scope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Note deleted",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Short
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                viewModel.onEvent(NotesEvent.RestoreNote)
+                            }
+                        }
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { notePendingDeleteState.value = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -133,17 +176,7 @@ fun NotesScreen(
                                 )
                             },
                             onDeleteClick = {
-                                viewModel.onEvent(NotesEvent.DeleteNote(note))
-                                scope.launch {
-                                    val result = snackbarHostState.showSnackbar(
-                                        message = "Note deleted",
-                                        actionLabel = "Undo",
-                                        duration = SnackbarDuration.Short
-                                    )
-                                    if (result == SnackbarResult.ActionPerformed) {
-                                        viewModel.onEvent(NotesEvent.RestoreNote)
-                                    }
-                                }
+                                notePendingDeleteState.value = note
                             }
                         )
                     }

@@ -48,15 +48,10 @@
   <component name="ChangeListManager">
     <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/JsonHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/JsonHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/model/Note.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/model/Note.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/Builder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/Builder.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/MarkdownText.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/MarkdownText.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/Components/NoteItem.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/Components/NoteItem.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/AboutScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/AboutScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/SettingsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/SettingsScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/NotesScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

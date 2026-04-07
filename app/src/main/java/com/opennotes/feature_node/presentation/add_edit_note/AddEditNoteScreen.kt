@@ -229,7 +229,9 @@ fun AddEditNoteScreen(
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
                             singleLine = false,
                             focusRequester = contentFocusRequester,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(unbounded = true)
                         )
                     }
                 }
