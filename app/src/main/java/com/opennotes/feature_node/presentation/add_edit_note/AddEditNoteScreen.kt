@@ -1,7 +1,6 @@
 package com.opennotes.feature_node.presentation.add_edit_note
 
-import android.R.attr.singleLine
-import android.R.attr.textStyle
+
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -10,7 +9,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
@@ -31,7 +32,6 @@ import androidx.navigation.NavController
 import com.opennotes.feature_node.presentation.add_edit_note.components.TransParentHintTextField
 import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.MarkdownText
 import com.opennotes.ui.theme.NoteColorPalette
-import com.opennotes.ui.theme.PureBlack
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -46,30 +46,28 @@ fun AddEditNoteScreen(
     val contentState = viewModel.noteContent.value
     val snackbarHostState = remember { SnackbarHostState() }
 
-
     var isPreviewMode by remember { mutableStateOf(false) }
 
     val fallbackColorInt = MaterialTheme.colorScheme.surface.toArgb()
 
-    val resolvedColorInt = remember(noteColor, viewModel.noteColor.value, fallbackColorInt) {
-        noteColor
-            ?: viewModel.noteColor.value
-            ?: fallbackColorInt
+
+    val resolvedColorInt = remember(noteColor, viewModel.noteColor.value) {
+        noteColor ?: viewModel.noteColor.value
     }
 
-    val noteBackgroundAnimatable = remember(resolvedColorInt) {
-        Animatable(Color(resolvedColorInt))
-    }
+    val noteBackgroundAnimatable = remember { Animatable(Color(resolvedColorInt)) }
 
+
+    LaunchedEffect(resolvedColorInt) {
+        noteBackgroundAnimatable.animateTo(Color(resolvedColorInt))
+    }
 
     val backgroundColor = noteBackgroundAnimatable.value
 
-    val contentColor = remember(backgroundColor) {
-        if (backgroundColor.luminance() < 0.6f) {
-            Color.White.copy(alpha = 0.85f)
-        } else {
-            Color.Black
-        }
+    val contentColor = if (backgroundColor.luminance() < 0.5f) {
+        Color.White
+    } else {
+        Color.Black
     }
 
     val noteColors = if (isSystemInDarkTheme()) {
@@ -78,9 +76,11 @@ fun AddEditNoteScreen(
         NoteColorPalette.Light
     }
 
-
     val contentFocusRequester = remember { FocusRequester() }
     val titleFocusRequester = remember { FocusRequester() }
+
+
+    val interactionSource = remember { MutableInteractionSource() }
 
     val scope = rememberCoroutineScope()
 
@@ -90,12 +90,9 @@ fun AddEditNoteScreen(
                 is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = event.message)
                 }
-
                 is AddEditNoteViewModel.UiEvent.SavedNote -> {
                     navController.navigateUp()
                 }
-
-                else -> {}
             }
         }
     }
@@ -115,10 +112,7 @@ fun AddEditNoteScreen(
                     }
                 },
                 actions = {
-                    // Toggle preview/edit mode
-                    IconButton(
-                        onClick = { isPreviewMode = !isPreviewMode }
-                    ) {
+                    IconButton(onClick = { isPreviewMode = !isPreviewMode }) {
                         Icon(
                             imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
@@ -126,11 +120,7 @@ fun AddEditNoteScreen(
                         )
                     }
 
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(AddEditNoteEvent.SaveNote)
-                        }
-                    ) {
+                    IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "Save Note",
@@ -139,7 +129,7 @@ fun AddEditNoteScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = noteBackgroundAnimatable.value
+                    containerColor = backgroundColor
                 )
             )
         }
@@ -147,8 +137,9 @@ fun AddEditNoteScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(noteBackgroundAnimatable.value)
+                .background(backgroundColor)
                 .padding(paddingValues)
+                .imePadding()
                 .padding(16.dp)
         ) {
             // Color picker
@@ -158,10 +149,8 @@ fun AddEditNoteScreen(
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
-
                 noteColors.forEach { color ->
-                    val colorInt = color.toArgb()
+                    val colorInt = remember(color) { color.toArgb() } // Cache conversion
                     Box(
                         modifier = Modifier
                             .size(50.dp)
@@ -188,36 +177,25 @@ fun AddEditNoteScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
-
             TransParentHintTextField(
                 text = titleState.text,
                 hint = titleState.hint,
-                onValueChange = {
-                    viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
-                },
-                onFocusChange = {
-                    viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it))
-                },
+                onValueChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
+                onFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it)) },
                 singleLine = true,
-                textStyle = MaterialTheme.typography.headlineSmall.copy(
-                    color = contentColor
-                ),
+                textStyle = MaterialTheme.typography.headlineSmall.copy(color = contentColor),
                 focusRequester = titleFocusRequester,
                 modifier = Modifier.fillMaxWidth()
             )
 
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Content field with markdown support
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
                 if (isPreviewMode) {
-
                     MarkdownText(
                         radius = 8,
                         markdown = contentState.text.ifBlank { "No content to preview" },
@@ -226,19 +204,18 @@ fun AddEditNoteScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(8.dp),
-                        onContentChange = {
-
-                            viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
-                        },
-                        settingsViewModel = null
+                        onContentChange = {},
+                        settingsViewModel = null,
+                        textColor = contentColor
                     )
                 } else {
-
+                    val scrollState = rememberScrollState()
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .verticalScroll(scrollState)
                             .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
+                                interactionSource = interactionSource,
                                 indication = null
                             ) {
                                 contentFocusRequester.requestFocus()
@@ -247,24 +224,16 @@ fun AddEditNoteScreen(
                         TransParentHintTextField(
                             text = contentState.text,
                             hint = contentState.hint,
-                            onValueChange = {
-                                viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
-                            },
-                            onFocusChange = {
-                                viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it))
-                            },
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(
-                                color = contentColor
-                            ),
+                            onValueChange = { viewModel.onEvent(AddEditNoteEvent.EnteredContent(it)) },
+                            onFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it)) },
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
                             singleLine = false,
                             focusRequester = contentFocusRequester,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxWidth()
                         )
-
                     }
                 }
             }
         }
     }
-
 }

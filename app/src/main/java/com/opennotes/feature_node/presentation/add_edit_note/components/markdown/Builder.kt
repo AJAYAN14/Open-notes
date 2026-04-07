@@ -4,7 +4,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import java.text.BreakIterator
 import androidx.compose.ui.text.withStyle
 
 class MarkdownBuilder(internal val lines: List<String>, private var lineProcessors: List<MarkdownLineProcessor>) {
@@ -76,17 +75,16 @@ fun buildAnnotatedMarkdownString(
     input: String,
     defaultFontWeight: FontWeight = FontWeight.Normal
 ): AnnotatedString {
-    // Early return for empty or very long strings
     if (input.isBlank()) return AnnotatedString(input)
     if (input.length > 5000) { // Reduced limit for better performance
         return AnnotatedString(input)
     }
 
-    // Removed the URL check that was preventing all formatting for text with URLs
+
 
     val textStyleSegments: List<TextStyleSegment> = listOf(
         BoldSegment(),
-        CodeSegment(), // Process code first to avoid conflicts with other formatting
+        CodeSegment(),
         ItalicSegment(),
         HighlightSegment(),
         Strikethrough(),
@@ -94,7 +92,7 @@ fun buildAnnotatedMarkdownString(
     )
 
     return buildAnnotatedString {
-        var currentText = input
+        val currentText = input
         val styleRanges = mutableListOf<Triple<Int, Int, SpanStyle>>()
 
         // Process each formatting type in order with safety limits

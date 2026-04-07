@@ -1,6 +1,6 @@
 package com.opennotes.feature_node.domain.model
 
-import androidx.compose.ui.input.key.Key.Companion.G
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose

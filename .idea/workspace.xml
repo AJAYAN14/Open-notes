@@ -48,11 +48,15 @@
   <component name="ChangeListManager">
     <list default="true" id="482d8916-0ce2-4088-9462-d8f4a33027e0" name="Changes" comment="chore:&quot;Fix directory nane&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/JsonHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/data/repository/JsonHandler.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/model/Note.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/domain/model/Note.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/Builder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/Builder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/MarkdownText.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/components/markdown/MarkdownText.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/Components/NoteItem.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/notes/Components/NoteItem.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/ui/theme/Color.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/ui/theme/Color.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/AboutScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/AboutScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/SettingsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/settings/SettingsScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +71,23 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Open notes" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -94,8 +115,21 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Fandroid745&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Fandroid745/Open-notes.git&quot;,
+    &quot;accountId&quot;: &quot;0db38df8-2c22-47a9-9af3-34838f18b668&quot;
+  }
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../Android/Sdk/platforms/android-35/data/res/values/themes.xml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/src/main/java/com/opennotes/feature_node/presentation/add_edit_note/AddEditNoteScreen.kt" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -117,6 +151,7 @@
     &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
@@ -131,7 +166,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;device.mirroring&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   },
   &quot;keyToStringList&quot;: {
