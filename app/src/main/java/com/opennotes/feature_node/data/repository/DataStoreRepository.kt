@@ -24,6 +24,7 @@ class DataStoreRepository @Inject constructor(
         // New theme settings
         private val THEME_MODE = stringPreferencesKey("theme_mode")
         private val BLACK_THEME = booleanPreferencesKey("black_theme")
+        private val BIOMETRIC_LOCK = booleanPreferencesKey("biometric_lock")
 
         // Legacy settings for backward compatibility
         private val DARK_THEME = booleanPreferencesKey("dark_theme")
@@ -38,6 +39,7 @@ class DataStoreRepository @Inject constructor(
         dataStore.edit { prefs ->
             prefs[THEME_MODE] = settings.themeMode.name
             prefs[BLACK_THEME] = settings.blackTheme
+            prefs[BIOMETRIC_LOCK] = settings.biometricLock
 
             // Also update legacy fields for compatibility
             when (settings.themeMode) {
@@ -92,6 +94,7 @@ class DataStoreRepository @Inject constructor(
                 Settings(
                     themeMode = themeMode,
                     blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
+                    biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
                     // Legacy fields for compatibility
                     darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
                     systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
@@ -134,6 +137,7 @@ class DataStoreRepository @Inject constructor(
         return Settings(
             themeMode = themeMode,
             blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
+            biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
             // Legacy fields for compatibility
             darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
             systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,

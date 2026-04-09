@@ -1,6 +1,10 @@
 package com.opennotes.feature_node.presentation.settings
 
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 // androidx.compose.runtime.State // Not needed if exposing StateFlow directly
 // import androidx.compose.runtime.mutableStateOf // Not needed if exposing StateFlow directly
 import androidx.lifecycle.ViewModel
@@ -42,9 +46,12 @@ class SettingsViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+
+
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        data class ShowShareDialog(val uri: Uri) : UiEvent()
+        data class OpenExportPicker(val suggestedFileName: String) : UiEvent()
+        object RequestBiometricAuthForEnable : UiEvent()
     }
 
     init {
@@ -55,6 +62,9 @@ class SettingsViewModel @Inject constructor(
             _isLoaded.value = true
         }
     }
+
+
+
 
     fun updateSettings(update: (Settings) -> Settings) {
         val newSettings = update(settings.value)
@@ -77,11 +87,47 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onBiometricLockToggleRequest(enable: Boolean) {
+        if (!enable) {
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(settings.value.copy(biometricLock = false))
+            }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiEvent.send(UiEvent.RequestBiometricAuthForEnable)
+        }
+    }
+
+    fun onBiometricAuthSuccess() {
+        viewModelScope.launch {
+            dataStoreRepository.saveSettings(settings.value.copy(biometricLock = true))
+            _uiEvent.send(UiEvent.ShowSnackbar("Biometric lock enabled"))
+        }
+    }
+
+    fun onBiometricAuthFailed() {
+        viewModelScope.launch {
+            _uiEvent.send(UiEvent.ShowSnackbar("Biometric authentication cancelled or failed"))
+        }
+    }
+
 
     fun onExportClick() {
+        viewModelScope.launch {
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val backupFileName = "notes_backup_$timestamp.json"
+            _uiEvent.send(UiEvent.OpenExportPicker(backupFileName))
+        }
+    }
+
+    fun onExportUriSelected(fileUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = noteUseCases.exportNotes()) {
-                is ExportResult.Success -> _uiEvent.send(UiEvent.ShowShareDialog(result.uri))
+            when (val result = noteUseCases.exportNotes(fileUri)) {
+                is ExportResult.Success -> _uiEvent.send(
+                    UiEvent.ShowSnackbar("Notes exported successfully")
+                )
                 is ExportResult.Error -> _uiEvent.send(UiEvent.ShowSnackbar(result.message))
             }
         }

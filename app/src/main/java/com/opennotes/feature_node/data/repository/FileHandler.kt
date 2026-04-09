@@ -1,9 +1,11 @@
 package com.opennotes.feature_node.data.repository
 
 import android.app.Application
+import android.content.ContentValues
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
-import androidx.core.content.FileProvider
+import android.provider.MediaStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -14,6 +16,7 @@ import java.io.InputStreamReader
 interface FileHandler{
     suspend fun readTextFromUri(uri: Uri):String
     suspend fun saveToFile(filename:String,content:String):Uri?
+    suspend fun writeTextToUri(uri: Uri, content: String): Boolean
 
 
 }
@@ -29,25 +32,58 @@ class AndroidFileHandler(private val application: Application):FileHandler{
 
     override suspend fun  saveToFile(filename:String,content:String):Uri?=withContext(Dispatchers.IO)
     {
-        val notesDir = application.getExternalFilesDir(null)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = application.contentResolver
 
+            val values = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, filename)
+                put(MediaStore.Downloads.MIME_TYPE, "application/json")
+                put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                put(MediaStore.Downloads.IS_PENDING, 1)
+            }
 
-        if(notesDir==null){
+            val collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            val itemUri = resolver.insert(collection, values) ?: return@withContext null
+
+            try {
+                resolver.openOutputStream(itemUri)?.use { outputStream ->
+                    outputStream.write(content.toByteArray())
+                } ?: return@withContext null
+
+                values.clear()
+                values.put(MediaStore.Downloads.IS_PENDING, 0)
+                resolver.update(itemUri, values, null, null)
+
+                return@withContext itemUri
+            } catch (_: Exception) {
+                resolver.delete(itemUri, null, null)
+                return@withContext null
+            }
+        }
+
+        @Suppress("DEPRECATION")
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
             return@withContext null
         }
 
-
-
-        if(!notesDir.exists() && !notesDir.mkdirs()){
-            return@withContext null
+        val file = File(downloadsDir, filename)
+        return@withContext try {
+            file.writeText(content)
+            Uri.fromFile(file)
+        } catch (_: Exception) {
+            null
         }
+    }
 
-        val file=File(notesDir,filename)
-        file.writeText(content)
-        return@withContext FileProvider.getUriForFile(
-            application,
-            "${application.packageName}.fileprovider",
-            file
-        )
+    override suspend fun writeTextToUri(uri: Uri, content: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            application.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                outputStream.write(content.toByteArray())
+            } ?: return@withContext false
+            true
+        } catch (_: Exception) {
+            false
+        }
     }
 }

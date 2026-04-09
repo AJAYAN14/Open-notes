@@ -7,7 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
 fun AddEditNoteScreen(
     navController: NavController,
     noteColor: Int?,
+    isDarkTheme: Boolean,
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
     val titleState = viewModel.noteTitle.value
@@ -47,9 +48,6 @@ fun AddEditNoteScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     var isPreviewMode by remember { mutableStateOf(false) }
-
-    val fallbackColorInt = MaterialTheme.colorScheme.surface.toArgb()
-
 
     val resolvedColorInt = remember(noteColor, viewModel.noteColor.value) {
         noteColor ?: viewModel.noteColor.value
@@ -70,7 +68,7 @@ fun AddEditNoteScreen(
         Color.Black
     }
 
-    val noteColors = if (isSystemInDarkTheme()) {
+    val noteColors = if (isDarkTheme) {
         NoteColorPalette.Dark
     } else {
         NoteColorPalette.Light
@@ -150,7 +148,7 @@ fun AddEditNoteScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 noteColors.forEach { color ->
-                    val colorInt = remember(color) { color.toArgb() } // Cache conversion
+                    val colorInt = remember(color) { color.toArgb() }
                     Box(
                         modifier = Modifier
                             .size(50.dp)

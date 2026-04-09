@@ -69,7 +69,7 @@ private var currentNoteId:Int ? = null
                             text=note.content,
                             isHintVisible=false
                         )
-                        _noteColor.value = note.color
+                        _noteColor.intValue = note.color
                     }
                 }
             }
@@ -119,7 +119,7 @@ private var currentNoteId:Int ? = null
                 }
             }
             is AddEditNoteEvent.changeColor -> {
-                _noteColor.value= event.color
+                _noteColor.intValue= event.color
             }
             is AddEditNoteEvent.changeContentFocus -> {
                 _noteContent.value= _noteContent.value.copy(
