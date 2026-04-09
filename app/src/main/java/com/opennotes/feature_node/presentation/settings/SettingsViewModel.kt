@@ -40,6 +40,13 @@ class SettingsViewModel @Inject constructor(
             initialValue = Settings() // Default settings while loading
         )
 
+    private val _isAppUnlocked = MutableStateFlow(false)
+    val isAppUnlocked: StateFlow<Boolean> = _isAppUnlocked.asStateFlow()
+
+    fun setAppUnlocked(unlocked: Boolean) {
+        _isAppUnlocked.value = unlocked
+    }
+
     private val _isLoaded = MutableStateFlow(false)
     val isLoaded: StateFlow<Boolean> = _isLoaded.asStateFlow()
 
