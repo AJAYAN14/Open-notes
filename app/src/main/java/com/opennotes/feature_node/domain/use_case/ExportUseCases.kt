@@ -1,8 +1,7 @@
 package com.opennotes.feature_node.domain.use_case
 
-import android.util.Log
+import android.net.Uri
 import com.opennotes.feature_node.data.repository.FileHandler
-import com.opennotes.feature_node.data.repository.GsonJsonHandler
 import com.opennotes.feature_node.data.repository.JsonHandler
 
 import com.opennotes.feature_node.domain.repository.NoteRepository
@@ -15,7 +14,7 @@ class ExportUseCases(
     private val fileHandler: FileHandler,
     private val jsonHandler: JsonHandler
     ) {
-    suspend operator fun invoke(): ExportResult {
+    suspend operator fun invoke(targetUri: Uri): ExportResult {
         return try {
             val allNotes = repository.getAllNotes()
                 .filter{it.isNotEmpty()}
@@ -26,14 +25,13 @@ class ExportUseCases(
             val notesJson = jsonHandler.toJson(allNotes)
 
 
-           val fileUri=fileHandler.saveToFile ("notes_backup.json", notesJson)
+            val isSaved = fileHandler.writeTextToUri(targetUri, notesJson)
 
-
-            if(fileUri==null){
-                return ExportResult.Error("Could not save the file to a URI")
+            if(!isSaved){
+                return ExportResult.Error("Could not save the file to the selected location")
             }
 
-            ExportResult.Success(fileUri)
+            ExportResult.Success(targetUri)
         } catch (e: Exception) {
             ExportResult.Error("Failed to export notes: ${e.message}")
         }

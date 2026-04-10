@@ -1,47 +1,39 @@
 package com.opennotes.feature_node.presentation.settings
 
 import ThemePicker
-import android.R.attr.onClick
+
 import android.content.Intent
 import android.net.Uri
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -51,14 +43,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.opennotes.feature_node.presentation.util.Screen
@@ -73,8 +62,9 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activity = context as? FragmentActivity
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -85,7 +75,17 @@ fun SettingsScreen(
         }
     )
 
+    val exportFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { activityResult ->
+            activityResult.data?.data?.let { uri ->
+                viewModel.onExportUriSelected(uri)
+            }
+        }
+    )
+
     val settings by viewModel.settings.collectAsState()
+    val showThemePicker = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collectLatest { event ->
@@ -95,23 +95,85 @@ fun SettingsScreen(
                         snackbarHostState.showSnackbar(message = event.message)
                     }
                 }
-                is SettingsViewModel.UiEvent.ShowShareDialog -> {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Notes exported successfully!"
+                is SettingsViewModel.UiEvent.OpenExportPicker -> {
+                    val pickerIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = "application/json"
+                        putExtra(Intent.EXTRA_TITLE, event.suggestedFileName)
+                        putExtra(
+                            DocumentsContract.EXTRA_INITIAL_URI,
+                            "content://com.android.externalstorage.documents/document/primary:Download".toUri()
                         )
                     }
-                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                        putExtra(Intent.EXTRA_STREAM, event.uri)
-                        type = "application/json"
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    }
-                    context.startActivity(
-                        Intent.createChooser(shareIntent, "Save notes to ...")
-                    )
+                    exportFileLauncher.launch(pickerIntent)
                 }
+                SettingsViewModel.UiEvent.RequestBiometricAuthForEnable -> {
+                    if (activity == null) {
+                        viewModel.onBiometricAuthFailed()
+                        return@collectLatest
+                    }
+
+                    val biometricManager = BiometricManager.from(context)
+                    val canAuthenticate = biometricManager.canAuthenticate(
+                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                BiometricManager.Authenticators.BIOMETRIC_WEAK
+                    )
+
+                    if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Biometric authentication is not available")
+                        }
+                        viewModel.onBiometricAuthFailed()
+                        return@collectLatest
+                    }
+
+                    val executor = ContextCompat.getMainExecutor(context)
+                    val prompt = BiometricPrompt(
+                        activity,
+                        executor,
+                        object : BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationSucceeded(
+                                result: BiometricPrompt.AuthenticationResult
+                            ) {
+                                super.onAuthenticationSucceeded(result)
+                                viewModel.onBiometricAuthSuccess()
+                            }
+
+                            override fun onAuthenticationError(
+                                errorCode: Int,
+                                errString: CharSequence
+                            ) {
+                                super.onAuthenticationError(errorCode, errString)
+                                viewModel.onBiometricAuthFailed()
+                            }
+
+                            override fun onAuthenticationFailed() {
+                                super.onAuthenticationFailed()
+                            }
+                        }
+                    )
+
+                    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                        .setTitle("Enable biometric lock")
+                        .setSubtitle("Confirm your fingerprint to enable app lock")
+                        .setNegativeButtonText("Cancel")
+                        .build()
+
+                    prompt.authenticate(promptInfo)
+                }
+
             }
         }
+    }
+
+    if (showThemePicker.value) {
+        ThemePicker(
+            currentTheme = settings.themeMode,
+            onThemeSelected = { theme ->
+                viewModel.updateThemeMode(theme)
+            },
+            onDismiss = { showThemePicker.value = false }
+        )
     }
 
     Scaffold(
@@ -191,18 +253,6 @@ fun SettingsScreen(
                 )
             }
             item {
-                var showThemePicker by remember { mutableStateOf(false) }
-
-                if (showThemePicker) {
-                    ThemePicker(
-                        currentTheme = settings.themeMode,
-                        onThemeSelected = { theme ->
-                            viewModel.updateThemeMode(theme)
-                        },
-                        onDismiss = { showThemePicker = false }
-                    )
-                }
-
                 SettingItem(
                     title = "Theme",
                     subtitle = when (settings.themeMode) {
@@ -211,7 +261,7 @@ fun SettingsScreen(
                         ThemeMode.DARK -> "Dark"
                     },
                     icon = Icons.Default.Palette,
-                    onClick = { showThemePicker = true },
+                    onClick = { showThemePicker.value = true },
                     isFirst = true
                 )
             }
@@ -229,6 +279,38 @@ fun SettingsScreen(
                             }
                         )
                     },
+                    isLast = false
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+
+            item {
+                Text(
+                    text = "Privacy",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = "Biometric Lock",
+                    subtitle = if (settings.biometricLock) "Fingerprint required when enabled" else "Require fingerprint to unlock app",
+                    icon = Icons.Default.Fingerprint,
+                    trailing = {
+                        Switch(
+                            checked = settings.biometricLock,
+                            onCheckedChange = { enabled ->
+                                viewModel.onBiometricLockToggleRequest(enabled)
+                            }
+                        )
+                    },
+                    isFirst = true,
                     isLast = true
                 )
             }
@@ -236,6 +318,8 @@ fun SettingsScreen(
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
+
+
 
             item {
                 SettingItem(
