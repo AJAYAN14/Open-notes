@@ -148,7 +148,6 @@ class MainActivity : FragmentActivity() {
                             }
                         }
                     } else {
-                        // Blank surface shown until auth completes
                         Surface(color = MaterialTheme.colorScheme.background) {}
                     }
                 }

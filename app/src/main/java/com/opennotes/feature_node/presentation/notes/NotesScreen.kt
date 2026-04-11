@@ -60,7 +60,7 @@ fun NotesScreen(
                 )
             },
             text = {
-                Text("This action cannot be undone.")
+                Text("Are you sure you want to delete this note?")
             },
             confirmButton = {
                 TextButton(
