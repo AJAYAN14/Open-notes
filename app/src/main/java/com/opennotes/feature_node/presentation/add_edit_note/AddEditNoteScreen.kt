@@ -29,6 +29,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -135,7 +137,6 @@ fun AddEditNoteScreen(
                             tint = contentColor
                         )
                     }
-
                     IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
                         Icon(
                             imageVector = Icons.Default.Done,
@@ -150,105 +151,129 @@ fun AddEditNoteScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(backgroundColor)
-                .padding(paddingValues)
-                .imePadding()
-                .padding(16.dp)
-        ) {
-            // Color picker
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                noteColors.forEach { color ->
-                    val colorInt = remember(color) { color.toArgb() }
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .shadow(15.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(color)
-                            .border(
-                                width = 3.dp,
-                                color = if (viewModel.noteColor.value == colorInt) Color.Black else Color.Transparent,
-                                shape = CircleShape
-                            )
-                            .clickable {
-                                scope.launch {
-                                    noteBackgroundAnimatable.animateTo(
-                                        targetValue = Color(colorInt),
-                                        animationSpec = tween(durationMillis = 500)
-                                    )
-                                }
-                                viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
-                            }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TransParentHintTextField(
-                text = titleState.text,
-                hint = titleState.hint,
-                onValueChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
-                onFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it)) },
-                singleLine = true,
-                textStyle = MaterialTheme.typography.headlineSmall.copy(color = contentColor),
-                focusRequester = titleFocusRequester,
-                modifier = Modifier.fillMaxWidth()
+        CompositionLocalProvider(
+            LocalContentColor provides contentColor,
+            LocalTextSelectionColors provides TextSelectionColors(
+                handleColor = contentColor,
+                backgroundColor = contentColor.copy(alpha = 0.4f)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Box(
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                    .fillMaxSize()
+                    .background(backgroundColor)
+                    .padding(paddingValues)
+                    .imePadding()
+                    .padding(16.dp)
             ) {
-                if (isPreviewMode) {
-                    MarkdownText(
-                        radius = 8,
-                        markdown = contentState.text.ifBlank { "No content to preview" },
-                        isPreview = false,
-                        isEnabled = true,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        onContentChange = {},
-                        settingsViewModel = null,
-                        textColor = contentColor
-                    )
-                } else {
-                    val scrollState = rememberScrollState()
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(scrollState)
-                            .clickable(
-                                interactionSource = interactionSource,
-                                indication = null
-                            ) {
-                                contentFocusRequester.requestFocus()
-                            }
-                    ) {
-                        TransParentHintTextField(
-                            text = contentState.text,
-                            hint = contentState.hint,
-                            onValueChange = { viewModel.onEvent(AddEditNoteEvent.EnteredContent(it)) },
-                            onFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeContentFocus(it)) },
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
-                            singleLine = false,
-                            focusRequester = contentFocusRequester,
+
+
+                // Color picker
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    noteColors.forEach { color ->
+                        val colorInt = remember(color) { color.toArgb() }
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(unbounded = true)
+                                .size(50.dp)
+                                .shadow(15.dp, CircleShape)
+                                .clip(CircleShape)
+                                .background(color)
+                                .border(
+                                    width = 3.dp,
+                                    color = if (viewModel.noteColor.value == colorInt) Color.Black else Color.Transparent,
+                                    shape = CircleShape
+                                )
+                                .clickable {
+                                    scope.launch {
+                                        noteBackgroundAnimatable.animateTo(
+                                            targetValue = Color(colorInt),
+                                            animationSpec = tween(durationMillis = 500)
+                                        )
+                                    }
+                                    viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
+                                }
                         )
+                    }
+                }
+
+
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TransParentHintTextField(
+                    text = titleState.text,
+                    hint = titleState.hint,
+                    onValueChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
+                    onFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it)) },
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = contentColor),
+                    focusRequester = titleFocusRequester,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    if (isPreviewMode) {
+                        MarkdownText(
+                            radius = 8,
+                            markdown = contentState.text.ifBlank { "No content to preview" },
+                            isPreview = false,
+                            isEnabled = true,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                            onContentChange = {},
+                            settingsViewModel = null,
+                            textColor = contentColor
+                        )
+                    } else {
+                        val scrollState = rememberScrollState()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) {
+                                    contentFocusRequester.requestFocus()
+                                }
+                        ) {
+                            TransParentHintTextField(
+                                text = contentState.text,
+                                hint = contentState.hint,
+                                onValueChange = {
+                                    viewModel.onEvent(
+                                        AddEditNoteEvent.EnteredContent(
+                                            it
+                                        )
+                                    )
+                                },
+                                onFocusChange = {
+                                    viewModel.onEvent(
+                                        AddEditNoteEvent.changeContentFocus(
+                                            it
+                                        )
+                                    )
+                                },
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
+                                singleLine = false,
+                                focusRequester = contentFocusRequester,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(unbounded = true)
+                            )
+                        }
                     }
                 }
             }
