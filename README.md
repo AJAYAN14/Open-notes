@@ -36,7 +36,7 @@ Perfect for students, professionals, and anyone who needs to jot down ideas, rem
 ## Contributing
 Contributions are welcome! Your help in making OpenNotes better is appreciated.
 Please open an issue before submitting a pull request that adds a new feature, so it can be discussed first.
-All changes should be committed to the dev branch, not master.
+All changes should be committed to the dev branch, not main.
 
 
 ---
