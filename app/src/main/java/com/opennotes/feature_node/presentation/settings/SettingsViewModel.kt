@@ -85,15 +85,6 @@ class SettingsViewModel @Inject constructor(
     }
 
 
-
-
-    fun updateSettings(update: (Settings) -> Settings) {
-        val newSettings = update(settings.value)
-        viewModelScope.launch {
-            dataStoreRepository.saveSettings(newSettings)
-        }
-    }
-
     fun updateThemeMode(themeMode: ThemeMode) {
         val newSettings = settings.value.copy(themeMode = themeMode)
         viewModelScope.launch {

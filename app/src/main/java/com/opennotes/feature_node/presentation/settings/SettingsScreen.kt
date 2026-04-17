@@ -18,8 +18,6 @@
 
 package com.opennotes.feature_node.presentation.settings
 
-import ThemePicker
-
 import android.content.Intent
 import android.net.Uri
 import androidx.biometric.BiometricManager
@@ -165,9 +163,6 @@ fun SettingsScreen(
                                 viewModel.onBiometricAuthFailed()
                             }
 
-                            override fun onAuthenticationFailed() {
-                                super.onAuthenticationFailed()
-                            }
                         }
                     )
 

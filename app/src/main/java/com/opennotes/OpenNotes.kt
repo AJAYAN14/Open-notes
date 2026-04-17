@@ -23,6 +23,4 @@ import dagger.hilt.android.HiltAndroidApp
 
 
 @HiltAndroidApp
-class OpenNotes: Application() {
-
-}
+class OpenNotes: Application()

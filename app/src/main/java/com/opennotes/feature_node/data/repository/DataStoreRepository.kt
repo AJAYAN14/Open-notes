@@ -100,7 +100,7 @@ class DataStoreRepository @Inject constructor(
                 val themeMode = if (themeModeString != null) {
                     try {
                         ThemeMode.valueOf(themeModeString)
-                    } catch (e: IllegalArgumentException) {
+                    } catch (_: IllegalArgumentException) {
                         // If migration needed from legacy settings
                         migrateLegacyThemeMode(prefs, defaultSettings)
                     }

@@ -81,7 +81,7 @@ class MainActivity : FragmentActivity() {
                                 showContent = true
                             },
                             onError = { errorCode, errString ->
-                                handleBiometricError(errorCode, errString) {
+                                handleBiometricError(errorCode) {
                                     showContent = true
                                 }
                             }
@@ -182,7 +182,6 @@ class MainActivity : FragmentActivity() {
 
     private fun handleBiometricError(
         errorCode: Int,
-        errString: CharSequence,
         onComplete: () -> Unit
     ) {
         when (errorCode) {

@@ -1,4 +1,4 @@
-/*
+package com.opennotes.feature_node.presentation.settings/*
  *
  *  *  Copyright (c) 2026 Dhanush Sugganahalli <dhanush41230@gmail.com>
  *  *
@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.opennotes.feature_node.presentation.settings.ThemeMode
 
 @Composable
 fun ThemePicker(
@@ -47,7 +46,7 @@ fun ThemePicker(
         },
         text = {
             Column {
-                ThemeMode.values().forEach { theme ->
+                ThemeMode.entries.forEach { theme ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
