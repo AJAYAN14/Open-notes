@@ -31,8 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -88,13 +86,15 @@ fun NoteItem(
                     .padding(bottom = 36.dp)
             ) {
                 if (note.title.isNotBlank()) {
-                    Text(
-                        text = note.title,
+                    MarkdownText(
+                        radius = cornerRadius.value.toInt(),
+                        markdown = note.title,
+                        isPreview = true,
+                        isEnabled = true,
+                        modifier = Modifier.fillMaxWidth(),
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = textColor,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        spacing = 1.dp,
+                        textColor = textColor
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
