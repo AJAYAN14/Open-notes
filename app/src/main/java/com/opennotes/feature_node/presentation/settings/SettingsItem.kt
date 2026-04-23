@@ -43,11 +43,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingItem(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     icon: ImageVector,
     onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
     trailing: @Composable (() -> Unit)? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false

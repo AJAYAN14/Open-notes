@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.opennotes.feature_node.presentation.add_edit_note.components.TransParentHintTextField
+import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.MarkdownField
 import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.MarkdownText
 import com.opennotes.ui.theme.NoteColorPalette
 import kotlinx.coroutines.flow.collectLatest
@@ -108,6 +109,7 @@ fun AddEditNoteScreen(
                 is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = event.message)
                 }
+
                 is AddEditNoteViewModel.UiEvent.SavedNote -> {
                     navController.navigateUp()
                 }
@@ -205,77 +207,28 @@ fun AddEditNoteScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                TransParentHintTextField(
-                    text = titleState.text,
-                    hint = titleState.hint,
-                    onValueChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
-                    onFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it)) },
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = contentColor),
-                    focusRequester = titleFocusRequester,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Box(
+                MarkdownField(
+                    titleText = titleState.text,
+                    contentText = contentState.text,
+                    contentColor = contentColor,
+                    isPreviewMode = isPreviewMode,
+                    interactionSource = interactionSource,
+                    contentFocusRequester = contentFocusRequester,
+                    titleFocusRequester = titleFocusRequester,
+                    onTitleChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
+                    onTitleFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it)) },
+                    onContentChange = { viewModel.onEvent(AddEditNoteEvent.EnteredContent(it)) },
+                    onContentFocusChange = {
+                        viewModel.onEvent(
+                            AddEditNoteEvent.changeContentFocus(
+                                it
+                            )
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                ) {
-                    if (isPreviewMode) {
-                        MarkdownText(
-                            radius = 8,
-                            markdown = contentState.text.ifBlank { "No content to preview" },
-                            isPreview = false,
-                            isEnabled = true,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp),
-                            onContentChange = {},
-                            settingsViewModel = null,
-                            textColor = contentColor
-                        )
-                    } else {
-                        val scrollState = rememberScrollState()
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(scrollState)
-                                .clickable(
-                                    interactionSource = interactionSource,
-                                    indication = null
-                                ) {
-                                    contentFocusRequester.requestFocus()
-                                }
-                        ) {
-                            TransParentHintTextField(
-                                text = contentState.text,
-                                hint = contentState.hint,
-                                onValueChange = {
-                                    viewModel.onEvent(
-                                        AddEditNoteEvent.EnteredContent(
-                                            it
-                                        )
-                                    )
-                                },
-                                onFocusChange = {
-                                    viewModel.onEvent(
-                                        AddEditNoteEvent.changeContentFocus(
-                                            it
-                                        )
-                                    )
-                                },
-                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
-                                singleLine = false,
-                                focusRequester = contentFocusRequester,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(unbounded = true)
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }

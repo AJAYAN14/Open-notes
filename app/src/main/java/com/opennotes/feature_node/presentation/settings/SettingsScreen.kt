@@ -18,17 +18,11 @@
 
 package com.opennotes.feature_node.presentation.settings
 
-import ThemePicker
-
-import android.content.Intent
 import android.net.Uri
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,10 +33,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,10 +55,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -92,13 +87,10 @@ fun SettingsScreen(
             }
         }
     )
-
     val exportFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { activityResult ->
-            activityResult.data?.data?.let { uri ->
-                viewModel.onExportUriSelected(uri)
-            }
+        contract = ActivityResultContracts.CreateDocument("application/json"),
+        onResult = { uri: Uri? ->
+            uri?.let { viewModel.onExportUriSelected(it) }
         }
     )
 
@@ -114,16 +106,7 @@ fun SettingsScreen(
                     }
                 }
                 is SettingsViewModel.UiEvent.OpenExportPicker -> {
-                    val pickerIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "application/json"
-                        putExtra(Intent.EXTRA_TITLE, event.suggestedFileName)
-                        putExtra(
-                            DocumentsContract.EXTRA_INITIAL_URI,
-                            "content://com.android.externalstorage.documents/document/primary:Download".toUri()
-                        )
-                    }
-                    exportFileLauncher.launch(pickerIntent)
+                    exportFileLauncher.launch(event.suggestedFileName)
                 }
                 SettingsViewModel.UiEvent.RequestBiometricAuthForEnable -> {
                     if (activity == null) {
@@ -165,9 +148,6 @@ fun SettingsScreen(
                                 viewModel.onBiometricAuthFailed()
                             }
 
-                            override fun onAuthenticationFailed() {
-                                super.onAuthenticationFailed()
-                            }
                         }
                     )
 
@@ -350,7 +330,7 @@ fun SettingsScreen(
                 )
             }
             item {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))~
             }
         }
     }

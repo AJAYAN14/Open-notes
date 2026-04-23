@@ -21,7 +21,6 @@ package com.opennotes.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val PureBlack = Color(0xFF000000)
-val PureWhite = Color(0xFFFFFFFF)
 val SoftWhite = Color(0xFFF5F5F5)
 
 val RedOrange = Color(0xffffab91)

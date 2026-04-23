@@ -55,7 +55,7 @@ fun NotesScreen(
             onDismissRequest = { notePendingDeleteState.value = null },
             title = {
                 Text(
-                    text = "Delete note?",
+                    text = "Delete note",
                     fontWeight = FontWeight.SemiBold
                 )
             },

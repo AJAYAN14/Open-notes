@@ -33,20 +33,55 @@ class ImportUseCases(
 ) {
     suspend operator fun invoke(fileUri: Uri): ImportResult {
         return try {
-
             val notesJson = fileHandler.readTextFromUri(fileUri)
+            
+            if (notesJson.isBlank()) {
+                return ImportResult.Error("File is empty")
+            }
 
+            // Deserialize with validation - catch invalid JSON first
+            val noteListType = object : TypeToken<List<Map<String, Any?>>>() {}.type
+            val rawNotes: List<Map<String, Any?>> = try {
+                jsonHandler.fromJson(notesJson, noteListType)
+            } catch (e: Exception) {
+                return ImportResult.Error("Invalid JSON format: ${e.message}")
+            }
 
-            val noteListType = object : TypeToken<List<Note>>() {}.type
+            if (rawNotes.isEmpty()) {
+                return ImportResult.Error("No notes found in file")
+            }
 
+            // Validate and construct trusted Note objects
+            val validNotes = rawNotes.mapNotNull { rawNote ->
+                val title = (rawNote["title"] as? String)?.trim()
+                val content = (rawNote["content"] as? String)?.trim()
+                val timestamp = (rawNote["timestamp"] as? Number)?.toLong()
+                val color = (rawNote["color"] as? Number)?.toInt()
 
-            val notesToImport = jsonHandler.fromJson<List<Note>>(notesJson, noteListType)
+                // Only create Note if all required fields are present and valid
+                if (!title.isNullOrEmpty() && !content.isNullOrEmpty() && 
+                    timestamp != null && color != null) {
+                    Note(
+                        title = title,
+                        content = content,
+                        timestamp = timestamp,
+                        color = color,
+                        id = null
+                    )
+                } else {
+                    null  // Skip invalid notes
+                }
+            }
 
+            if (validNotes.isEmpty()) {
+                return ImportResult.Error("No valid notes found (title, content, timestamp, and color required)")
+            }
 
-            repository.insertNotes(notesToImport)
+            repository.insertNotes(validNotes)
 
             ImportResult.Success
         } catch (e: Exception) {
+            e.printStackTrace()
             ImportResult.Error("Failed to import notes: ${e.localizedMessage}")
         }
     }
