@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -48,10 +49,13 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val settings: StateFlow<Settings> = dataStoreRepository.getSettingsFlow()
+        .onEach {
+            if (!_isLoaded.value) _isLoaded.value = true
+        }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = Settings() // Default settings while loading
+            started = SharingStarted.Eagerly, // starts collecting immediately, not waiting for subscribers
+            initialValue = Settings()
         )
 
     private val _isAppUnlocked = MutableStateFlow(false)
@@ -74,16 +78,6 @@ class SettingsViewModel @Inject constructor(
         data class OpenExportPicker(val suggestedFileName: String) : UiEvent()
         object RequestBiometricAuthForEnable : UiEvent()
     }
-
-    init {
-
-        viewModelScope.launch {
-
-            settings.first()
-            _isLoaded.value = true
-        }
-    }
-
 
     fun updateThemeMode(themeMode: ThemeMode) {
         val newSettings = settings.value.copy(themeMode = themeMode)
