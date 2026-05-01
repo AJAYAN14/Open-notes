@@ -21,6 +21,7 @@ package com.opennotes.feature_node.presentation
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -159,6 +160,16 @@ class MainActivity : FragmentActivity() {
         onSuccess: () -> Unit,
         onError: (Int, CharSequence) -> Unit
     ) {
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Unlock OpenNotes")
+            .setSubtitle("Confirm your identity to access your notes")
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
+            .build()
+
         BiometricPrompt(
             this,
             ContextCompat.getMainExecutor(this),
@@ -171,13 +182,7 @@ class MainActivity : FragmentActivity() {
                 }
                 override fun onAuthenticationFailed() = Unit
             }
-        ).authenticate(
-            BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Unlock OpenNotes")
-                .setSubtitle("Confirm your fingerprint to access your notes")
-                .setNegativeButtonText("Cancel")
-                .build()
-        )
+        ).authenticate(promptInfo)
     }
 
     private fun handleBiometricError(

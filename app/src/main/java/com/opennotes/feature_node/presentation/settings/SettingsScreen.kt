@@ -117,7 +117,8 @@ fun SettingsScreen(
                     val biometricManager = BiometricManager.from(context)
                     val canAuthenticate = biometricManager.canAuthenticate(
                         BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                BiometricManager.Authenticators.BIOMETRIC_WEAK
+                                BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                BiometricManager.Authenticators.DEVICE_CREDENTIAL
                     )
 
                     if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
@@ -153,8 +154,12 @@ fun SettingsScreen(
 
                     val promptInfo = BiometricPrompt.PromptInfo.Builder()
                         .setTitle("Enable biometric lock")
-                        .setSubtitle("Confirm your fingerprint to enable app lock")
-                        .setNegativeButtonText("Cancel")
+                        .setSubtitle("Confirm your identity to enable app lock")
+                        .setAllowedAuthenticators(
+                            BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                        )
                         .build()
 
                     prompt.authenticate(promptInfo)
