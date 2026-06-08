@@ -40,36 +40,60 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    savedStateHandle : SavedStateHandle
-) : ViewModel()
-{
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
-    private val _noteTitle= mutableStateOf(
+    private val _noteTitle = mutableStateOf(
         NoteTextFieldState(
-    hint= "Enter title ...."
+            text = savedStateHandle.get<String>("title") ?: "",
+            hint = "Enter title ...."
+        )
     )
-    )
+    val noteTitle: State<NoteTextFieldState> = _noteTitle
 
-    val noteTitle: State<NoteTextFieldState> =_noteTitle
-
-
-    private val _noteContent= mutableStateOf(
+    private val _noteContent = mutableStateOf(
         NoteTextFieldState(
-        hint="Enter content...."
+            text = savedStateHandle.get<String>("content") ?: "",
+            hint = "Enter content...."
+        )
     )
-    )
-    val noteContent:State<NoteTextFieldState> = _noteContent
-
+    val noteContent: State<NoteTextFieldState> = _noteContent
 
     private val _noteColor = mutableIntStateOf(
-        NoteColorPalette.Light.first().toArgb()
+        savedStateHandle.get<Int>("color") ?: NoteColorPalette.Light.first().toArgb()
     )
     val noteColor: State<Int> = _noteColor
 
-
-    private val _eventFlow= MutableSharedFlow<UiEvent>()
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    private var currentNoteId: Int? = null
+
+    init {
+        savedStateHandle.get<Int>("noteId")?.let { noteId ->
+            if (noteId != -1) {
+                viewModelScope.launch {
+                    noteUseCases.getNote(noteId)?.also { note ->
+                        currentNoteId = note.id
+                        if (savedStateHandle.get<String>("title") == null) {
+                            _noteTitle.value = noteTitle.value.copy(
+                                text = note.title,
+                                isHintVisible = false
+                            )
+                            _noteContent.value = _noteContent.value.copy(
+                                text = note.content,
+                                isHintVisible = false
+                            )
+
+                            if (savedStateHandle.get<Int>("color") == null) {
+                                _noteColor.intValue = note.color
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fun applyDefaultColor(isDarkTheme: Boolean) {
         if (_noteColor.intValue == NoteColorPalette.Light.first().toArgb()) {
@@ -81,51 +105,28 @@ class AddEditNoteViewModel @Inject constructor(
         }
     }
 
-private var currentNoteId:Int ? = null
-    init{
-        savedStateHandle.get<Int>("noteId")?.let{
-            noteId->
-            if(noteId!=-1){
-                viewModelScope.launch{
-                    noteUseCases.getNote(noteId)?.also{ note->
-                        currentNoteId  = note.id
-                        _noteTitle.value= noteTitle.value.copy(
-                            text= note.title,
-                            isHintVisible = false
-                        )
-                        _noteContent.value =_noteContent.value.copy(
-                            text=note.content,
-                            isHintVisible=false
-                        )
-                        _noteColor.intValue = note.color
-                    }
-                }
-            }
-        }
-    }
-    fun onEvent (event: AddEditNoteEvent) {
+    fun onEvent(event: AddEditNoteEvent) {
         when (event) {
             is AddEditNoteEvent.EnteredTitle -> {
-                _noteTitle.value = noteTitle.value.copy(
-                    text = event.value
-                )
+                _noteTitle.value = noteTitle.value.copy(text = event.value)
+                savedStateHandle["title"] = event.value // persist to SavedStateHandle
             }
-
-
             is AddEditNoteEvent.changeTitleFocus -> {
                 _noteTitle.value = noteTitle.value.copy(
-                isHintVisible= !event.focusState.isFocused && _noteContent.value.text.isBlank()
+                    isHintVisible = !event.focusState.isFocused && _noteTitle.value.text.isBlank()
                 )
             }
-
             is AddEditNoteEvent.EnteredContent -> {
-                _noteContent.value=_noteContent.value.copy(
-                    text=event.value
-                )
+                _noteContent.value = _noteContent.value.copy(text = event.value)
+                savedStateHandle["content"] = event.value // persist to SavedStateHandle
             }
-             is AddEditNoteEvent.SaveNote ->{
-                viewModelScope.launch{
-                    try{
+            is AddEditNoteEvent.changeColor -> {
+                _noteColor.intValue = event.color
+                savedStateHandle["color"] = event.color // persist to SavedStateHandle
+            }
+            is AddEditNoteEvent.SaveNote -> {
+                viewModelScope.launch {
+                    try {
                         noteUseCases.addNote(
                             Note(
                                 title = noteTitle.value.text,
@@ -135,9 +136,8 @@ private var currentNoteId:Int ? = null
                                 id = currentNoteId,
                             )
                         )
-
                         _eventFlow.emit(UiEvent.SavedNote)
-                    } catch(e: InvalidNoteException){
+                    } catch (e: InvalidNoteException) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = e.message ?: "Couldn't save note"
@@ -146,18 +146,16 @@ private var currentNoteId:Int ? = null
                     }
                 }
             }
-            is AddEditNoteEvent.changeColor -> {
-                _noteColor.intValue= event.color
-            }
             is AddEditNoteEvent.changeContentFocus -> {
-                _noteContent.value= _noteContent.value.copy(
-                    isHintVisible=!event.focusState.isFocused && _noteContent.value.text.isBlank()
+                _noteContent.value = _noteContent.value.copy(
+                    isHintVisible = !event.focusState.isFocused && _noteContent.value.text.isBlank()
                 )
             }
         }
     }
-    sealed class UiEvent{
-        data class ShowSnackbar(val message:String): UiEvent()
+
+    sealed class UiEvent {
+        data class ShowSnackbar(val message: String) : UiEvent()
         object SavedNote : UiEvent()
     }
 }

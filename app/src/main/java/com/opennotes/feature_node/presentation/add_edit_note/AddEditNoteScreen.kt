@@ -287,7 +287,7 @@ fun AddEditNoteScreen(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .size(44.dp)
+                            .size(48.dp)
                             .scale(scale)
                             .shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
                             .clip(CircleShape)
