@@ -18,53 +18,51 @@
 
 package com.opennotes.feature_node.presentation.settings
 
-import androidx.compose.foundation.clickable
+
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    subtitle: String? = null,
-    icon: ImageVector,
-    onClick: (() -> Unit)? = null,
-    trailing: @Composable (() -> Unit)? = null,
-    isFirst: Boolean = false,
-    isLast: Boolean = false
+fun ColorSchemePicker(
+    currentColor: Long,
+    onColorChange: (Long) -> Unit
 ) {
+    val colorSchemes = listOf(
+        0xfffeb4a7L, 0xffffb3c0L, 0xfffcaaffL,
+        0xffb9c3ffL, 0xff62d3ffL, 0xff44d9f1L,
+        0xff52dbc9L, 0xff78dd77L, 0xff9fd75cL,
+        0xffc1d02dL, 0xfffabd00L, 0xffffb86eL,
+        0L
+    )
+
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (onClick != null) Modifier.clickable { onClick() }
-                else Modifier
-            ),
-        shape = when {
-            isFirst && isLast -> RoundedCornerShape(12.dp)
-            isFirst -> RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-            isLast -> RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-            else -> RectangleShape
-        },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
@@ -76,7 +74,7 @@ fun SettingItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = icon,
+                imageVector = Icons.Default.ColorLens,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
@@ -84,30 +82,46 @@ fun SettingItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = title,
+                    text = "Color Scheme",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                if (subtitle != null) {
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(colorSchemes) { colorLong ->
+                        ColorPickerButton(
+                            color = if (colorLong == 0L) MaterialTheme.colorScheme.primary else Color(colorLong),
+                            isSelected = colorLong == currentColor,
+                            onClick = { onColorChange(colorLong) }
+                        )
+                    }
                 }
             }
-
-
-            if (trailing != null) {
-                trailing()
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = "Navigate",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(40.dp)
-                )
-            }
+        }
+    }
+}
+@Composable
+fun ColorPickerButton(
+    color: Color,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    IconButton(
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = color,
+            contentColor = if (color == Color.White) Color.Black else Color.White
+        ),
+        modifier = Modifier.size(48.dp),
+        onClick = onClick
+    ) {
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Selected",
+                tint = if (color == Color.White) Color.Black else Color.White
+            )
         }
     }
 }
