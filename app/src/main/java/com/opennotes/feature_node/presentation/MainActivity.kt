@@ -34,23 +34,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.opennotes.feature_node.presentation.add_edit_note.AddEditNoteScreen
-import com.opennotes.ui.theme.NoteColorPalette
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import com.opennotes.feature_node.presentation.notes.NotesScreen
 import com.opennotes.feature_node.presentation.settings.AboutScreen
+import com.opennotes.feature_node.presentation.settings.AppearanceSettingsScreen
+import com.opennotes.feature_node.presentation.settings.BackupScreen
+import com.opennotes.feature_node.presentation.settings.PrivacySettingsScreen
 import com.opennotes.feature_node.presentation.settings.SettingsScreen
 import com.opennotes.feature_node.presentation.settings.SettingsViewModel
 import com.opennotes.feature_node.presentation.settings.ThemeMode
 import com.opennotes.feature_node.presentation.util.Screen
+import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -140,6 +143,24 @@ class MainActivity : FragmentActivity() {
                             }
                             composable(route = Screen.SettingsScreen.route) {
                                 SettingsScreen(
+                                    navController = navController,
+                                    viewModel = settingsViewModel
+                                )
+                            }
+                            composable(route = Screen.BackupScreen.route) {
+                                BackupScreen(
+                                    navController = navController,
+                                    viewModel = settingsViewModel
+                                )
+                            }
+                            composable(route = Screen.AppearanceSettingsScreen.route) {
+                                AppearanceSettingsScreen(
+                                    navController = navController,
+                                    viewModel = settingsViewModel
+                                )
+                            }
+                            composable(route = Screen.PrivacySettingsScreen.route) {
+                                PrivacySettingsScreen(
                                     navController = navController,
                                     viewModel = settingsViewModel
                                 )

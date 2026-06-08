@@ -42,6 +42,8 @@ class DataStoreRepository @Inject constructor(
         // New theme settings
         private val THEME_MODE = stringPreferencesKey("theme_mode")
         private val BLACK_THEME = booleanPreferencesKey("black_theme")
+
+        private val COLOR_SCHEME = stringPreferencesKey("color_scheme")
         private val BIOMETRIC_LOCK = booleanPreferencesKey("biometric_lock")
 
         // Legacy settings for backward compatibility
@@ -58,7 +60,7 @@ class DataStoreRepository @Inject constructor(
             prefs[THEME_MODE] = settings.themeMode.name
             prefs[BLACK_THEME] = settings.blackTheme
             prefs[BIOMETRIC_LOCK] = settings.biometricLock
-
+            prefs[COLOR_SCHEME] = settings.colorScheme.toString()
             // Also update legacy fields for compatibility
             when (settings.themeMode) {
                 ThemeMode.SYSTEM -> {
@@ -113,6 +115,7 @@ class DataStoreRepository @Inject constructor(
                     themeMode = themeMode,
                     blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
                     biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
+                    colorScheme = prefs[COLOR_SCHEME]?.toLongOrNull() ?: 0L,
                     // Legacy fields for compatibility
                     darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
                     systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
@@ -156,6 +159,7 @@ class DataStoreRepository @Inject constructor(
             themeMode = themeMode,
             blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
             biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
+            colorScheme = prefs[COLOR_SCHEME]?.toLongOrNull() ?: 0L,
             // Legacy fields for compatibility
             darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
             systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
@@ -172,3 +176,4 @@ class DataStoreRepository @Inject constructor(
         }
     }
 }
+

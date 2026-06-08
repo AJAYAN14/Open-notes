@@ -146,7 +146,7 @@ fun MarkdownText(
 ) {
     if (!isEnabled || markdown.isBlank()) {
         StaticMarkdownText(
-            markdown = if (markdown.isBlank()) "Start typing..." else markdown,
+            markdown = if (markdown.isBlank()) "content" else markdown,
             modifier = modifier,
             weight = weight,
             fontSize = fontSize,
@@ -225,7 +225,7 @@ fun StaticMarkdownText(
         text = markdown,
         fontSize = fontSize,
         fontWeight = weight,
-        color = if (markdown == "Start typing...") {
+        color = if (markdown == "content") {
             Color.Gray
         } else {
             textColor
@@ -249,7 +249,7 @@ fun MarkdownContent(
 ) {
     if (content.isEmpty()) {
         Text(
-            text = "Start typing...",
+            text = "Content",
             fontSize = fontSize,
             fontWeight = weight,
             color = Color.Gray,

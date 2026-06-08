@@ -18,36 +18,30 @@
 
 package com.opennotes.feature_node.presentation.settings
 
-import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -59,52 +53,24 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.opennotes.feature_node.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@Composable
-fun SettingsSwitch(
-    isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Switch(
-        checked = isChecked,
-        onCheckedChange = onCheckedChange,
-        thumbContent = {
-            Icon(
-                imageVector = if (isChecked) Icons.Default.Check else Icons.Default.Close,
-                contentDescription = if (isChecked) "On" else "Off",
-                modifier = Modifier.size(18.dp),
-                tint = if (isChecked) MaterialTheme.colorScheme.onPrimary
-                else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        colors = SwitchDefaults.colors(
-            checkedThumbColor = MaterialTheme.colorScheme.primary,
-            uncheckedThumbColor = MaterialTheme.colorScheme.surface,
-            checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    )
-}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+fun PrivacySettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val activity = context as? FragmentActivity
-    val versionName = remember {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
-    }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
-
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collectLatest { event ->
@@ -116,21 +82,20 @@ fun SettingsScreen(
                 }
 
 
-
                 SettingsViewModel.UiEvent.RequestBiometricAuthForEnable -> {
                     if (activity == null) {
                         viewModel.onBiometricAuthFailed()
                         return@collectLatest
                     }
 
-                    val biometricManager = BiometricManager.from(context)
+                    val biometricManager = androidx.biometric.BiometricManager.from(context)
                     val canAuthenticate = biometricManager.canAuthenticate(
-                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                        androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
                     )
 
-                    if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
+                    if (canAuthenticate != androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS) {
                         scope.launch {
                             snackbarHostState.showSnackbar("Biometric authentication is not available")
                         }
@@ -142,9 +107,9 @@ fun SettingsScreen(
                     val prompt = BiometricPrompt(
                         activity,
                         executor,
-                        object : BiometricPrompt.AuthenticationCallback() {
+                        object : androidx.biometric.BiometricPrompt.AuthenticationCallback() {
                             override fun onAuthenticationSucceeded(
-                                result: BiometricPrompt.AuthenticationResult
+                                result: androidx.biometric.BiometricPrompt.AuthenticationResult
                             ) {
                                 super.onAuthenticationSucceeded(result)
                                 viewModel.onBiometricAuthSuccess()
@@ -161,13 +126,13 @@ fun SettingsScreen(
                         }
                     )
 
-                    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                    val promptInfo = androidx.biometric.BiometricPrompt.PromptInfo.Builder()
                         .setTitle("Enable biometric lock")
                         .setSubtitle("Confirm your identity to enable app lock")
                         .setAllowedAuthenticators(
-                            BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                            androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                    androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                    androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
                         )
                         .build()
 
@@ -179,17 +144,29 @@ fun SettingsScreen(
         }
     }
 
+
+
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            fontWeight = FontWeight.Bold,
+                        text = "Privacy & Security",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
                             letterSpacing = 0.15.sp
                         )
                     )
+                },
+                navigationIcon = {
+                    FilledTonalIconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -198,10 +175,8 @@ fun SettingsScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) }
-    )
-    { paddingValues ->
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -211,58 +186,23 @@ fun SettingsScreen(
         ) {
             item {
                 SettingItem(
-                    title = "Backup & Restore",
-                    subtitle = "Export and import your notes",
-                    icon = Icons.Default.Cloud,
-                    onClick = { navController.navigate(Screen.BackupScreen.route) },
-                    isFirst = true,
-                    isLast = true
-                )
-            }
-
-
-
-            item {
-                SettingItem(
-                    title = "Appearance",
-                    subtitle = "Theme, Color scheme, Black Theme",
-                    icon = Icons.Default.Palette,
-                    onClick = { navController.navigate(Screen.AppearanceSettingsScreen.route) },
-                    isFirst = true,
-                    isLast = true
-                )
-            }
-
-
-
-
-            item {
-                SettingItem(
-                    title = "Privacy",
-                    subtitle = "Biometric lock",
+                    title = "Biometric Lock",
+                    subtitle = if (settings.biometricLock) "Fingerprint required when enabled"
+                    else "Require fingerprint to unlock app",
                     icon = Icons.Default.Fingerprint,
-                    onClick = { navController.navigate(Screen.PrivacySettingsScreen.route) },
+                    trailing = {
+                        SettingsSwitch(
+                            isChecked = settings.biometricLock,
+                            onCheckedChange = { enabled ->
+                                viewModel.onBiometricLockToggleRequest(enabled)
+                            }
+                        )
+                    },
                     isFirst = true,
                     isLast = true
                 )
             }
-
-
-                item {
-                    SettingItem(
-                        title = "About",
-                        subtitle ="Version $versionName",
-                        icon = Icons.Default.Info,
-                        onClick = {
-                            navController.navigate(Screen.AboutScreen.route)
-                        },
-                        isFirst = true
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-            }
+            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
     }
-
+}

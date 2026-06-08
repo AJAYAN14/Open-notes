@@ -111,7 +111,7 @@ fun MarkdownField(
             ) {
                 TransParentHintTextField(
                     text = contentText,
-                    hint = "Start typing...",
+                    hint = "Content",
                     onValueChange = onContentChange,
                     onFocusChange = onContentFocusChange,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),

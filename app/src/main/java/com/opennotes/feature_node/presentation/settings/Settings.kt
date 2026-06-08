@@ -28,6 +28,7 @@ data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val blackTheme: Boolean = false,
     val biometricLock: Boolean = false,
+    val colorScheme: Long =0L,
     // Legacy fields - keeping for migration compatibility
     @Deprecated("Use themeMode instead") val darkTheme: Boolean = false,
     @Deprecated("Use themeMode instead") val systemTheme: Boolean = true,

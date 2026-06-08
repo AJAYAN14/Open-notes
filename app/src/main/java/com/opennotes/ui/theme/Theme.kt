@@ -29,6 +29,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.materialkolor.dynamicColorScheme
 import com.opennotes.feature_node.presentation.settings.Settings
 import com.opennotes.feature_node.presentation.settings.ThemeMode
 
@@ -99,7 +100,6 @@ fun OpenNotesTheme(
     val context = LocalContext.current
     val systemInDarkTheme = isSystemInDarkTheme()
 
-    // Determine if dark theme should be used based on ThemeMode
     val isDarkTheme = when (settings.themeMode) {
         ThemeMode.SYSTEM -> systemInDarkTheme
         ThemeMode.LIGHT -> false
@@ -107,15 +107,22 @@ fun OpenNotesTheme(
     }
 
     val colorScheme = when {
-        // Use dynamic colors on Android 12+ if available
+        // Custom color scheme selected
+        settings.colorScheme != 0L -> {
+            val seedColor = Color(settings.colorScheme)
+            if (isDarkTheme) {
+                dynamicColorScheme(seedColor, isDark = true, isAmoled = settings.blackTheme)
+            } else {
+                dynamicColorScheme(seedColor, isDark = false, isAmoled = false)
+            }
+        }
+        // Dynamic colors on Android 12+
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val baseColorScheme = if (isDarkTheme) {
                 dynamicDarkColorScheme(context)
             } else {
                 dynamicLightColorScheme(context)
             }
-
-            // Apply black theme modifications while keeping Material colors
             if (isDarkTheme && settings.blackTheme) {
                 baseColorScheme.copy(
                     background = Color.Black,
@@ -131,7 +138,7 @@ fun OpenNotesTheme(
                 baseColorScheme
             }
         }
-        // Fallback to custom colors on older Android versions
+        // Fallback
         else -> {
             when {
                 isDarkTheme && settings.blackTheme -> AmoledColorScheme

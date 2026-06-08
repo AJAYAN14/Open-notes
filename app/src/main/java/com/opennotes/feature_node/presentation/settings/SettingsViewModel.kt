@@ -19,9 +19,6 @@
 package com.opennotes.feature_node.presentation.settings
 
 import android.net.Uri
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opennotes.feature_node.data.repository.DataStoreRepository
@@ -35,11 +32,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -88,6 +87,13 @@ class SettingsViewModel @Inject constructor(
 
     fun updateBlackTheme(blackTheme: Boolean) {
         val newSettings = settings.value.copy(blackTheme = blackTheme)
+        viewModelScope.launch {
+            dataStoreRepository.saveSettings(newSettings)
+        }
+    }
+
+    fun updateColorScheme(colorLong: Long) {
+        val newSettings = settings.value.copy(colorScheme = colorLong)
         viewModelScope.launch {
             dataStoreRepository.saveSettings(newSettings)
         }
@@ -150,3 +156,5 @@ class SettingsViewModel @Inject constructor(
         }
     }
 }
+
+
