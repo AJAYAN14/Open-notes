@@ -20,6 +20,9 @@ package com.opennotes.feature_node.presentation.add_edit_note
 
 
 import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,24 +39,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -62,13 +72,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -121,7 +134,7 @@ fun AddEditNoteScreen(
 
 
     val interactionSource = remember { MutableInteractionSource() }
-    var showColorPicker by remember { mutableStateOf(false) }
+
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -137,6 +150,7 @@ fun AddEditNoteScreen(
             }
         }
     }
+    var showColorPicker by remember { mutableStateOf(false) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -172,6 +186,25 @@ fun AddEditNoteScreen(
                     containerColor = backgroundColor
                 )
             )
+        },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = backgroundColor,
+                contentColor = contentColor
+            ) {
+                IconButton(
+                    onClick = { showColorPicker = true },)
+                 {
+                    Icon(
+                        imageVector = Icons.Default.Palette,
+                        contentDescription = "Change color",
+                        tint = contentColor,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                }
+            }
         }
     ) { paddingValues ->
         CompositionLocalProvider(
@@ -187,44 +220,8 @@ fun AddEditNoteScreen(
                     .background(backgroundColor)
                     .padding(paddingValues)
                     .padding(16.dp)
+                    .imePadding()
             ) {
-
-
-                // Color picker
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    noteColors.forEach { color ->
-                        val colorInt = remember(color) { color.toArgb() }
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .shadow(15.dp, CircleShape)
-                                .clip(CircleShape)
-                                .background(color)
-                                .border(
-                                    width = 3.dp,
-                                    color = if (viewModel.noteColor.value == colorInt) Color.Black else Color.Transparent,
-                                    shape = CircleShape
-                                )
-                                .clickable {
-                                    scope.launch {
-                                        noteBackgroundAnimatable.animateTo(
-                                            targetValue = Color(colorInt),
-                                            animationSpec = tween(durationMillis = 500)
-                                        )
-                                    }
-                                    viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
-                                }
-                        )
-                    }
-                }
-
-
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 MarkdownField(
@@ -248,8 +245,77 @@ fun AddEditNoteScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .imePadding()
                 )
+            }
+        }
+    }
+
+    if (showColorPicker) {
+        ModalBottomSheet(
+            onDismissRequest = { showColorPicker = false },
+            containerColor = backgroundColor
+        ) { Text(
+            text = "Color",
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.SemiBold
+            ),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 32.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                noteColors.forEach { color ->
+                    val colorInt = remember(color) { color.toArgb() }
+                    val isSelected = viewModel.noteColor.value == colorInt
+                    val scale by animateFloatAsState(
+                        targetValue = if (isSelected) 1.2f else 1f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        ),
+                        label = "scale"
+                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(44.dp)
+                            .scale(scale)
+                            .shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(color)
+                            .border(
+                                width = if (isSelected) 3.dp else 0.dp,
+                                color = if (isSelected) contentColor else Color.Transparent,
+                                shape = CircleShape
+                            )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(bounded = true)
+                            ) {
+                                scope.launch {
+                                    noteBackgroundAnimatable.animateTo(
+                                        targetValue = Color(colorInt),
+                                        animationSpec = tween(durationMillis = 500)
+                                    )
+                                }
+                                viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
+                            }
+                    ) {
+                        if (isSelected) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Selected",
+                                tint = contentColor,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
