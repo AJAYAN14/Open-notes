@@ -115,6 +115,10 @@ fun AddEditNoteScreen(
         noteBackgroundAnimatable.animateTo(Color(resolvedColorInt))
     }
 
+    LaunchedEffect(isDarkTheme) {
+        viewModel.applyDefaultColor(isDarkTheme)
+    }
+
     val backgroundColor = noteBackgroundAnimatable.value
 
     val contentColor = if (backgroundColor.luminance() < 0.5f) {

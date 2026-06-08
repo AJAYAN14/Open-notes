@@ -71,6 +71,16 @@ class AddEditNoteViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
 
+    fun applyDefaultColor(isDarkTheme: Boolean) {
+        if (_noteColor.intValue == NoteColorPalette.Light.first().toArgb()) {
+            _noteColor.intValue = if (isDarkTheme) {
+                NoteColorPalette.Dark.first().toArgb()
+            } else {
+                NoteColorPalette.Light.first().toArgb()
+            }
+        }
+    }
+
 private var currentNoteId:Int ? = null
     init{
         savedStateHandle.get<Int>("noteId")?.let{
