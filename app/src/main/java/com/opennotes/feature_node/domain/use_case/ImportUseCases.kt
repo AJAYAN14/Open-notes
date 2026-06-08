@@ -59,11 +59,11 @@ class ImportUseCases(
                 val color = (rawNote["color"] as? Number)?.toInt()
 
                 // Only create Note if all required fields are present and valid
-                if (!title.isNullOrEmpty() && !content.isNullOrEmpty() && 
+                if ((title?.isNotBlank() == true || content?.isNotBlank() == true) &&
                     timestamp != null && color != null) {
                     Note(
-                        title = title,
-                        content = content,
+                        title = title ?: "",
+                        content = content ?: "",
                         timestamp = timestamp,
                         color = color,
                         id = null
@@ -74,7 +74,7 @@ class ImportUseCases(
             }
 
             if (validNotes.isEmpty()) {
-                return ImportResult.Error("No valid notes found (title, content, timestamp, and color required)")
+                return ImportResult.Error("No valid notes found ")
             }
 
             repository.insertNotes(validNotes)
