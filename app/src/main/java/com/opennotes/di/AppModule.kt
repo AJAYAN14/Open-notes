@@ -19,7 +19,7 @@
 package com.opennotes.di
 
 import android.app.Application
-
+import androidx.room.Room
 import com.opennotes.feature_node.data.data_source.NoteDatabase
 import com.opennotes.feature_node.data.repository.AndroidFileHandler
 import com.opennotes.feature_node.data.repository.FileHandler
@@ -31,7 +31,6 @@ import com.opennotes.feature_node.domain.use_case.AddNote
 import com.opennotes.feature_node.domain.use_case.DeleteNote
 import com.opennotes.feature_node.domain.use_case.ExportUseCases
 import com.opennotes.feature_node.domain.use_case.GetNote
-import androidx.room.Room
 import com.opennotes.feature_node.domain.use_case.GetNotes
 import com.opennotes.feature_node.domain.use_case.ImportUseCases
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
@@ -45,54 +44,44 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    @Provides
+    @Singleton
+    fun provideNoteDataBase(app: Application): NoteDatabase =
+        Room
+            .databaseBuilder(
+                app,
+                NoteDatabase::class.java,
+                NoteDatabase.DATABASE_NAME,
+            ).build()
 
     @Provides
     @Singleton
-    fun provideNoteDataBase(app: Application): NoteDatabase {
-        return Room.databaseBuilder(
-            app,
-            NoteDatabase::class.java,
-            NoteDatabase.DATABASE_NAME
-        ).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideNoteRepository(db: NoteDatabase): NoteRepository {
-        return NoteRepositoryImpl(db.noteDao)
-    }
+    fun provideNoteRepository(db: NoteDatabase): NoteRepository = NoteRepositoryImpl(db.noteDao)
 
     // NEW: Provides the FileHandler implementation
     @Provides
     @Singleton
-    fun provideFileHandler(app: Application): FileHandler {
-        return AndroidFileHandler(app)
-    }
+    fun provideFileHandler(app: Application): FileHandler = AndroidFileHandler(app)
 
     // CORRECTED: Provides the concrete GsonJsonHandler implementation
     @Provides
     @Singleton
-    fun provideJsonHandler(): JsonHandler {
-        return GsonJsonHandler()
-    }
-
+    fun provideJsonHandler(): JsonHandler = GsonJsonHandler()
 
     @Provides
     @Singleton
     fun provideNoteUseCaseId(
         repository: NoteRepository,
         jsonHandler: JsonHandler,
-        fileHandler: FileHandler
-    ): NoteUseCases {
-        return NoteUseCases(
-
+        fileHandler: FileHandler,
+    ): NoteUseCases =
+        NoteUseCases(
             deleteNote = DeleteNote(repository),
             addNote = AddNote(repository),
             getNote = GetNote(repository),
             getNotes = GetNotes(repository),
             searchNotes = SearchNotesUseCase(repository),
-            importNotes = ImportUseCases(repository, fileHandler,jsonHandler),
-            exportNotes = ExportUseCases(repository, fileHandler,jsonHandler)
+            importNotes = ImportUseCases(repository, fileHandler, jsonHandler),
+            exportNotes = ExportUseCases(repository, fileHandler, jsonHandler),
         )
-    }
 }

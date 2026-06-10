@@ -18,7 +18,6 @@
 
 package com.opennotes.feature_node.presentation.add_edit_note.components.markdown
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -53,13 +52,14 @@ fun MarkdownField(
     onTitleFocusChange: (FocusState) -> Unit,
     onContentChange: (String) -> Unit,
     onContentFocusChange: (FocusState) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isPreviewMode) {
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(8.dp)
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
         ) {
             MarkdownText(
                 radius = 8,
@@ -69,7 +69,7 @@ fun MarkdownField(
                 modifier = Modifier.fillMaxWidth(),
                 onContentChange = {},
                 settingsViewModel = null,
-                textColor = contentColor
+                textColor = contentColor,
             )
             Spacer(modifier = Modifier.height(16.dp))
             MarkdownText(
@@ -77,12 +77,13 @@ fun MarkdownField(
                 markdown = contentText.ifBlank { "No content to preview" },
                 isPreview = false,
                 isEnabled = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 onContentChange = {},
                 settingsViewModel = null,
-                textColor = contentColor
+                textColor = contentColor,
             )
         }
     } else {
@@ -95,19 +96,20 @@ fun MarkdownField(
                 singleLine = true,
                 textStyle = MaterialTheme.typography.headlineSmall.copy(color = contentColor),
                 focusRequester = titleFocusRequester,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(16.dp))
             val scrollState = rememberScrollState()
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) { contentFocusRequester.requestFocus() }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(scrollState)
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                        ) { contentFocusRequester.requestFocus() },
             ) {
                 TransParentHintTextField(
                     text = contentText,
@@ -117,9 +119,10 @@ fun MarkdownField(
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
                     singleLine = false,
                     focusRequester = contentFocusRequester,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(unbounded = true)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(unbounded = true),
                 )
             }
         }

@@ -1,11 +1,30 @@
 
-# Android/Ignored files
 .gradle/
 .idea/
 build/
 app/build/
 local.properties
+
+# Compiled class files
 *.iml
 *.class
-gradle.propeties
-test0.jks
+
+
+*.apk
+*.ap_
+*.aab
+*.dex
+
+
+*.jks
+*.keystore
+
+
+!debug.keystore
+
+# Native build folders
+.cxx/
+.externalNativeBuild/
+
+# OS-specific files
+.DS_Store

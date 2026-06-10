@@ -79,12 +79,14 @@ import com.opennotes.R
 fun AboutScreen(navController: NavController) {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        rememberTopAppBarState()
-    )
-    val versionName = remember {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
-    }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            rememberTopAppBarState(),
+        )
+    val versionName =
+        remember {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
+        }
 
     var showLicenseBottomSheet by remember { mutableStateOf(false) }
 
@@ -95,133 +97,146 @@ fun AboutScreen(navController: NavController) {
                 title = {
                     Text(
                         text = "About",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                     )
                 },
                 navigationIcon = {
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background
-                ),
-                scrollBehavior = scrollBehavior
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
+                scrollBehavior = scrollBehavior,
             )
-        }
-    )
-    { paddingValues ->
+        },
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding() + 16.dp,
-                start = 16.dp,
-                end = 16.dp
-            )
+            contentPadding =
+                PaddingValues(
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                ),
         ) {
-
-
-
-
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Card(
-                        shape = RoundedCornerShape(
-                            topStart = 12.dp, topEnd = 12.dp,
-                            bottomStart = 4.dp, bottomEnd = 4.dp
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 12.dp,
+                                topEnd = 12.dp,
+                                bottomStart = 4.dp,
+                                bottomEnd = 4.dp,
+                            ),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            ),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(
-                                modifier = Modifier
-                                    .size(64.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                        shape = RoundedCornerShape(16.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
+                                modifier =
+                                    Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            shape = RoundedCornerShape(16.dp),
+                                        ),
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Notes,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(32.dp),
                                 )
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "OpenNotes",
-                                    style = MaterialTheme.typography.headlineSmall.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                    )
+                                    style =
+                                        MaterialTheme.typography.headlineSmall.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                        ),
                                 )
                                 Text(
                                     text = versionName,
-                                    style = MaterialTheme.typography.titleSmall.copy(
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
+                                    style =
+                                        MaterialTheme.typography.titleSmall.copy(
+                                            color = MaterialTheme.colorScheme.primary,
+                                        ),
                                 )
                             }
                             IconButton(
                                 onClick = { uriHandler.openUri("https://github.com/Fandroid745") },
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(40.dp),
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.github),
                                     contentDescription = "GitHub",
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(40.dp)
+                                    modifier = Modifier.size(40.dp),
                                 )
                             }
                         }
                     }
 
                     Card(
-                        shape = RoundedCornerShape(
-                            topStart = 4.dp, topEnd = 4.dp,
-                            bottomStart = 12.dp, bottomEnd = 12.dp
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp)
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 4.dp,
+                                topEnd = 4.dp,
+                                bottomStart = 12.dp,
+                                bottomEnd = 12.dp,
+                            ),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            ),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                     ) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp)
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
                         ) {
                             Row(
-                                modifier = Modifier
-                                    .align(Alignment.BottomStart)
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.BottomStart)
+                                        .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(40.dp)
+                                    modifier = Modifier.size(40.dp),
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -229,42 +244,44 @@ fun AboutScreen(navController: NavController) {
                                 Column {
                                     Text(
                                         text = "Dhanush Sugganahalli",
-                                        style = MaterialTheme.typography.titleLarge.copy(
-                                            fontWeight = FontWeight.Bold
-                                        )
+                                        style =
+                                            MaterialTheme.typography.titleLarge.copy(
+                                                fontWeight = FontWeight.Bold,
+                                            ),
                                     )
                                     Text(
                                         text = "Developer",
-                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.Medium
-                                        ),
-                                        letterSpacing = 0.15.sp
+                                        style =
+                                            MaterialTheme.typography.bodyMedium.copy(
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.Medium,
+                                            ),
+                                        letterSpacing = 0.15.sp,
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     ) {
                                         IconButton(
                                             onClick = { uriHandler.openUri("https://github.com/Fandroid745") },
-                                            modifier = Modifier.size(40.dp)
+                                            modifier = Modifier.size(40.dp),
                                         ) {
                                             Icon(
                                                 painter = painterResource(R.drawable.github),
                                                 contentDescription = "GitHub",
                                                 tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(30.dp)
+                                                modifier = Modifier.size(30.dp),
                                             )
                                         }
                                         IconButton(
                                             onClick = { uriHandler.openUri("mailto:dhanush41230@gmail.com") },
-                                            modifier = Modifier.size(40.dp)
+                                            modifier = Modifier.size(40.dp),
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Email,
                                                 contentDescription = "Email",
                                                 tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(30.dp)
+                                                modifier = Modifier.size(30.dp),
                                             )
                                         }
                                     }
@@ -275,32 +292,35 @@ fun AboutScreen(navController: NavController) {
 
                     if (showLicenseBottomSheet) {
                         LicenseBottomSheet(
-                            onDismissRequest = { showLicenseBottomSheet = false }
+                            onDismissRequest = { showLicenseBottomSheet = false },
                         )
                     }
 
-
-
                     Card(
-                        shape = RoundedCornerShape(
-                            topStart = 4.dp, topEnd = 4.dp,
-                            bottomStart = 12.dp, bottomEnd = 12.dp
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                uriHandler.openUri("https://github.com/sponsors/Fandroid745")
-                            }
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 4.dp,
+                                topEnd = 4.dp,
+                                bottomStart = 12.dp,
+                                bottomEnd = 12.dp,
+                            ),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            ),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    uriHandler.openUri("https://github.com/sponsors/Fandroid745")
+                                },
                     ) {
                         ListItem(
                             leadingContent = {
                                 Icon(
                                     imageVector = Icons.Default.Support,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.primary,
                                 )
                             },
                             headlineContent = { Text("Support me on Github Sponsors") },
@@ -309,41 +329,44 @@ fun AboutScreen(navController: NavController) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             },
-                            colors = ListItemDefaults.colors(
-                                containerColor = Color.Transparent
-                            )
+                            colors =
+                                ListItemDefaults.colors(
+                                    containerColor = Color.Transparent,
+                                ),
                         )
                     }
                 }
             }
 
-
             item {
                 Card(
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { showLicenseBottomSheet = true }
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { showLicenseBottomSheet = true },
                 ) {
                     ListItem(
                         leadingContent = {
                             Icon(
                                 imageVector = Icons.Default.Gavel,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         },
                         headlineContent = { Text("License") },
                         supportingContent = { Text("GPL-3.0 License") },
-                        colors = ListItemDefaults.colors(
-                            containerColor = Color.Transparent
-                        )
+                        colors =
+                            ListItemDefaults.colors(
+                                containerColor = Color.Transparent,
+                            ),
                     )
                 }
             }

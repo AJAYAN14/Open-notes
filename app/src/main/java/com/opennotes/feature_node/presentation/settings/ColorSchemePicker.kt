@@ -18,7 +18,6 @@
 
 package com.opennotes.feature_node.presentation.settings
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,51 +49,62 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ColorSchemePicker(
     currentColor: Long,
-    onColorChange: (Long) -> Unit
+    onColorChange: (Long) -> Unit,
 ) {
-    val colorSchemes = listOf(
-        0xfffeb4a7L, 0xffffb3c0L, 0xfffcaaffL,
-        0xffb9c3ffL, 0xff62d3ffL, 0xff44d9f1L,
-        0xff52dbc9L, 0xff78dd77L, 0xff9fd75cL,
-        0xffc1d02dL, 0xfffabd00L, 0xffffb86eL,
-        0L
-    )
+    val colorSchemes =
+        listOf(
+            0xfffeb4a7L,
+            0xffffb3c0L,
+            0xfffcaaffL,
+            0xffb9c3ffL,
+            0xff62d3ffL,
+            0xff44d9f1L,
+            0xff52dbc9L,
+            0xff78dd77L,
+            0xff9fd75cL,
+            0xffc1d02dL,
+            0xfffabd00L,
+            0xffffb86eL,
+            0L,
+        )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            ),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = Icons.Default.ColorLens,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Color Scheme",
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(colorSchemes) { colorLong ->
                         ColorPickerButton(
                             color = if (colorLong == 0L) MaterialTheme.colorScheme.primary else Color(colorLong),
                             isSelected = colorLong == currentColor,
-                            onClick = { onColorChange(colorLong) }
+                            onClick = { onColorChange(colorLong) },
                         )
                     }
                 }
@@ -102,25 +112,27 @@ fun ColorSchemePicker(
         }
     }
 }
+
 @Composable
 fun ColorPickerButton(
     color: Color,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = color,
-            contentColor = if (color == Color.White) Color.Black else Color.White
-        ),
+        colors =
+            IconButtonDefaults.iconButtonColors(
+                containerColor = color,
+                contentColor = if (color == Color.White) Color.Black else Color.White,
+            ),
         modifier = Modifier.size(48.dp),
-        onClick = onClick
+        onClick = onClick,
     ) {
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
-                tint = if (color == Color.White) Color.Black else Color.White
+                tint = if (color == Color.White) Color.Black else Color.White,
             )
         }
     }

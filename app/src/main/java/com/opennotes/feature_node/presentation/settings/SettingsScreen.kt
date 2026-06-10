@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsSwitch(
     isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Switch(
         checked = isChecked,
@@ -77,34 +77,39 @@ fun SettingsSwitch(
                 imageVector = if (isChecked) Icons.Default.Check else Icons.Default.Close,
                 contentDescription = if (isChecked) "On" else "Off",
                 modifier = Modifier.size(18.dp),
-                tint = if (isChecked) MaterialTheme.colorScheme.onPrimary
-                else MaterialTheme.colorScheme.onSurfaceVariant
+                tint =
+                    if (isChecked) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
             )
         },
-        colors = SwitchDefaults.colors(
-            checkedThumbColor = MaterialTheme.colorScheme.primary,
-            uncheckedThumbColor = MaterialTheme.colorScheme.surface,
-            checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        colors =
+            SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                uncheckedThumbColor = MaterialTheme.colorScheme.surface,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+            ),
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavController,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val activity = context as? FragmentActivity
-    val versionName = remember {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
-    }
+    val versionName =
+        remember {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
+        }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
-
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collectLatest { event ->
@@ -115,8 +120,6 @@ fun SettingsScreen(
                     }
                 }
 
-
-
                 SettingsViewModel.UiEvent.RequestBiometricAuthForEnable -> {
                     if (activity == null) {
                         viewModel.onBiometricAuthFailed()
@@ -124,11 +127,12 @@ fun SettingsScreen(
                     }
 
                     val biometricManager = BiometricManager.from(context)
-                    val canAuthenticate = biometricManager.canAuthenticate(
-                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                    val canAuthenticate =
+                        biometricManager.canAuthenticate(
+                            BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                 BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    )
+                                BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                        )
 
                     if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
                         scope.launch {
@@ -139,37 +143,36 @@ fun SettingsScreen(
                     }
 
                     val executor = ContextCompat.getMainExecutor(context)
-                    val prompt = BiometricPrompt(
-                        activity,
-                        executor,
-                        object : BiometricPrompt.AuthenticationCallback() {
-                            override fun onAuthenticationSucceeded(
-                                result: BiometricPrompt.AuthenticationResult
-                            ) {
-                                super.onAuthenticationSucceeded(result)
-                                viewModel.onBiometricAuthSuccess()
-                            }
+                    val prompt =
+                        BiometricPrompt(
+                            activity,
+                            executor,
+                            object : BiometricPrompt.AuthenticationCallback() {
+                                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                    super.onAuthenticationSucceeded(result)
+                                    viewModel.onBiometricAuthSuccess()
+                                }
 
-                            override fun onAuthenticationError(
-                                errorCode: Int,
-                                errString: CharSequence
-                            ) {
-                                super.onAuthenticationError(errorCode, errString)
-                                viewModel.onBiometricAuthFailed()
-                            }
-
-                        }
-                    )
-
-                    val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                        .setTitle("Enable biometric lock")
-                        .setSubtitle("Confirm your identity to enable app lock")
-                        .setAllowedAuthenticators(
-                            BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                                override fun onAuthenticationError(
+                                    errorCode: Int,
+                                    errString: CharSequence,
+                                ) {
+                                    super.onAuthenticationError(errorCode, errString)
+                                    viewModel.onBiometricAuthFailed()
+                                }
+                            },
                         )
-                        .build()
+
+                    val promptInfo =
+                        BiometricPrompt.PromptInfo
+                            .Builder()
+                            .setTitle("Enable biometric lock")
+                            .setSubtitle("Confirm your identity to enable app lock")
+                            .setAllowedAuthenticators(
+                                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                    BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                            ).build()
 
                     prompt.authenticate(promptInfo)
                 }
@@ -185,29 +188,31 @@ fun SettingsScreen(
                 title = {
                     Text(
                         text = "Settings",
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.15.sp
-                        )
+                        style =
+                            MaterialTheme.typography.displaySmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.15.sp,
+                            ),
                     )
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background
-                ),
-                scrollBehavior = scrollBehavior
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
+                scrollBehavior = scrollBehavior,
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    )
-    { paddingValues ->
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item {
                 SettingItem(
@@ -216,11 +221,9 @@ fun SettingsScreen(
                     icon = Icons.Default.Cloud,
                     onClick = { navController.navigate(Screen.BackupScreen.route) },
                     isFirst = true,
-                    isLast = true
+                    isLast = true,
                 )
             }
-
-
 
             item {
                 SettingItem(
@@ -229,12 +232,9 @@ fun SettingsScreen(
                     icon = Icons.Default.Palette,
                     onClick = { navController.navigate(Screen.AppearanceSettingsScreen.route) },
                     isFirst = true,
-                    isLast = true
+                    isLast = true,
                 )
             }
-
-
-
 
             item {
                 SettingItem(
@@ -243,26 +243,24 @@ fun SettingsScreen(
                     icon = Icons.Default.Fingerprint,
                     onClick = { navController.navigate(Screen.PrivacySettingsScreen.route) },
                     isFirst = true,
-                    isLast = true
+                    isLast = true,
                 )
             }
 
-
-                item {
-                    SettingItem(
-                        title = "About",
-                        subtitle ="Version $versionName",
-                        icon = Icons.Default.Info,
-                        onClick = {
-                            navController.navigate(Screen.AboutScreen.route)
-                        },
-                        isFirst = true
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
+            item {
+                SettingItem(
+                    title = "About",
+                    subtitle = "Version $versionName",
+                    icon = Icons.Default.Info,
+                    onClick = {
+                        navController.navigate(Screen.AboutScreen.route)
+                    },
+                    isFirst = true,
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
-
+}

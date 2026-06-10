@@ -59,45 +59,51 @@ import com.opennotes.feature_node.presentation.settings.SettingsViewModel
 @Composable
 fun MarkdownCodeBlock(
     color: Color,
-    text: @Composable (() -> Unit)
+    text: @Composable (() -> Unit),
 ) {
     Box(
         modifier = Modifier.padding(top = 6.dp),
         content = {
             Surface(
                 color = color,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .fillMaxWidth(),
                 content = {
                     text()
-                }
+                },
             )
-        }
+        },
     )
 }
 
 @Composable
-fun MarkdownQuote(content: String, fontSize: TextUnit, textColor: Color) {
+fun MarkdownQuote(
+    content: String,
+    fontSize: TextUnit,
+    textColor: Color,
+) {
     Row(
         horizontalArrangement = Arrangement.Start,
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = Modifier.padding(vertical = 4.dp),
     ) {
         Box(
-            modifier = Modifier
-                .height(22.dp)
-                .width(6.dp)
-                .background(
-                    Color(0xFF1565C0),
-                    RoundedCornerShape(16.dp)
-                )
+            modifier =
+                Modifier
+                    .height(22.dp)
+                    .width(6.dp)
+                    .background(
+                        Color(0xFF1565C0),
+                        RoundedCornerShape(16.dp),
+                    ),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = content,
             fontSize = fontSize,
             color = textColor,
-            fontStyle = FontStyle.Italic
+            fontStyle = FontStyle.Italic,
         )
     }
 }
@@ -107,24 +113,26 @@ fun MarkdownCheck(
     content: @Composable () -> Unit,
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
-    textColor: Color
+    textColor: Color,
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 2.dp)
+        modifier = Modifier.padding(vertical = 2.dp),
     ) {
         Checkbox(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .size(24.dp),
-            colors = CheckboxDefaults.colors(
-                checkmarkColor = Color.White,
-                checkedColor = Color(0xFF1565C0),
-                uncheckedColor = textColor
-            )
+            modifier =
+                Modifier
+                    .padding(end = 8.dp)
+                    .size(24.dp),
+            colors =
+                CheckboxDefaults.colors(
+                    checkmarkColor = Color.White,
+                    checkedColor = Color(0xFF1565C0),
+                    uncheckedColor = textColor,
+                ),
         )
         content()
     }
@@ -142,7 +150,7 @@ fun MarkdownText(
     spacing: Dp = 2.dp,
     onContentChange: (String) -> Unit = {},
     settingsViewModel: SettingsViewModel? = null,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     if (!isEnabled || markdown.isBlank()) {
         StaticMarkdownText(
@@ -150,15 +158,16 @@ fun MarkdownText(
             modifier = modifier,
             weight = weight,
             fontSize = fontSize,
-            textColor = textColor
+            textColor = textColor,
         )
         return
     }
 
     // Safety check - use simple text rendering for extremely large content only
-    val isTooLarge = remember(markdown) {
-        markdown.length > 20000 
-    }
+    val isTooLarge =
+        remember(markdown) {
+            markdown.length > 20000
+        }
 
     if (isTooLarge) {
         SelectionContainer {
@@ -169,7 +178,7 @@ fun MarkdownText(
                         fontSize = fontSize,
                         fontWeight = weight,
                         color = textColor,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -178,26 +187,28 @@ fun MarkdownText(
     }
 
     // Cache expensive markdown parsing
-    val parsedContent = remember(markdown) {
-        try {
-            val lines = markdown.lines()
-            val lineProcessors = listOf(
-                HeadingProcessor(),
-                ListItemProcessor(),
-                CodeBlockProcessor(),
-                QuoteProcessor(),
-                ImageInsertionProcessor(),
-                CheckboxProcessor(),
-                LinkProcessor(),
-                HorizontalRuleProcessor()
-            )
-            val markdownBuilder = MarkdownBuilder(lines, lineProcessors)
-            markdownBuilder.parse()
-            markdownBuilder.content
-        } catch (e: Exception) {
-            listOf(NormalText(markdown))
+    val parsedContent =
+        remember(markdown) {
+            try {
+                val lines = markdown.lines()
+                val lineProcessors =
+                    listOf(
+                        HeadingProcessor(),
+                        ListItemProcessor(),
+                        CodeBlockProcessor(),
+                        QuoteProcessor(),
+                        ImageInsertionProcessor(),
+                        CheckboxProcessor(),
+                        LinkProcessor(),
+                        HorizontalRuleProcessor(),
+                    )
+                val markdownBuilder = MarkdownBuilder(lines, lineProcessors)
+                markdownBuilder.parse()
+                markdownBuilder.content
+            } catch (e: Exception) {
+                listOf(NormalText(markdown))
+            }
         }
-    }
 
     MarkdownContent(
         radius = radius,
@@ -209,7 +220,7 @@ fun MarkdownText(
         fontSize = fontSize,
         lines = markdown.lines(),
         onContentChange = onContentChange,
-        textColor = textColor
+        textColor = textColor,
     )
 }
 
@@ -219,18 +230,19 @@ fun StaticMarkdownText(
     modifier: Modifier,
     weight: FontWeight,
     fontSize: TextUnit,
-    textColor: Color
+    textColor: Color,
 ) {
     Text(
         text = markdown,
         fontSize = fontSize,
         fontWeight = weight,
-        color = if (markdown == "content") {
-            Color.Gray
-        } else {
-            textColor
-        },
-        modifier = modifier
+        color =
+            if (markdown == "content") {
+                Color.Gray
+            } else {
+                textColor
+            },
+        modifier = modifier,
     )
 }
 
@@ -245,7 +257,7 @@ fun MarkdownContent(
     fontSize: TextUnit,
     lines: List<String>,
     onContentChange: (String) -> Unit,
-    textColor: Color
+    textColor: Color,
 ) {
     if (content.isEmpty()) {
         Text(
@@ -253,7 +265,7 @@ fun MarkdownContent(
             fontSize = fontSize,
             fontWeight = weight,
             color = Color.Gray,
-            modifier = modifier
+            modifier = modifier,
         )
         return
     }
@@ -270,7 +282,7 @@ fun MarkdownContent(
                     lines = lines,
                     isPreview = true,
                     onContentChange = onContentChange,
-                    textColor = textColor
+                    textColor = textColor,
                 )
                 if (index < content.size - 1 && index < 5) {
                     Spacer(modifier = Modifier.height(spacing))
@@ -281,7 +293,7 @@ fun MarkdownContent(
         SelectionContainer {
             LazyColumn(
                 modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(spacing)
+                verticalArrangement = Arrangement.spacedBy(spacing),
             ) {
                 items(content.size) { index ->
                     RenderMarkdownElement(
@@ -293,7 +305,7 @@ fun MarkdownContent(
                         lines = lines,
                         isPreview = isPreview,
                         onContentChange = onContentChange,
-                        textColor = textColor
+                        textColor = textColor,
                     )
                 }
             }
@@ -311,7 +323,7 @@ fun RenderMarkdownElement(
     lines: List<String>,
     isPreview: Boolean,
     onContentChange: (String) -> Unit,
-    textColor: Color
+    textColor: Color,
 ) {
     val element = content[index]
 
@@ -319,18 +331,19 @@ fun RenderMarkdownElement(
         is Heading -> {
             Text(
                 text = buildAnnotatedMarkdownString(element.text, weight),
-                fontSize = when (element.level) {
-                    1 -> (fontSize.value + 8).sp
-                    2 -> (fontSize.value + 6).sp
-                    3 -> (fontSize.value + 4).sp
-                    4 -> (fontSize.value + 2).sp
-                    5 -> (fontSize.value + 1).sp
-                    6 -> fontSize
-                    else -> fontSize
-                },
+                fontSize =
+                    when (element.level) {
+                        1 -> (fontSize.value + 8).sp
+                        2 -> (fontSize.value + 6).sp
+                        3 -> (fontSize.value + 4).sp
+                        4 -> (fontSize.value + 2).sp
+                        5 -> (fontSize.value + 1).sp
+                        6 -> fontSize
+                        else -> fontSize
+                    },
                 fontWeight = FontWeight.Bold,
                 color = textColor,
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 4.dp),
             )
         }
 
@@ -341,36 +354,44 @@ fun RenderMarkdownElement(
                         text = buildAnnotatedMarkdownString(element.text, weight),
                         fontSize = fontSize,
                         fontWeight = weight,
-                        color = textColor
+                        color = textColor,
                     )
                 },
                 checked = element.checked,
                 textColor = textColor,
-                onCheckedChange = if (isPreview) null else { newChecked ->
-                    val newMarkdown = lines.toMutableList().apply {
-                        this[element.index] = if (newChecked) {
-                            "[X] ${element.text}"
-                        } else {
-                            "[ ] ${element.text}"
+                onCheckedChange =
+                    if (isPreview) {
+                        null
+                    } else {
+                        { newChecked ->
+                            val newMarkdown =
+                                lines.toMutableList().apply {
+                                    this[element.index] =
+                                        if (newChecked) {
+                                            "[X] ${element.text}"
+                                        } else {
+                                            "[ ] ${element.text}"
+                                        }
+                                }
+                            onContentChange(newMarkdown.joinToString("\n"))
                         }
-                    }
-                    onContentChange(newMarkdown.joinToString("\n"))
-                }
+                    },
             )
         }
 
         is ListItem -> {
-            val prefix = if (element.isNumbered && element.number != null) {
-                "${element.number}. "
-            } else {
-                "• "
-            }
+            val prefix =
+                if (element.isNumbered && element.number != null) {
+                    "${element.number}. "
+                } else {
+                    "• "
+                }
             Text(
                 text = buildAnnotatedMarkdownString("$prefix${element.text}", weight),
                 fontSize = fontSize,
                 fontWeight = weight,
                 color = textColor,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp),
             )
         }
 
@@ -381,11 +402,12 @@ fun RenderMarkdownElement(
         is CodeBlock -> {
             if (element.isEnded) {
                 Box(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFFE0E0E0))
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .padding(top = 6.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color(0xFFE0E0E0))
+                            .fillMaxWidth(),
                 ) {
                     Column {
                         element.language?.let { lang ->
@@ -394,7 +416,7 @@ fun RenderMarkdownElement(
                                 fontSize = (fontSize.value - 2).sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color(0xFF666666),
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )
                         }
                         Text(
@@ -403,7 +425,7 @@ fun RenderMarkdownElement(
                             fontWeight = weight,
                             fontFamily = FontFamily.Monospace,
                             color = textColor,
-                            modifier = Modifier.padding(8.dp)
+                            modifier = Modifier.padding(8.dp),
                         )
                     }
                 }
@@ -412,73 +434,77 @@ fun RenderMarkdownElement(
                     text = buildAnnotatedMarkdownString(element.firstLine, weight),
                     fontWeight = weight,
                     fontSize = fontSize,
-                    color = textColor
+                    color = textColor,
                 )
             }
         }
-
 
         is Link -> {
             val context = LocalContext.current
             val linkColor = Color(0xFF0D47A1) // Dark blue for links
 
-            val annotatedString = remember(element.fullText, element.urlRanges) {
-                buildAnnotatedString {
-                    try {
-                        val fullText = element.fullText
-                        var lastIndex = 0
+            val annotatedString =
+                remember(element.fullText, element.urlRanges) {
+                    buildAnnotatedString {
+                        try {
+                            val fullText = element.fullText
+                            var lastIndex = 0
 
-                        val safeRanges = element.urlRanges
-                            .take(5)
-                            .filter { (url, range) ->
-                                url.isNotEmpty() &&
-                                        range.first >= 0 &&
-                                        range.last < fullText.length &&
-                                        range.first <= range.last
-                            }
-                            .sortedBy { it.second.first }
+                            val safeRanges =
+                                element.urlRanges
+                                    .take(5)
+                                    .filter { (url, range) ->
+                                        url.isNotEmpty() &&
+                                            range.first >= 0 &&
+                                            range.last < fullText.length &&
+                                            range.first <= range.last
+                                    }.sortedBy { it.second.first }
 
-                        for ((url, range) in safeRanges) {
-                            val safeStart = maxOf(0, minOf(range.first, fullText.length))
-                            val safeEnd = maxOf(safeStart, minOf(range.last + 1, fullText.length))
+                            for ((url, range) in safeRanges) {
+                                val safeStart = maxOf(0, minOf(range.first, fullText.length))
+                                val safeEnd = maxOf(safeStart, minOf(range.last + 1, fullText.length))
 
-                            // Add text before the link
-                            if (safeStart > lastIndex && lastIndex < fullText.length) {
-                                append(buildAnnotatedMarkdownString(fullText.substring(lastIndex, safeStart), weight))
-                            }
-
-                            // Add the link itself
-                            if (safeStart < safeEnd) {
-                                pushStringAnnotation("URL", url)
-                                withStyle(SpanStyle(
-                                    color = linkColor,
-                                    fontWeight = FontWeight.Bold,
-                                    textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
-                                )) {
-                                    append(url)
+                                // Add text before the link
+                                if (safeStart > lastIndex && lastIndex < fullText.length) {
+                                    append(buildAnnotatedMarkdownString(fullText.substring(lastIndex, safeStart), weight))
                                 }
-                                pop()
+
+                                // Add the link itself
+                                if (safeStart < safeEnd) {
+                                    pushStringAnnotation("URL", url)
+                                    withStyle(
+                                        SpanStyle(
+                                            color = linkColor,
+                                            fontWeight = FontWeight.Bold,
+                                            textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline,
+                                        ),
+                                    ) {
+                                        append(url)
+                                    }
+                                    pop()
+                                }
+
+                                lastIndex = safeEnd
                             }
 
-                            lastIndex = safeEnd
+                            // Add remaining text after all links
+                            if (lastIndex < fullText.length) {
+                                append(buildAnnotatedMarkdownString(fullText.substring(lastIndex), weight))
+                            }
+                        } catch (e: Exception) {
+                            append(element.fullText)
                         }
-
-                        // Add remaining text after all links
-                        if (lastIndex < fullText.length) {
-                            append(buildAnnotatedMarkdownString(fullText.substring(lastIndex), weight))
-                        }
-                    } catch (e: Exception) {
-                        append(element.fullText)
                     }
                 }
-            }
 
             ClickableText(
                 text = annotatedString,
                 onClick = { offset: Int ->
                     try {
-                        annotatedString.getStringAnnotations("URL", offset, offset)
-                            .firstOrNull()?.let { annotation ->
+                        annotatedString
+                            .getStringAnnotations("URL", offset, offset)
+                            .firstOrNull()
+                            ?.let { annotation ->
                                 val intent = android.content.Intent(android.content.Intent.ACTION_VIEW)
                                 intent.data = android.net.Uri.parse(annotation.item)
                                 context.startActivity(intent)
@@ -487,19 +513,21 @@ fun RenderMarkdownElement(
                         // Handle error silently
                     }
                 },
-                style = androidx.compose.ui.text.TextStyle(
-                    fontSize = fontSize
-                )
+                style =
+                    androidx.compose.ui.text.TextStyle(
+                        fontSize = fontSize,
+                    ),
             )
         }
 
         is HorizontalRule -> {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .height(1.dp)
-                    .background(Color(0xFF666666))
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .height(1.dp)
+                        .background(Color(0xFF666666)),
             )
         }
 
@@ -508,7 +536,7 @@ fun RenderMarkdownElement(
                 text = buildAnnotatedMarkdownString(element.text, weight),
                 fontSize = fontSize,
                 fontWeight = weight,
-                color = textColor
+                color = textColor,
             )
         }
 

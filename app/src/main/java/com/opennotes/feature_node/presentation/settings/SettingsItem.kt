@@ -50,53 +50,59 @@ fun SettingItem(
     onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     isFirst: Boolean = false,
-    isLast: Boolean = false
+    isLast: Boolean = false,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (onClick != null) Modifier.clickable { onClick() }
-                else Modifier
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable { onClick() }
+                    } else {
+                        Modifier
+                    },
+                ),
+        shape =
+            when {
+                isFirst && isLast -> RoundedCornerShape(12.dp)
+                isFirst -> RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+                isLast -> RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+                else -> RectangleShape
+            },
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
             ),
-        shape = when {
-            isFirst && isLast -> RoundedCornerShape(12.dp)
-            isFirst -> RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-            isLast -> RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-            else -> RectangleShape
-        },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (subtitle != null) {
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
-
 
             if (trailing != null) {
                 trailing()
@@ -105,7 +111,7 @@ fun SettingItem(
                     imageVector = Icons.Filled.ChevronRight,
                     contentDescription = "Navigate",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp),
                 )
             }
         }

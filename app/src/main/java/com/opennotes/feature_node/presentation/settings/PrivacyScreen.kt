@@ -58,12 +58,11 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacySettingsScreen(
     navController: NavController,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val activity = context as? FragmentActivity
@@ -81,7 +80,6 @@ fun PrivacySettingsScreen(
                     }
                 }
 
-
                 SettingsViewModel.UiEvent.RequestBiometricAuthForEnable -> {
                     if (activity == null) {
                         viewModel.onBiometricAuthFailed()
@@ -89,11 +87,12 @@ fun PrivacySettingsScreen(
                     }
 
                     val biometricManager = androidx.biometric.BiometricManager.from(context)
-                    val canAuthenticate = biometricManager.canAuthenticate(
-                        androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                    val canAuthenticate =
+                        biometricManager.canAuthenticate(
+                            androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                 androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    )
+                                androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                        )
 
                     if (canAuthenticate != androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS) {
                         scope.launch {
@@ -104,37 +103,36 @@ fun PrivacySettingsScreen(
                     }
 
                     val executor = ContextCompat.getMainExecutor(context)
-                    val prompt = BiometricPrompt(
-                        activity,
-                        executor,
-                        object : androidx.biometric.BiometricPrompt.AuthenticationCallback() {
-                            override fun onAuthenticationSucceeded(
-                                result: androidx.biometric.BiometricPrompt.AuthenticationResult
-                            ) {
-                                super.onAuthenticationSucceeded(result)
-                                viewModel.onBiometricAuthSuccess()
-                            }
+                    val prompt =
+                        BiometricPrompt(
+                            activity,
+                            executor,
+                            object : androidx.biometric.BiometricPrompt.AuthenticationCallback() {
+                                override fun onAuthenticationSucceeded(result: androidx.biometric.BiometricPrompt.AuthenticationResult) {
+                                    super.onAuthenticationSucceeded(result)
+                                    viewModel.onBiometricAuthSuccess()
+                                }
 
-                            override fun onAuthenticationError(
-                                errorCode: Int,
-                                errString: CharSequence
-                            ) {
-                                super.onAuthenticationError(errorCode, errString)
-                                viewModel.onBiometricAuthFailed()
-                            }
-
-                        }
-                    )
-
-                    val promptInfo = androidx.biometric.BiometricPrompt.PromptInfo.Builder()
-                        .setTitle("Enable biometric lock")
-                        .setSubtitle("Confirm your identity to enable app lock")
-                        .setAllowedAuthenticators(
-                            androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                    androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                    androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                                override fun onAuthenticationError(
+                                    errorCode: Int,
+                                    errString: CharSequence,
+                                ) {
+                                    super.onAuthenticationError(errorCode, errString)
+                                    viewModel.onBiometricAuthFailed()
+                                }
+                            },
                         )
-                        .build()
+
+                    val promptInfo =
+                        androidx.biometric.BiometricPrompt.PromptInfo
+                            .Builder()
+                            .setTitle("Enable biometric lock")
+                            .setSubtitle("Confirm your identity to enable app lock")
+                            .setAllowedAuthenticators(
+                                androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                    androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                    androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                            ).build()
 
                     prompt.authenticate(promptInfo)
                 }
@@ -144,9 +142,6 @@ fun PrivacySettingsScreen(
         }
     }
 
-
-
-
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -154,52 +149,59 @@ fun PrivacySettingsScreen(
                 title = {
                     Text(
                         text = "Privacy & Security",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = 0.15.sp
-                        )
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 0.15.sp,
+                            ),
                     )
                 },
                 navigationIcon = {
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background
-                ),
-                scrollBehavior = scrollBehavior
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
+                scrollBehavior = scrollBehavior,
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item {
                 SettingItem(
                     title = "Biometric Lock",
-                    subtitle = if (settings.biometricLock) "Fingerprint required when enabled"
-                    else "Require fingerprint to unlock app",
+                    subtitle =
+                        if (settings.biometricLock) {
+                            "Fingerprint required when enabled"
+                        } else {
+                            "Require fingerprint to unlock app"
+                        },
                     icon = Icons.Default.Fingerprint,
                     trailing = {
                         SettingsSwitch(
                             isChecked = settings.biometricLock,
                             onCheckedChange = { enabled ->
                                 viewModel.onBiometricLockToggleRequest(enabled)
-                            }
+                            },
                         )
                     },
                     isFirst = true,
-                    isLast = true
+                    isLast = true,
                 )
             }
             item { Spacer(modifier = Modifier.height(24.dp)) }

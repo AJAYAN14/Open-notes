@@ -50,11 +50,10 @@ import androidx.navigation.NavController
 @Composable
 fun AppearanceSettingsScreen(
     navController: NavController,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
 
     Scaffold(
         topBar = {
@@ -62,40 +61,43 @@ fun AppearanceSettingsScreen(
                 title = {
                     Text(
                         text = "Appearance",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.15.sp
-                        )
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.15.sp,
+                            ),
                     )
                 },
                 navigationIcon = {
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background
-                ),
-                scrollBehavior = scrollBehavior
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
+                scrollBehavior = scrollBehavior,
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item {
                 ThemePicker(
                     currentTheme = settings.themeMode,
-                    onThemeSelected = { viewModel.updateThemeMode(it) }
+                    onThemeSelected = { viewModel.updateThemeMode(it) },
                 )
             }
             item {
@@ -104,7 +106,7 @@ fun AppearanceSettingsScreen(
             item {
                 ColorSchemePicker(
                     currentColor = settings.colorScheme,
-                    onColorChange = { viewModel.updateColorScheme(it) }
+                    onColorChange = { viewModel.updateColorScheme(it) },
                 )
             }
             item {
@@ -118,11 +120,11 @@ fun AppearanceSettingsScreen(
                     trailing = {
                         SettingsSwitch(
                             isChecked = settings.blackTheme,
-                            onCheckedChange = { viewModel.updateBlackTheme(it) }
+                            onCheckedChange = { viewModel.updateBlackTheme(it) },
                         )
                     },
                     isFirst = false,
-                    isLast = true
+                    isLast = true,
                 )
             }
         }

@@ -61,27 +61,30 @@ import kotlinx.coroutines.launch
 @Composable
 fun BackupScreen(
     navController: NavController,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-        onResult = { uri: Uri? ->
-            uri?.let { viewModel.onImportClick(it) }
-        }
-    )
-    val exportFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json"),
-        onResult = { uri: Uri? ->
-            uri?.let { viewModel.onExportUriSelected(it) }
-        }
-    )
+    val filePickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocument(),
+            onResult = { uri: Uri? ->
+                uri?.let { viewModel.onImportClick(it) }
+            },
+        )
+    val exportFileLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.CreateDocument("application/json"),
+            onResult = { uri: Uri? ->
+                uri?.let { viewModel.onExportUriSelected(it) }
+            },
+        )
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    LaunchedEffect(key1 = true) { // fix deprecated key
+    LaunchedEffect(key1 = true) {
+        // fix deprecated key
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar ->
@@ -99,36 +102,39 @@ fun BackupScreen(
                 title = {
                     Text(
                         text = "Backup & Restore",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = 0.15.sp
-                        )
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 0.15.sp,
+                            ),
                     )
                 },
                 navigationIcon = {
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background
-                ),
-                scrollBehavior = scrollBehavior
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
+                scrollBehavior = scrollBehavior,
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item {
                 SettingItem(
@@ -137,7 +143,7 @@ fun BackupScreen(
                     icon = Icons.Default.CloudUpload,
                     onClick = { viewModel.onExportClick() },
                     isFirst = true,
-                    trailing = {}
+                    trailing = {},
                 )
             }
             item {
@@ -147,7 +153,7 @@ fun BackupScreen(
                     icon = Icons.Default.CloudDownload,
                     onClick = { filePickerLauncher.launch(arrayOf("application/json")) },
                     isLast = true,
-                    trailing = {}
+                    trailing = {},
                 )
             }
             item {

@@ -29,9 +29,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NotesScreen(
     navController: NavController,
-    viewModel: NotesViewModel = hiltViewModel()
+    viewModel: NotesViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
     val snackbarHostState = remember { SnackbarHostState() }
@@ -56,7 +56,7 @@ fun NotesScreen(
             title = {
                 Text(
                     text = "Delete note",
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 )
             },
             text = {
@@ -68,16 +68,17 @@ fun NotesScreen(
                         notePendingDeleteState.value = null
                         viewModel.onEvent(NotesEvent.DeleteNote(noteToDelete))
                         scope.launch {
-                            val result = snackbarHostState.showSnackbar(
-                                message = "Note deleted",
-                                actionLabel = "Undo",
-                                duration = SnackbarDuration.Short
-                            )
+                            val result =
+                                snackbarHostState.showSnackbar(
+                                    message = "Note deleted",
+                                    actionLabel = "Undo",
+                                    duration = SnackbarDuration.Short,
+                                )
                             if (result == SnackbarResult.ActionPerformed) {
                                 viewModel.onEvent(NotesEvent.RestoreNote)
                             }
                         }
-                    }
+                    },
                 ) {
                     Text("Delete")
                 }
@@ -86,7 +87,7 @@ fun NotesScreen(
                 TextButton(onClick = { notePendingDeleteState.value = null }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 
@@ -101,73 +102,77 @@ fun NotesScreen(
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "New note"
+                        contentDescription = "New note",
                     )
                 },
                 text = {
                     Text("New Note")
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         Surface(
             color = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(top = 12.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(top = 12.dp),
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                 ) {
                     OutlinedTextField(
                         value = state.searchQuery,
                         onValueChange = {
                             viewModel.onEvent(NotesEvent.SearchNote(it))
                         },
-                        modifier = Modifier
-                            .width(400.dp)
-                            .padding(bottom = 12.dp),
+                        modifier =
+                            Modifier
+                                .width(400.dp)
+                                .padding(bottom = 12.dp),
                         shape = RoundedCornerShape(48.dp),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Search Notes"
+                                contentDescription = "Search Notes",
                             )
                         },
                         trailingIcon = {
                             IconButton(
                                 onClick = {
                                     navController.navigate(Screen.SettingsScreen.route)
-                                }
+                                },
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings"
+                                    contentDescription = "Settings",
                                 )
                             }
                         },
                         placeholder = { Text("Search Notes") },
                         singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent,
-                            cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                            unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                            unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                        )
+                        colors =
+                            OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                cursorColor = MaterialTheme.colorScheme.primary,
+                                focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                                unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+                                unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            ),
                     )
                 }
 
@@ -178,11 +183,11 @@ fun NotesScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalItemSpacing = 8.dp
+                    verticalItemSpacing = 8.dp,
                 ) {
                     items(
                         items = state.notes,
-                        key = { note -> note.id ?: 0 }
+                        key = { note -> note.id ?: 0 },
                     ) { note ->
                         NoteItem(
                             note = note,
@@ -190,12 +195,12 @@ fun NotesScreen(
                             onNoteClick = {
                                 navController.navigate(
                                     Screen.AddEditNoteScreen.route +
-                                            "?noteId=${note.id}&noteColor=${note.color}"
+                                        "?noteId=${note.id}&noteColor=${note.color}",
                                 )
                             },
                             onDeleteClick = {
                                 notePendingDeleteState.value = note
-                            }
+                            },
                         )
                     }
                 }

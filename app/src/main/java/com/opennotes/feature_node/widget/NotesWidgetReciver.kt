@@ -16,14 +16,11 @@
  *
  */
 
-package com.opennotes.feature_node.domain.use_case
+package com.opennotes.feature_node.widget
 
-data class NoteUseCases(
-    val deleteNote: DeleteNote,
-    val addNote: AddNote,
-    val getNote: GetNote,
-    val getNotes: GetNotes,
-    val searchNotes: SearchNotesUseCase,
-    val importNotes: ImportUseCases,
-    val exportNotes: ExportUseCases,
-)
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
+
+class NotesWidgetReceiver : GlanceAppWidgetReceiver() {
+    override val glanceAppWidget: GlanceAppWidget = NotesWidget()
+}

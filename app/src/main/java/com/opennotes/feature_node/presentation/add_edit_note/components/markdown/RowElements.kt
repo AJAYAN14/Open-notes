@@ -22,19 +22,29 @@ sealed interface MarkdownElement {
     fun render(builder: StringBuilder)
 }
 
-data class Heading(val level: Int, val text: String) : MarkdownElement {
+data class Heading(
+    val level: Int,
+    val text: String,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("#".repeat(level)).append(" $text\n\n")
     }
 }
 
-data class CheckboxItem(val text: String, var checked: Boolean = false, var index: Int) : MarkdownElement {
+data class CheckboxItem(
+    val text: String,
+    var checked: Boolean = false,
+    var index: Int,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("[${if (checked) "X" else " "}] $text\n")
     }
 }
 
-data class Quote(val level: Int, val text: String) : MarkdownElement {
+data class Quote(
+    val level: Int,
+    val text: String,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("> ${text}\n")
     }
@@ -43,7 +53,7 @@ data class Quote(val level: Int, val text: String) : MarkdownElement {
 data class ListItem(
     val text: String,
     val isNumbered: Boolean = false,
-    val number: Int? = null
+    val number: Int? = null,
 ) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         if (isNumbered && number != null) {
@@ -58,7 +68,7 @@ data class CodeBlock(
     val code: String,
     val isEnded: Boolean = false,
     val firstLine: String,
-    val language: String? = null
+    val language: String? = null,
 ) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("```")
@@ -71,25 +81,34 @@ data class CodeBlock(
     }
 }
 
-data class NormalText(val text: String) : MarkdownElement {
+data class NormalText(
+    val text: String,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("$text\n\n")
     }
 }
 
-data class ImageInsertion(val photoUri: String) : MarkdownElement {
+data class ImageInsertion(
+    val photoUri: String,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("!($photoUri)\n\n")
     }
 }
 
-data class Link(val fullText: String, val urlRanges: List<Pair<String, IntRange>>) : MarkdownElement {
+data class Link(
+    val fullText: String,
+    val urlRanges: List<Pair<String, IntRange>>,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("$fullText\n\n")
     }
 }
 
-data class HorizontalRule(val fullText: String) : MarkdownElement {
+data class HorizontalRule(
+    val fullText: String,
+) : MarkdownElement {
     override fun render(builder: StringBuilder) {
         builder.append("---\n\n")
     }

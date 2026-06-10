@@ -23,9 +23,7 @@ import com.opennotes.feature_node.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetNotes(
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
 ) {
-    operator fun invoke(): Flow<List<Note>> {
-        return repository.getAllNotes()
-    }
+    operator fun invoke(): Flow<List<Note>> = repository.getAllNotes()
 }

@@ -28,21 +28,20 @@ import kotlinx.coroutines.flow.first
 class ExportUseCases(
     private val repository: NoteRepository,
     private val fileHandler: FileHandler,
-    private val jsonHandler: JsonHandler
-    ) {
+    private val jsonHandler: JsonHandler,
+) {
     suspend operator fun invoke(targetUri: Uri): ExportResult {
         return try {
-
-            val allNotes = repository.getAllNotes()
-                .first()
+            val allNotes =
+                repository
+                    .getAllNotes()
+                    .first()
 
             if (allNotes.isEmpty()) {
                 return ExportResult.Error("No notes to export")
             }
 
-
             val notesJson = jsonHandler.toJson(allNotes)
-
 
             val isSaved = fileHandler.writeTextToUri(targetUri, notesJson)
 
@@ -56,5 +55,4 @@ class ExportUseCases(
             ExportResult.Error("Failed to export notes: ${e.localizedMessage}")
         }
     }
-
 }
