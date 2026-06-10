@@ -18,17 +18,22 @@
 
 package com.opennotes.feature_node.widget
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
+import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
@@ -38,13 +43,13 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.opennotes.feature_node.domain.model.Note
-import com.opennotes.feature_node.domain.use_case.NoteUseCases
-import com.opennotes.feature_node.presentation.MainActivity
+import com.opennotes.feature_node.presentation.add_edit_note.components.markdown.stripMarkdown
 
 @Composable
 fun ZeroState(widgetId: Int) {
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = GlanceModifier
             .fillMaxSize()
             .background(GlanceTheme.colors.surfaceVariant)
@@ -61,38 +66,54 @@ fun ZeroState(widgetId: Int) {
         )
     }
 }
-
 @Composable
 fun SelectedNote(
     note: Note,
-    noteUseCases: NoteUseCases,
     widgetId: Int
 ) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(GlanceTheme.colors.surface)
+            .background(ColorProvider(day = Color(note.color), night = Color(note.color)))
             .cornerRadius(16.dp)
             .padding(16.dp)
-            .clickable(actionStartActivity<MainActivity>())
+            .clickable(
+                actionStartActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        "opennotes://note/${note.id}?noteColor=${note.color}".toUri()
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                )
+
+            )
     ) {
-        Text(
-            text = note.title,
-            style = TextStyle(
-                color = GlanceTheme.colors.onSurface,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
-            )
-        )
+        val contentColor = if (Color(note.color).luminance() < 0.5f) {
+            ColorProvider(day = Color.White, night = Color.White)
+        } else {
+            ColorProvider(day = Color.Black, night = Color.Black)
+        }
 
-        Spacer(modifier = GlanceModifier.height(8.dp))
-
-        Text(
-            text = note.content,
-            style = TextStyle(
-                color = GlanceTheme.colors.onSurfaceVariant,
-                fontSize = 14.sp
+        if (note.title.isNotBlank()) {
+            Text(
+                text = note.title,
+                style = TextStyle(
+                    color = contentColor,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                ),
+                maxLines = 2
             )
+            Spacer(modifier = GlanceModifier.height(8.dp))
+        }
+        Text(
+            text = note.content.stripMarkdown().ifBlank { "No content" },
+            style = TextStyle(
+                color = contentColor,
+                fontSize = 13.sp
+            ),
+            maxLines = 6
         )
     }
 }

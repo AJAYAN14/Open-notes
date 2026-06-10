@@ -122,6 +122,36 @@ class ImageInsertionProcessor : MarkdownLineProcessor {
     }
 }
 
+
+fun String.stripMarkdown(): String {
+    val lines = this.lines()
+    val result = StringBuilder()
+    var inCodeBlock = false
+
+    for (line in lines) {
+        when {
+            line.startsWith("```") -> inCodeBlock = !inCodeBlock
+            inCodeBlock -> result.appendLine(line) // keep code content as plain text
+            line.startsWith("#") -> result.appendLine(line.dropWhile { it == '#' }.trim())
+            line.trim().startsWith(">") -> result.appendLine(line.dropWhile { it == '>' }.trim())
+            line.trim().startsWith("- ") || line.trim().startsWith("+ ") || line.trim().startsWith("* ") -> result.appendLine("• " + line.trim().drop(2))
+            line.matches(Regex("^\\d+\\. .*")) -> result.appendLine(line.substringAfter(". "))
+            line.trim() == "---" -> {} // skip horizontal rules
+            line.trim().startsWith("!(") -> {} // skip images
+            else -> result.appendLine(
+                line
+                    .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
+                    .replace(Regex("\\*(.+?)\\*"), "$1")
+                    .replace(Regex("~~(.+?)~~"), "$1")
+                    .replace(Regex("`(.+?)`"), "$1")
+                    .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1")
+            )
+        }
+    }
+
+    return result.toString().trim()
+}
+
 class LinkProcessor : MarkdownLineProcessor {
     override fun canProcessLine(line: String): Boolean {
         // Simple, fast check for URLs without regex

@@ -25,24 +25,39 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NoteAlt
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -88,8 +103,19 @@ class NotesWidgetConfigActivity : ComponentActivity() {
             OpenNotesTheme(settings = settings) {
                 Scaffold(
                     topBar = {
-                        TopAppBar(
-                            title = { Text("Select a note") }
+                        LargeTopAppBar(
+                            title = {
+                                Text(
+                                    "Select a note",
+                                    style = MaterialTheme.typography.headlineLarge.copy(
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                            },
+                            colors = TopAppBarDefaults.largeTopAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                scrolledContainerColor = MaterialTheme.colorScheme.background
+                            )
                         )
                     }
                 ) { paddingValues ->
@@ -107,7 +133,22 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("No notes found")
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.NoteAlt,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(48.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "No notes found",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
                         }
                         else -> {
@@ -115,45 +156,71 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(paddingValues)
+                                    .padding(horizontal = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp)
                             ) {
                                 items(notes!!) { note ->
-                                    Text(
-                                        text = note.title.ifBlank { "Untitled" },
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                scope.launch {
-                                                    val glanceId = GlanceAppWidgetManager(
-                                                        applicationContext
-                                                    )
-                                                        .getGlanceIds(NotesWidget::class.java)
-                                                        .firstOrNull {
-                                                            GlanceAppWidgetManager(
-                                                                applicationContext
-                                                            )
-                                                                .getAppWidgetId(it) == appWidgetId
-                                                        }
-                                                    glanceId?.let {
-                                                        updateAppWidgetState(applicationContext,
-                                                            PreferencesGlanceStateDefinition, it) { prefs ->
-                                                            prefs.toMutablePreferences().apply {
-                                                                this[intPreferencesKey("note_$appWidgetId")] = note.id!!
-                                                            }
-                                                        }
-                                                        NotesWidget().update(applicationContext, it)
+                                    Card(
+                                        onClick = {
+                                            scope.launch {
+                                                val glanceId = GlanceAppWidgetManager(applicationContext)
+                                                    .getGlanceIds(NotesWidget::class.java)
+                                                    .firstOrNull {
+                                                        GlanceAppWidgetManager(applicationContext)
+                                                            .getAppWidgetId(it) == appWidgetId
                                                     }
-                                                    val resultValue = Intent().putExtra(
-                                                        AppWidgetManager.EXTRA_APPWIDGET_ID,
-                                                        appWidgetId
-                                                    )
-                                                    setResult(RESULT_OK, resultValue)
-                                                    finish()
+                                                glanceId?.let {
+                                                    updateAppWidgetState(
+                                                        applicationContext,
+                                                        PreferencesGlanceStateDefinition,
+                                                        it
+                                                    ) { prefs ->
+                                                        prefs.toMutablePreferences().apply {
+                                                            this[intPreferencesKey("note_$appWidgetId")] = note.id!!
+                                                        }
+                                                    }
+                                                    NotesWidget().update(applicationContext, it)
                                                 }
+                                                val resultValue = Intent().putExtra(
+                                                    AppWidgetManager.EXTRA_APPWIDGET_ID,
+                                                    appWidgetId
+                                                )
+                                                setResult(RESULT_OK, resultValue)
+                                                finish()
                                             }
-                                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                                    )
-                                    HorizontalDivider()
+                                        },
+                                        shape = RoundedCornerShape(16.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color(note.color)
+                                        )
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                        ) {
+                                            if (note.title.isNotBlank()) {
+                                                Text(
+                                                    text = note.title,
+                                                    style = MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.SemiBold
+                                                    ),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                            }
+                                            if (note.content.isNotBlank()) {
+                                                Text(
+                                                    text = note.content,
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                    maxLines = 2,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

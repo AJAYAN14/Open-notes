@@ -43,6 +43,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.opennotes.feature_node.presentation.add_edit_note.AddEditNoteScreen
 import com.opennotes.feature_node.presentation.notes.NotesScreen
 import com.opennotes.feature_node.presentation.settings.AboutScreen
@@ -121,6 +122,9 @@ class MainActivity : FragmentActivity() {
                                         type = NavType.IntType
                                         defaultValue = -1
                                     }
+                                ),
+                                deepLinks = listOf(
+                                    navDeepLink { uriPattern = "opennotes://note/{noteId}?noteColor={noteColor}" }
                                 )
                             ) { backStackEntry ->
                                 val color = backStackEntry.arguments?.getInt("noteColor")
@@ -168,6 +172,7 @@ class MainActivity : FragmentActivity() {
                             composable(route = Screen.AboutScreen.route) {
                                 AboutScreen(navController = navController)
                             }
+
                         }
                     } else {
                         Surface(color = MaterialTheme.colorScheme.background) {}

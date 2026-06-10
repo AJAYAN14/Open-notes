@@ -70,7 +70,7 @@ class NotesWidget : GlanceAppWidget() {
 
                 when {
                     selectedNote == null -> ZeroState(widgetId = widgetId)
-                    else -> SelectedNote(selectedNote, noteUseCase, widgetId = widgetId)
+                    else -> SelectedNote(selectedNote, widgetId = widgetId)
                 }
             }
         }
