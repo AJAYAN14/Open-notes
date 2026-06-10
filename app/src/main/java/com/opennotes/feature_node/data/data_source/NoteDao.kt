@@ -29,12 +29,12 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteDao {
     @Query(value = "SELECT * FROM note")
-    fun getNotes():Flow<List<Note>>
+    fun getNotes(): Flow<List<Note>>
 
     @Query(value = "SELECT * FROM note WHERE id=:id")
-    suspend fun getNoteById(id:Int): Note?
+    suspend fun getNoteById(id: Int): Note?
 
-    @Insert(onConflict=OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(note: Note)
 
     @Delete
@@ -43,9 +43,6 @@ interface NoteDao {
     @Query("SELECT * FROM note WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%'")
     fun searchNotes(query: String): Flow<List<Note>>
 
-
-    @Insert(onConflict=OnConflictStrategy.REPLACE)
-    suspend fun insertAll(notes:List<Note>)
-
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(notes: List<Note>)
 }

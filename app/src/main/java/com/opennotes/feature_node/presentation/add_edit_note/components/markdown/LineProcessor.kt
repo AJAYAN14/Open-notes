@@ -20,15 +20,20 @@ package com.opennotes.feature_node.presentation.add_edit_note.components.markdow
 
 interface MarkdownLineProcessor {
     fun canProcessLine(line: String): Boolean
-    fun processLine(line: String, builder: MarkdownBuilder)
+
+    fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    )
 }
 
 class CodeBlockProcessor : MarkdownLineProcessor {
-    override fun canProcessLine(line: String): Boolean {
-        return line.startsWith("```")
-    }
+    override fun canProcessLine(line: String): Boolean = line.startsWith("```")
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         val language = line.removePrefix("```").trim().takeIf { it.isNotEmpty() }
         val codeBlock = StringBuilder()
         var index = builder.lineIndex + 1
@@ -52,18 +57,23 @@ class CodeBlockProcessor : MarkdownLineProcessor {
 class CheckboxProcessor : MarkdownLineProcessor {
     override fun canProcessLine(line: String): Boolean = line.matches(Regex("^\\[[ xX]]( .*)?"))
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         val checked = line.contains(Regex("^\\[[Xx]]"))
         val text = line.replace(Regex("^\\[[ xX]] ?"), "").trim()
         builder.add(CheckboxItem(text, checked, builder.lineIndex))
     }
 }
 
-
 class HeadingProcessor : MarkdownLineProcessor {
     override fun canProcessLine(line: String): Boolean = line.startsWith("#")
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         val level = line.takeWhile { it == '#' }.length
         val text = line.drop(level).trim()
         builder.add(Heading(level, text))
@@ -73,7 +83,10 @@ class HeadingProcessor : MarkdownLineProcessor {
 class QuoteProcessor : MarkdownLineProcessor {
     override fun canProcessLine(line: String): Boolean = line.trim().startsWith(">")
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         val level = line.takeWhile { it == '>' }.length
         val text = line.drop(level).trim()
         builder.add(Quote(level, text))
@@ -84,44 +97,51 @@ class ListItemProcessor : MarkdownLineProcessor {
     override fun canProcessLine(line: String): Boolean {
         val trimmed = line.trim()
         return trimmed.startsWith("- ") ||
-                trimmed.startsWith("+ ") ||
-                trimmed.startsWith("* ") ||
-                trimmed.matches(Regex("^\\d+\\. .*"))
+            trimmed.startsWith("+ ") ||
+            trimmed.startsWith("* ") ||
+            trimmed.matches(Regex("^\\d+\\. .*"))
     }
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         val trimmed = line.trim()
-        val text = when {
-            trimmed.startsWith("- ") -> trimmed.removePrefix("- ").trim()
-            trimmed.startsWith("+ ") -> trimmed.removePrefix("+ ").trim()
-            trimmed.startsWith("* ") -> trimmed.removePrefix("* ").trim()
-            trimmed.matches(Regex("^\\d+\\. .*")) -> {
-                trimmed.substringAfter(". ").trim()
+        val text =
+            when {
+                trimmed.startsWith("- ") -> trimmed.removePrefix("- ").trim()
+                trimmed.startsWith("+ ") -> trimmed.removePrefix("+ ").trim()
+                trimmed.startsWith("* ") -> trimmed.removePrefix("* ").trim()
+                trimmed.matches(Regex("^\\d+\\. .*")) -> {
+                    trimmed.substringAfter(". ").trim()
+                }
+
+                else -> trimmed
             }
 
-            else -> trimmed
-        }
-
         val isNumbered = trimmed.matches(Regex("^\\d+\\. .*"))
-        val number = if (isNumbered) {
-            trimmed.substringBefore(".").toIntOrNull() ?: 1
-        } else null
+        val number =
+            if (isNumbered) {
+                trimmed.substringBefore(".").toIntOrNull() ?: 1
+            } else {
+                null
+            }
 
         builder.add(ListItem(text, isNumbered, number))
     }
 }
 
 class ImageInsertionProcessor : MarkdownLineProcessor {
-    override fun canProcessLine(line: String): Boolean {
-        return line.trim().startsWith("!(") && line.trim().endsWith(")")
-    }
+    override fun canProcessLine(line: String): Boolean = line.trim().startsWith("!(") && line.trim().endsWith(")")
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         val photoUri = line.substringAfter("!(", "").substringBefore(")")
         builder.add(ImageInsertion(photoUri))
     }
 }
-
 
 fun String.stripMarkdown(): String {
     val lines = this.lines()
@@ -134,18 +154,22 @@ fun String.stripMarkdown(): String {
             inCodeBlock -> result.appendLine(line) // keep code content as plain text
             line.startsWith("#") -> result.appendLine(line.dropWhile { it == '#' }.trim())
             line.trim().startsWith(">") -> result.appendLine(line.dropWhile { it == '>' }.trim())
-            line.trim().startsWith("- ") || line.trim().startsWith("+ ") || line.trim().startsWith("* ") -> result.appendLine("• " + line.trim().drop(2))
+            line.trim().startsWith("- ") || line.trim().startsWith("+ ") || line.trim().startsWith("* ") ->
+                result.appendLine(
+                    "• " + line.trim().drop(2),
+                )
             line.matches(Regex("^\\d+\\. .*")) -> result.appendLine(line.substringAfter(". "))
             line.trim() == "---" -> {} // skip horizontal rules
             line.trim().startsWith("!(") -> {} // skip images
-            else -> result.appendLine(
-                line
-                    .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
-                    .replace(Regex("\\*(.+?)\\*"), "$1")
-                    .replace(Regex("~~(.+?)~~"), "$1")
-                    .replace(Regex("`(.+?)`"), "$1")
-                    .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1")
-            )
+            else ->
+                result.appendLine(
+                    line
+                        .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
+                        .replace(Regex("\\*(.+?)\\*"), "$1")
+                        .replace(Regex("~~(.+?)~~"), "$1")
+                        .replace(Regex("`(.+?)`"), "$1")
+                        .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1"),
+                )
         }
     }
 
@@ -158,7 +182,10 @@ class LinkProcessor : MarkdownLineProcessor {
         return line.contains("http://") || line.contains("https://")
     }
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         try {
             // Simple URL detection without regex to prevent freezing
             val urlRanges = mutableListOf<Pair<String, IntRange>>()
@@ -170,12 +197,13 @@ class LinkProcessor : MarkdownLineProcessor {
                 val httpIndex = line.indexOf("http://", searchIndex)
                 val httpsIndex = line.indexOf("https://", searchIndex)
 
-                val startIndex = when {
-                    httpIndex != -1 && httpsIndex != -1 -> minOf(httpIndex, httpsIndex)
-                    httpIndex != -1 -> httpIndex
-                    httpsIndex != -1 -> httpsIndex
-                    else -> -1
-                }
+                val startIndex =
+                    when {
+                        httpIndex != -1 && httpsIndex != -1 -> minOf(httpIndex, httpsIndex)
+                        httpIndex != -1 -> httpIndex
+                        httpsIndex != -1 -> httpsIndex
+                        else -> -1
+                    }
 
                 if (startIndex == -1) break
 
@@ -214,11 +242,12 @@ class LinkProcessor : MarkdownLineProcessor {
 }
 
 class HorizontalRuleProcessor : MarkdownLineProcessor {
-    override fun canProcessLine(line: String): Boolean {
-        return line.trim() == "---"
-    }
+    override fun canProcessLine(line: String): Boolean = line.trim() == "---"
 
-    override fun processLine(line: String, builder: MarkdownBuilder) {
+    override fun processLine(
+        line: String,
+        builder: MarkdownBuilder,
+    ) {
         builder.add(HorizontalRule(line))
     }
 }

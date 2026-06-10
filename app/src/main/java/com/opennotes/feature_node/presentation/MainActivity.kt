@@ -60,7 +60,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
-
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +75,7 @@ class MainActivity : FragmentActivity() {
             var showContent by remember { mutableStateOf(false) }
 
             LaunchedEffect(isAppUnlocked, currentSettings.biometricLock, isLoaded) {
-                if (!isLoaded) return@LaunchedEffect  // wait for real settings to load
+                if (!isLoaded) return@LaunchedEffect // wait for real settings to load
                 when {
                     !currentSettings.biometricLock || isAppUnlocked -> showContent = true
                     else -> {
@@ -89,7 +88,7 @@ class MainActivity : FragmentActivity() {
                                 handleBiometricError(errorCode) {
                                     showContent = true
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -105,74 +104,80 @@ class MainActivity : FragmentActivity() {
                             enterTransition = { EnterTransition.None },
                             exitTransition = { ExitTransition.None },
                             popEnterTransition = { EnterTransition.None },
-                            popExitTransition = { ExitTransition.None }
+                            popExitTransition = { ExitTransition.None },
                         ) {
                             composable(route = Screen.NotesScreen.route) {
                                 NotesScreen(navController = navController)
                             }
                             composable(
-                                route = Screen.AddEditNoteScreen.route +
+                                route =
+                                    Screen.AddEditNoteScreen.route +
                                         "?noteId={noteId}&noteColor={noteColor}",
-                                arguments = listOf(
-                                    navArgument("noteId") {
-                                        type = NavType.IntType
-                                        defaultValue = -1
-                                    },
-                                    navArgument("noteColor") {
-                                        type = NavType.IntType
-                                        defaultValue = -1
-                                    }
-                                ),
-                                deepLinks = listOf(
-                                    navDeepLink { uriPattern = "opennotes://note/{noteId}?noteColor={noteColor}" }
-                                )
+                                arguments =
+                                    listOf(
+                                        navArgument("noteId") {
+                                            type = NavType.IntType
+                                            defaultValue = -1
+                                        },
+                                        navArgument("noteColor") {
+                                            type = NavType.IntType
+                                            defaultValue = -1
+                                        },
+                                    ),
+                                deepLinks =
+                                    listOf(
+                                        navDeepLink { uriPattern = "opennotes://note/{noteId}?noteColor={noteColor}" },
+                                    ),
                             ) { backStackEntry ->
-                                val color = backStackEntry.arguments?.getInt("noteColor")
-                                    ?.takeIf { it != -1 }
-                                val isDarkTheme = when (currentSettings.themeMode) {
-                                    ThemeMode.SYSTEM -> isSystemInDarkTheme()
-                                    ThemeMode.LIGHT -> false
-                                    ThemeMode.DARK -> true
-                                }
-                                val resolvedColor = color ?: if (isDarkTheme) {
-                                    NoteColorPalette.Dark.first().toArgb()
-                                } else {
-                                    NoteColorPalette.Light.first().toArgb()
-                                }
+                                val color =
+                                    backStackEntry.arguments
+                                        ?.getInt("noteColor")
+                                        ?.takeIf { it != -1 }
+                                val isDarkTheme =
+                                    when (currentSettings.themeMode) {
+                                        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                                        ThemeMode.LIGHT -> false
+                                        ThemeMode.DARK -> true
+                                    }
+                                val resolvedColor =
+                                    color ?: if (isDarkTheme) {
+                                        NoteColorPalette.Dark.first().toArgb()
+                                    } else {
+                                        NoteColorPalette.Light.first().toArgb()
+                                    }
                                 AddEditNoteScreen(
                                     navController = navController,
                                     noteColor = resolvedColor,
-                                    isDarkTheme = isDarkTheme
+                                    isDarkTheme = isDarkTheme,
                                 )
                             }
                             composable(route = Screen.SettingsScreen.route) {
                                 SettingsScreen(
                                     navController = navController,
-                                    viewModel = settingsViewModel
+                                    viewModel = settingsViewModel,
                                 )
                             }
                             composable(route = Screen.BackupScreen.route) {
                                 BackupScreen(
                                     navController = navController,
-                                    viewModel = settingsViewModel
+                                    viewModel = settingsViewModel,
                                 )
                             }
                             composable(route = Screen.AppearanceSettingsScreen.route) {
                                 AppearanceSettingsScreen(
                                     navController = navController,
-                                    viewModel = settingsViewModel
+                                    viewModel = settingsViewModel,
                                 )
                             }
                             composable(route = Screen.PrivacySettingsScreen.route) {
                                 PrivacySettingsScreen(
                                     navController = navController,
-                                    viewModel = settingsViewModel
+                                    viewModel = settingsViewModel,
                                 )
                             }
                             composable(route = Screen.AboutScreen.route) {
                                 AboutScreen(navController = navController)
                             }
-
                         }
                     } else {
                         Surface(color = MaterialTheme.colorScheme.background) {}
@@ -184,17 +189,18 @@ class MainActivity : FragmentActivity() {
 
     private fun showBiometricPrompt(
         onSuccess: () -> Unit,
-        onError: (Int, CharSequence) -> Unit
+        onError: (Int, CharSequence) -> Unit,
     ) {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Unlock OpenNotes")
-            .setSubtitle("Confirm your identity to access your notes")
-            .setAllowedAuthenticators(
-                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+        val promptInfo =
+            BiometricPrompt.PromptInfo
+                .Builder()
+                .setTitle("Unlock OpenNotes")
+                .setSubtitle("Confirm your identity to access your notes")
+                .setAllowedAuthenticators(
+                    BiometricManager.Authenticators.BIOMETRIC_STRONG or
                         BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
-            )
-            .build()
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                ).build()
 
         BiometricPrompt(
             this,
@@ -203,26 +209,33 @@ class MainActivity : FragmentActivity() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     onSuccess()
                 }
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+
+                override fun onAuthenticationError(
+                    errorCode: Int,
+                    errString: CharSequence,
+                ) {
                     onError(errorCode, errString)
                 }
+
                 override fun onAuthenticationFailed() = Unit
-            }
+            },
         ).authenticate(promptInfo)
     }
 
     private fun handleBiometricError(
         errorCode: Int,
-        onComplete: () -> Unit
+        onComplete: () -> Unit,
     ) {
         when (errorCode) {
             BiometricPrompt.ERROR_USER_CANCELED,
             BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-            BiometricPrompt.ERROR_CANCELED -> finish()
+            BiometricPrompt.ERROR_CANCELED,
+            -> finish()
 
             BiometricPrompt.ERROR_NO_BIOMETRICS,
             BiometricPrompt.ERROR_HW_NOT_PRESENT,
-            BiometricPrompt.ERROR_HW_UNAVAILABLE -> {
+            BiometricPrompt.ERROR_HW_UNAVAILABLE,
+            -> {
                 settingsViewModel.setAppUnlocked(true)
                 settingsViewModel.onBiometricLockToggleRequest(false)
                 onComplete()

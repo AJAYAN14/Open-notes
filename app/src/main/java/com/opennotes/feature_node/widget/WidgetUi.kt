@@ -50,70 +50,76 @@ fun ZeroState(widgetId: Int) {
     Column(
         verticalAlignment = Alignment.CenterVertically,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(GlanceTheme.colors.surfaceVariant)
-            .cornerRadius(16.dp)
-            .clickable(actionStartActivity<NotesWidgetConfigActivity>())
+        modifier =
+            GlanceModifier
+                .fillMaxSize()
+                .background(GlanceTheme.colors.surfaceVariant)
+                .cornerRadius(16.dp)
+                .clickable(actionStartActivity<NotesWidgetConfigActivity>()),
     ) {
         Text(
             text = "Tap to select a note",
-            style = TextStyle(
-                color = GlanceTheme.colors.onSurfaceVariant,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp
-            )
+            style =
+                TextStyle(
+                    color = GlanceTheme.colors.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                ),
         )
     }
 }
+
 @Composable
 fun SelectedNote(
     note: Note,
-    widgetId: Int
+    widgetId: Int,
 ) {
     Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(ColorProvider(day = Color(note.color), night = Color(note.color)))
-            .cornerRadius(16.dp)
-            .padding(16.dp)
-            .clickable(
-                actionStartActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        "opennotes://note/${note.id}?noteColor=${note.color}".toUri()
-                    ).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
-                )
-
-            )
+        modifier =
+            GlanceModifier
+                .fillMaxSize()
+                .background(ColorProvider(day = Color(note.color), night = Color(note.color)))
+                .cornerRadius(16.dp)
+                .padding(16.dp)
+                .clickable(
+                    actionStartActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            "opennotes://note/${note.id}?noteColor=${note.color}".toUri(),
+                        ).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        },
+                    ),
+                ),
     ) {
-        val contentColor = if (Color(note.color).luminance() < 0.5f) {
-            ColorProvider(day = Color.White, night = Color.White)
-        } else {
-            ColorProvider(day = Color.Black, night = Color.Black)
-        }
+        val contentColor =
+            if (Color(note.color).luminance() < 0.5f) {
+                ColorProvider(day = Color.White, night = Color.White)
+            } else {
+                ColorProvider(day = Color.Black, night = Color.Black)
+            }
 
         if (note.title.isNotBlank()) {
             Text(
                 text = note.title,
-                style = TextStyle(
-                    color = contentColor,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                ),
-                maxLines = 2
+                style =
+                    TextStyle(
+                        color = contentColor,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                    ),
+                maxLines = 2,
             )
             Spacer(modifier = GlanceModifier.height(8.dp))
         }
         Text(
             text = note.content.stripMarkdown().ifBlank { "No content" },
-            style = TextStyle(
-                color = contentColor,
-                fontSize = 13.sp
-            ),
-            maxLines = 6
+            style =
+                TextStyle(
+                    color = contentColor,
+                    fontSize = 13.sp,
+                ),
+            maxLines = 6,
         )
     }
 }

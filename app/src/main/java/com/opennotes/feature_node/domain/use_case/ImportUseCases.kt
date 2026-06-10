@@ -29,49 +29,53 @@ import com.opennotes.feature_node.domain.util.ImportResult
 class ImportUseCases(
     private val repository: NoteRepository,
     private val fileHandler: FileHandler,
-    private val jsonHandler: JsonHandler
+    private val jsonHandler: JsonHandler,
 ) {
     suspend operator fun invoke(fileUri: Uri): ImportResult {
         return try {
             val notesJson = fileHandler.readTextFromUri(fileUri)
-            
+
             if (notesJson.isBlank()) {
                 return ImportResult.Error("File is empty")
             }
 
             // Deserialize with validation - catch invalid JSON first
             val noteListType = object : TypeToken<List<Map<String, Any?>>>() {}.type
-            val rawNotes: List<Map<String, Any?>> = try {
-                jsonHandler.fromJson(notesJson, noteListType)
-            } catch (e: Exception) {
-                return ImportResult.Error("Invalid JSON format: ${e.message}")
-            }
+            val rawNotes: List<Map<String, Any?>> =
+                try {
+                    jsonHandler.fromJson(notesJson, noteListType)
+                } catch (e: Exception) {
+                    return ImportResult.Error("Invalid JSON format: ${e.message}")
+                }
 
             if (rawNotes.isEmpty()) {
                 return ImportResult.Error("No notes found in file")
             }
 
             // Validate and construct trusted Note objects
-            val validNotes = rawNotes.mapNotNull { rawNote ->
-                val title = (rawNote["title"] as? String)?.trim()
-                val content = (rawNote["content"] as? String)?.trim()
-                val timestamp = (rawNote["timestamp"] as? Number)?.toLong()
-                val color = (rawNote["color"] as? Number)?.toInt()
+            val validNotes =
+                rawNotes.mapNotNull { rawNote ->
+                    val title = (rawNote["title"] as? String)?.trim()
+                    val content = (rawNote["content"] as? String)?.trim()
+                    val timestamp = (rawNote["timestamp"] as? Number)?.toLong()
+                    val color = (rawNote["color"] as? Number)?.toInt()
 
-                // Only create Note if all required fields are present and valid
-                if ((title?.isNotBlank() == true || content?.isNotBlank() == true) &&
-                    timestamp != null && color != null) {
-                    Note(
-                        title = title ?: "",
-                        content = content ?: "",
-                        timestamp = timestamp,
-                        color = color,
-                        id = null
-                    )
-                } else {
-                    null  // Skip invalid notes
+                    // Only create Note if all required fields are present and valid
+                    if ((title?.isNotBlank() == true || content?.isNotBlank() == true) &&
+                        timestamp != null &&
+                        color != null
+                    ) {
+                        Note(
+                            title = title ?: "",
+                            content = content ?: "",
+                            timestamp = timestamp,
+                            color = color,
+                            id = null,
+                        )
+                    } else {
+                        null // Skip invalid notes
+                    }
                 }
-            }
 
             if (validNotes.isEmpty()) {
                 return ImportResult.Error("No valid notes found ")

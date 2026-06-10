@@ -22,9 +22,7 @@ import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.domain.repository.NoteRepository
 
 class GetNote(
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
 ) {
-    suspend operator fun invoke(id: Int): Note? {
-        return repository.getNoteById(id)
-    }
+    suspend operator fun invoke(id: Int): Note? = repository.getNoteById(id)
 }

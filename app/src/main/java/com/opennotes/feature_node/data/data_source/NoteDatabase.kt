@@ -22,15 +22,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.opennotes.feature_node.domain.model.Note
 
-
 @Database(
-    entities=[Note::class],
-    version=2
+    entities = [Note::class],
+    version = 2,
 )
- abstract class NoteDatabase :RoomDatabase(){
-     abstract val noteDao: NoteDao
+abstract class NoteDatabase : RoomDatabase() {
+    abstract val noteDao: NoteDao
 
-     companion object{
-         const val DATABASE_NAME="notes_db"
-     }
+    companion object {
+        const val DATABASE_NAME = "notes_db"
+    }
 }

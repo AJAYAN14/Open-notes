@@ -18,7 +18,6 @@
 
 package com.opennotes.feature_node.presentation.notes.Components
 
-
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,46 +42,54 @@ fun NoteItem(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 12.dp,
     onDeleteClick: () -> Unit,
-    onNoteClick: () -> Unit = {}
+    onNoteClick: () -> Unit = {},
 ) {
     val backgroundColor = Color(note.color)
 
-    val textColor = remember(backgroundColor) {
-        if (
-            backgroundColor.contrastAgainst(Color.White) >=
-            backgroundColor.contrastAgainst(Color.Black)
-        ) Color.White else Color.Black
-    }
+    val textColor =
+        remember(backgroundColor) {
+            if (
+                backgroundColor.contrastAgainst(Color.White) >=
+                backgroundColor.contrastAgainst(Color.Black)
+            ) {
+                Color.White
+            } else {
+                Color.Black
+            }
+        }
 
-
-
-    val borderColor = remember(backgroundColor) {
-        if (textColor == Color.White)
-            Color.White.copy(alpha = 0.2f)
-        else
-            Color.Black.copy(alpha = 0.15f)
-    }
+    val borderColor =
+        remember(backgroundColor) {
+            if (textColor == Color.White) {
+                Color.White.copy(alpha = 0.2f)
+            } else {
+                Color.Black.copy(alpha = 0.15f)
+            }
+        }
 
     Card(
         onClick = onNoteClick,
-        modifier = modifier.border(
-            width = 1.dp,
-            color = borderColor,
-            shape = RoundedCornerShape(cornerRadius)
-        ),
+        modifier =
+            modifier.border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(cornerRadius),
+            ),
         shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
-            hoveredElevation = 4.dp
-        )
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 2.dp,
+                hoveredElevation = 4.dp,
+            ),
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-                    .padding(bottom = 36.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .padding(bottom = 36.dp),
             ) {
                 if (note.title.isNotBlank()) {
                     MarkdownText(
@@ -94,7 +100,7 @@ fun NoteItem(
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 16.sp,
                         spacing = 1.dp,
-                        textColor = textColor
+                        textColor = textColor,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -104,26 +110,28 @@ fun NoteItem(
                         markdown = note.content,
                         isPreview = true,
                         isEnabled = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 180.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 180.dp),
                         fontSize = 14.sp,
                         spacing = 1.dp,
-                        textColor = textColor
+                        textColor = textColor,
                     )
                 }
             }
             IconButton(
                 onClick = onDeleteClick,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(36.dp)
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(36.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete note",
                     tint = textColor,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }

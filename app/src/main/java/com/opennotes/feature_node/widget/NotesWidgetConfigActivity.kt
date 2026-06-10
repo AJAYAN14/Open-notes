@@ -18,13 +18,11 @@
 
 package com.opennotes.feature_node.widget
 
-
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +42,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +54,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -80,10 +78,11 @@ class NotesWidgetConfigActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appWidgetId = intent?.extras?.getInt(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID
-        ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+        val appWidgetId =
+            intent?.extras?.getInt(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID,
+            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
@@ -98,8 +97,6 @@ class NotesWidgetConfigActivity : ComponentActivity() {
             val notes by noteUseCases.getNotes().collectAsState(initial = null)
             val scope = rememberCoroutineScope()
 
-
-
             OpenNotesTheme(settings = settings) {
                 Scaffold(
                     topBar = {
@@ -107,23 +104,25 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                             title = {
                                 Text(
                                     "Select a note",
-                                    style = MaterialTheme.typography.headlineLarge.copy(
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    style =
+                                        MaterialTheme.typography.headlineLarge.copy(
+                                            fontWeight = FontWeight.Bold,
+                                        ),
                                 )
                             },
-                            colors = TopAppBarDefaults.largeTopAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                scrolledContainerColor = MaterialTheme.colorScheme.background
-                            )
+                            colors =
+                                TopAppBarDefaults.largeTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.background,
+                                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                                ),
                         )
-                    }
+                    },
                 ) { paddingValues ->
                     when {
                         notes == null -> {
                             Box(
                                 modifier = Modifier.fillMaxSize().padding(paddingValues),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
                             }
@@ -131,50 +130,52 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                         notes!!.isEmpty() -> {
                             Box(
                                 modifier = Modifier.fillMaxSize().padding(paddingValues),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.NoteAlt,
                                         contentDescription = null,
                                         modifier = Modifier.size(48.dp),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                     Text(
                                         text = "No notes found",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                             }
                         }
                         else -> {
                             LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(paddingValues)
-                                    .padding(horizontal = 16.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(paddingValues)
+                                        .padding(horizontal = 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(vertical = 16.dp)
+                                contentPadding = PaddingValues(vertical = 16.dp),
                             ) {
                                 items(notes!!) { note ->
                                     Card(
                                         onClick = {
                                             scope.launch {
-                                                val glanceId = GlanceAppWidgetManager(applicationContext)
-                                                    .getGlanceIds(NotesWidget::class.java)
-                                                    .firstOrNull {
-                                                        GlanceAppWidgetManager(applicationContext)
-                                                            .getAppWidgetId(it) == appWidgetId
-                                                    }
+                                                val glanceId =
+                                                    GlanceAppWidgetManager(applicationContext)
+                                                        .getGlanceIds(NotesWidget::class.java)
+                                                        .firstOrNull {
+                                                            GlanceAppWidgetManager(applicationContext)
+                                                                .getAppWidgetId(it) == appWidgetId
+                                                        }
                                                 glanceId?.let {
                                                     updateAppWidgetState(
                                                         applicationContext,
                                                         PreferencesGlanceStateDefinition,
-                                                        it
+                                                        it,
                                                     ) { prefs ->
                                                         prefs.toMutablePreferences().apply {
                                                             this[intPreferencesKey("note_$appWidgetId")] = note.id!!
@@ -182,32 +183,36 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                                     }
                                                     NotesWidget().update(applicationContext, it)
                                                 }
-                                                val resultValue = Intent().putExtra(
-                                                    AppWidgetManager.EXTRA_APPWIDGET_ID,
-                                                    appWidgetId
-                                                )
+                                                val resultValue =
+                                                    Intent().putExtra(
+                                                        AppWidgetManager.EXTRA_APPWIDGET_ID,
+                                                        appWidgetId,
+                                                    )
                                                 setResult(RESULT_OK, resultValue)
                                                 finish()
                                             }
                                         },
                                         shape = RoundedCornerShape(16.dp),
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = Color(note.color)
-                                        )
+                                        colors =
+                                            CardDefaults.cardColors(
+                                                containerColor = Color(note.color),
+                                            ),
                                     ) {
                                         Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp)
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp),
                                         ) {
                                             if (note.title.isNotBlank()) {
                                                 Text(
                                                     text = note.title,
-                                                    style = MaterialTheme.typography.titleMedium.copy(
-                                                        fontWeight = FontWeight.SemiBold
-                                                    ),
+                                                    style =
+                                                        MaterialTheme.typography.titleMedium.copy(
+                                                            fontWeight = FontWeight.SemiBold,
+                                                        ),
                                                     maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
+                                                    overflow = TextOverflow.Ellipsis,
                                                 )
                                                 Spacer(modifier = Modifier.height(4.dp))
                                             }
@@ -216,7 +221,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                                     text = note.content,
                                                     style = MaterialTheme.typography.bodyMedium,
                                                     maxLines = 2,
-                                                    overflow = TextOverflow.Ellipsis
+                                                    overflow = TextOverflow.Ellipsis,
                                                 )
                                             }
                                         }

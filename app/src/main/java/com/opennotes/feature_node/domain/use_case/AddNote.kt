@@ -18,20 +18,18 @@
 
 package com.opennotes.feature_node.domain.use_case
 
-
 import com.opennotes.feature_node.domain.model.InvalidNoteException
 import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.domain.repository.NoteRepository
 
-class AddNote (
-    private val repository: NoteRepository
+class AddNote(
+    private val repository: NoteRepository,
 ) {
-
     @Throws(InvalidNoteException::class)
-    suspend operator fun invoke(note: Note){
-    if(note.title.isBlank() && note.content.isBlank()){
-        throw InvalidNoteException("Either a title or content must be provided")
-    }
+    suspend operator fun invoke(note: Note) {
+        if (note.title.isBlank() && note.content.isBlank()) {
+            throw InvalidNoteException("Either a title or content must be provided")
+        }
         repository.insertNote(note)
     }
 }

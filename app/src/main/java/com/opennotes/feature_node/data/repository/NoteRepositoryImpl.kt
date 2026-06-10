@@ -24,32 +24,23 @@ import com.opennotes.feature_node.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
 class NoteRepositoryImpl(
-private val dao: NoteDao
-) : NoteRepository
+    private val dao: NoteDao,
+) : NoteRepository {
+    override fun getAllNotes(): Flow<List<Note>> = dao.getNotes()
 
-
-{
-    override fun getAllNotes(): Flow<List<Note>> {
-        return dao.getNotes()
-    }
-
-    override suspend fun getNoteById(id: Int): Note? {
-        return dao.getNoteById(id)
-    }
+    override suspend fun getNoteById(id: Int): Note? = dao.getNoteById(id)
 
     override suspend fun insertNote(note: Note) {
         dao.insertNote(note)
     }
 
     override suspend fun deleteNote(note: Note) {
-     dao.deleteNote(note)
+        dao.deleteNote(note)
     }
 
-    override fun searchNotes(query: String): Flow<List<Note>> {
-        return dao.searchNotes(query)
-    }
-    override suspend fun insertNotes(notes:List<Note>) {
+    override fun searchNotes(query: String): Flow<List<Note>> = dao.searchNotes(query)
+
+    override suspend fun insertNotes(notes: List<Note>) {
         dao.insertAll(notes)
     }
-
 }

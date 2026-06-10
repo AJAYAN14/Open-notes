@@ -18,7 +18,6 @@
 
 package com.opennotes.feature_node.presentation.add_edit_note
 
-
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -96,7 +95,7 @@ fun AddEditNoteScreen(
     navController: NavController,
     noteColor: Int?,
     isDarkTheme: Boolean,
-    viewModel: AddEditNoteViewModel = hiltViewModel()
+    viewModel: AddEditNoteViewModel = hiltViewModel(),
 ) {
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
@@ -104,12 +103,12 @@ fun AddEditNoteScreen(
 
     var isPreviewMode by remember { mutableStateOf(false) }
 
-    val resolvedColorInt = remember(noteColor, viewModel.noteColor.value) {
-        noteColor ?: viewModel.noteColor.value
-    }
+    val resolvedColorInt =
+        remember(noteColor, viewModel.noteColor.value) {
+            noteColor ?: viewModel.noteColor.value
+        }
 
     val noteBackgroundAnimatable = remember { Animatable(Color(resolvedColorInt)) }
-
 
     LaunchedEffect(resolvedColorInt) {
         noteBackgroundAnimatable.animateTo(Color(resolvedColorInt))
@@ -121,21 +120,22 @@ fun AddEditNoteScreen(
 
     val backgroundColor = noteBackgroundAnimatable.value
 
-    val contentColor = if (backgroundColor.luminance() < 0.5f) {
-        Color.White
-    } else {
-        Color.Black
-    }
+    val contentColor =
+        if (backgroundColor.luminance() < 0.5f) {
+            Color.White
+        } else {
+            Color.Black
+        }
 
-    val noteColors = if (isDarkTheme) {
-        NoteColorPalette.Dark
-    } else {
-        NoteColorPalette.Light
-    }
+    val noteColors =
+        if (isDarkTheme) {
+            NoteColorPalette.Dark
+        } else {
+            NoteColorPalette.Light
+        }
 
     val contentFocusRequester = remember { FocusRequester() }
     val titleFocusRequester = remember { FocusRequester() }
-
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -166,7 +166,7 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back",
-                            tint = contentColor
+                            tint = contentColor,
                         )
                     }
                 },
@@ -175,62 +175,64 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
-                            tint = contentColor
+                            tint = contentColor,
                         )
                     }
                     IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "Save Note",
-                            tint = contentColor
+                            tint = contentColor,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = backgroundColor
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = backgroundColor,
+                    ),
             )
         },
         bottomBar = {
             BottomAppBar(
                 containerColor = backgroundColor,
-                contentColor = contentColor
+                contentColor = contentColor,
             ) {
                 IconButton(
-                    onClick = { showColorPicker = true },)
-                 {
+                    onClick = { showColorPicker = true },
+                ) {
                     Icon(
                         imageVector = Icons.Default.Palette,
                         contentDescription = "Change color",
                         tint = contentColor,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(28.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-
                 }
             }
-        }
+        },
     ) { paddingValues ->
         CompositionLocalProvider(
             LocalContentColor provides contentColor,
-            LocalTextSelectionColors provides TextSelectionColors(
-                handleColor = contentColor,
-                backgroundColor = contentColor.copy(alpha = 0.4f)
-            )
+            LocalTextSelectionColors provides
+                TextSelectionColors(
+                    handleColor = contentColor,
+                    backgroundColor = contentColor.copy(alpha = 0.4f),
+                ),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(backgroundColor)
-                    .padding(paddingValues)
-                    .padding(16.dp)
-                    .imePadding()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication=null
-                    ) {
-                        contentFocusRequester.requestFocus()
-                    }
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(backgroundColor)
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                        .imePadding()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            contentFocusRequester.requestFocus()
+                        },
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -248,13 +250,14 @@ fun AddEditNoteScreen(
                     onContentFocusChange = {
                         viewModel.onEvent(
                             AddEditNoteEvent.changeContentFocus(
-                                it
-                            )
+                                it,
+                            ),
                         )
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                 )
             }
         }
@@ -263,65 +266,69 @@ fun AddEditNoteScreen(
     if (showColorPicker) {
         ModalBottomSheet(
             onDismissRequest = { showColorPicker = false },
-            containerColor = backgroundColor
-        ) { Text(
-            text = "Color",
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.SemiBold
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
+            containerColor = backgroundColor,
+        ) {
+            Text(
+                text = "Color",
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 32.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 32.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 noteColors.forEach { color ->
                     val colorInt = remember(color) { color.toArgb() }
                     val isSelected = viewModel.noteColor.value == colorInt
                     val scale by animateFloatAsState(
                         targetValue = if (isSelected) 1.2f else 1f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        ),
-                        label = "scale"
+                        animationSpec =
+                            spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMedium,
+                            ),
+                        label = "scale",
                     )
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .scale(scale)
-                            .shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(color)
-                            .border(
-                                width = if (isSelected) 3.dp else 0.dp,
-                                color = if (isSelected) contentColor else Color.Transparent,
-                                shape = CircleShape
-                            )
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = ripple(bounded = true)
-                            ) {
-                                scope.launch {
-                                    noteBackgroundAnimatable.animateTo(
-                                        targetValue = Color(colorInt),
-                                        animationSpec = tween(durationMillis = 500)
-                                    )
-                                }
-                                viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
-                            }
+                        modifier =
+                            Modifier
+                                .size(48.dp)
+                                .scale(scale)
+                                .shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
+                                .clip(CircleShape)
+                                .background(color)
+                                .border(
+                                    width = if (isSelected) 3.dp else 0.dp,
+                                    color = if (isSelected) contentColor else Color.Transparent,
+                                    shape = CircleShape,
+                                ).clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = ripple(bounded = true),
+                                ) {
+                                    scope.launch {
+                                        noteBackgroundAnimatable.animateTo(
+                                            targetValue = Color(colorInt),
+                                            animationSpec = tween(durationMillis = 500),
+                                        )
+                                    }
+                                    viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
+                                },
                     ) {
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Selected",
                                 tint = contentColor,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(20.dp),
                             )
                         }
                     }

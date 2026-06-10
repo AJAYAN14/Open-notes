@@ -24,7 +24,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 
-class MarkdownBuilder(internal val lines: List<String>, private var lineProcessors: List<MarkdownLineProcessor>) {
+class MarkdownBuilder(
+    internal val lines: List<String>,
+    private var lineProcessors: List<MarkdownLineProcessor>,
+) {
     var lineIndex = -1
 
     internal val content = mutableListOf<MarkdownElement>()
@@ -57,7 +60,10 @@ class MarkdownBuilder(internal val lines: List<String>, private var lineProcesso
  * Splits the input string by the specified delimiter and returns a list of index pairs.
  * Each pair represents the start and end indices of segments between delimiters.
  */
-fun splitByDelimiter(input: String, delimiter: String): List<Pair<Int, Int>> {
+fun splitByDelimiter(
+    input: String,
+    delimiter: String,
+): List<Pair<Int, Int>> {
     val segments = mutableListOf<Pair<Int, Int>>()
     var startIndex = 0
     var delimiterIndex = input.indexOf(delimiter, startIndex)
@@ -85,29 +91,29 @@ fun splitByDelimiter(input: String, delimiter: String): List<Pair<Int, Int>> {
 /**
  * Checks if a given index is within any of the provided segments.
  */
-fun isInSegments(index: Int, segments: List<Pair<Int, Int>>): Boolean {
-    return segments.any { segment -> index in segment.first until segment.second }
-}
+fun isInSegments(
+    index: Int,
+    segments: List<Pair<Int, Int>>,
+): Boolean = segments.any { segment -> index in segment.first until segment.second }
 
 fun buildAnnotatedMarkdownString(
     input: String,
-    defaultFontWeight: FontWeight = FontWeight.Normal
+    defaultFontWeight: FontWeight = FontWeight.Normal,
 ): AnnotatedString {
     if (input.isBlank()) return AnnotatedString(input)
     if (input.length > 5000) { // Reduced limit for better performance
         return AnnotatedString(input)
     }
 
-
-
-    val textStyleSegments: List<TextStyleSegment> = listOf(
-        BoldSegment(),
-        CodeSegment(),
-        ItalicSegment(),
-        HighlightSegment(),
-        Strikethrough(),
-        Underline()
-    )
+    val textStyleSegments: List<TextStyleSegment> =
+        listOf(
+            BoldSegment(),
+            CodeSegment(),
+            ItalicSegment(),
+            HighlightSegment(),
+            Strikethrough(),
+            Underline(),
+        )
 
     return buildAnnotatedString {
         val currentText = input
@@ -140,8 +146,8 @@ fun buildAnnotatedMarkdownString(
                         Triple(
                             startIndex,
                             endDelimiterStart + delimiter.length,
-                            segment.getSpanStyle()
-                        )
+                            segment.getSpanStyle(),
+                        ),
                     )
                 }
 
@@ -156,9 +162,10 @@ fun buildAnnotatedMarkdownString(
         // Remove overlapping ranges (keep the first one)
         val nonOverlappingRanges = mutableListOf<Triple<Int, Int, SpanStyle>>()
         for (range in sortedRanges) {
-            val overlaps = nonOverlappingRanges.any { existing ->
-                range.first < existing.second && range.second > existing.first
-            }
+            val overlaps =
+                nonOverlappingRanges.any { existing ->
+                    range.first < existing.second && range.second > existing.first
+                }
             if (!overlaps) {
                 nonOverlappingRanges.add(range)
             }
@@ -175,17 +182,21 @@ fun buildAnnotatedMarkdownString(
                 val originalSegment = processedText.substring(start, end)
 
                 // Find delimiter length by checking the segment
-                val delimiter = textStyleSegments.find { segment ->
-                    originalSegment.startsWith(segment.delimiter) && originalSegment.endsWith(
-                        segment.delimiter
-                    )
-                }?.delimiter ?: continue
+                val delimiter =
+                    textStyleSegments
+                        .find { segment ->
+                            originalSegment.startsWith(segment.delimiter) &&
+                                originalSegment.endsWith(
+                                    segment.delimiter,
+                                )
+                        }?.delimiter ?: continue
 
                 // Extract content without delimiters
-                val content = originalSegment.substring(
-                    delimiter.length,
-                    originalSegment.length - delimiter.length
-                )
+                val content =
+                    originalSegment.substring(
+                        delimiter.length,
+                        originalSegment.length - delimiter.length,
+                    )
 
                 // Replace the segment with just the content
                 processedText =
@@ -208,11 +219,14 @@ fun buildAnnotatedMarkdownString(
                 val originalSegment = input.substring(originalStart, originalEnd)
 
                 // Find delimiter
-                val delimiter = textStyleSegments.find { segment ->
-                    originalSegment.startsWith(segment.delimiter) && originalSegment.endsWith(
-                        segment.delimiter
-                    )
-                }?.delimiter ?: continue
+                val delimiter =
+                    textStyleSegments
+                        .find { segment ->
+                            originalSegment.startsWith(segment.delimiter) &&
+                                originalSegment.endsWith(
+                                    segment.delimiter,
+                                )
+                        }?.delimiter ?: continue
 
                 val contentLength = originalSegment.length - (2 * delimiter.length)
                 if (contentLength > 0) {

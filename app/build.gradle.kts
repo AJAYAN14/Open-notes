@@ -4,10 +4,13 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose")
     id("dagger.hilt.android.plugin")
+    alias(libs.plugins.ktlint)
 }
 
-
-
+ktlint {
+    android.set(true)
+    outputToConsole.set(true)
+}
 
 android {
     namespace = "com.opennotes"
@@ -36,8 +39,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
             )
         }
     }

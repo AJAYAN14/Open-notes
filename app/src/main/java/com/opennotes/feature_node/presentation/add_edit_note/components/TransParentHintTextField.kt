@@ -20,9 +20,6 @@ package com.opennotes.feature_node.presentation.add_edit_note.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +32,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun TransParentHintTextField(
@@ -46,7 +42,7 @@ fun TransParentHintTextField(
     textStyle: TextStyle = TextStyle(),
     singleLine: Boolean = false,
     onFocusChange: (FocusState) -> Unit,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -57,13 +53,13 @@ fun TransParentHintTextField(
         textStyle = textStyle,
         cursorBrush = SolidColor(textStyle.color),
         interactionSource = interactionSource,
-        modifier = modifier
-            .focusRequester(focusRequester)
-            .onFocusChanged(onFocusChange),
+        modifier =
+            modifier
+                .focusRequester(focusRequester)
+                .onFocusChanged(onFocusChange),
         decorationBox = { innerTextField ->
             Box(
-                modifier = Modifier
-
+                modifier = Modifier,
             ) {
                 if (text.isEmpty()) {
                     Text(
@@ -75,6 +71,6 @@ fun TransParentHintTextField(
 
                 innerTextField()
             }
-        }
+        },
     )
 }

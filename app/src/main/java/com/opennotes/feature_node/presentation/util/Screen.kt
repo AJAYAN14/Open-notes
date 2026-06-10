@@ -18,10 +18,14 @@
 
 package com.opennotes.feature_node.presentation.util
 
-sealed class Screen(val route:String){
-    object NotesScreen: Screen("notes_screen")
-    object AddEditNoteScreen: Screen("add_edit_note_screen")
-    object SettingsScreen:Screen ("settings_screen")
+sealed class Screen(
+    val route: String,
+) {
+    object NotesScreen : Screen("notes_screen")
+
+    object AddEditNoteScreen : Screen("add_edit_note_screen")
+
+    object SettingsScreen : Screen("settings_screen")
 
     object AboutScreen : Screen("about_screen")
 
@@ -30,5 +34,4 @@ sealed class Screen(val route:String){
     object PrivacySettingsScreen : Screen("privacy_screen")
 
     object BackupScreen : Screen("backup_screen")
-
 }

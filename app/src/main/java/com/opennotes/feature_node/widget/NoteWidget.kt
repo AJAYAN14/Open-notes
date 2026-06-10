@@ -18,9 +18,6 @@
 
 package com.opennotes.feature_node.widget
 
-
-
-
 import android.content.Context
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,7 +36,6 @@ import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface WidgetModelRepositoryEntryPoint {
@@ -47,17 +43,21 @@ interface WidgetModelRepositoryEntryPoint {
 }
 
 fun getNoteUseCase(context: Context): NoteUseCases {
-    val entryPoint = EntryPoints.get(
-        context.applicationContext,
-        WidgetModelRepositoryEntryPoint::class.java
-    )
+    val entryPoint =
+        EntryPoints.get(
+            context.applicationContext,
+            WidgetModelRepositoryEntryPoint::class.java,
+        )
     return entryPoint.noteUseCase()
 }
 
 class NotesWidget : GlanceAppWidget() {
     override val stateDefinition = PreferencesGlanceStateDefinition
 
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId,
+    ) {
         val noteUseCase = getNoteUseCase(context)
         val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
 
@@ -76,4 +76,3 @@ class NotesWidget : GlanceAppWidget() {
         }
     }
 }
-
