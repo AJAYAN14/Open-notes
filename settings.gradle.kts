@@ -11,8 +11,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-
-
 }
+
 rootProject.name = "Open notes"
-include ':app'
+include(":app")
