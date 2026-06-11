@@ -18,17 +18,23 @@
 
 package com.opennotes.featureNode.presentation.notes
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.SwapVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +55,7 @@ fun NotesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val notePendingDeleteState = remember { mutableStateOf<Note?>(null) }
+    var showSortSheet by remember { mutableStateOf(false) }
 
     notePendingDeleteState.value?.let { noteToDelete ->
         AlertDialog(
@@ -93,6 +100,7 @@ fun NotesScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -146,15 +154,19 @@ fun NotesScreen(
                             )
                         },
                         trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    navController.navigate(Screen.SettingsScreen.route)
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings",
-                                )
+                            Row {
+                                IconButton(onClick = { showSortSheet = true }) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.SwapVert,
+                                        contentDescription = "Sort notes",
+                                    )
+                                }
+                                IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Settings,
+                                        contentDescription = "Settings",
+                                    )
+                                }
                             }
                         },
                         placeholder = { Text("Search Notes") },
@@ -195,7 +207,7 @@ fun NotesScreen(
                             onNoteClick = {
                                 navController.navigate(
                                     Screen.AddEditNoteScreen.route +
-                                        "?noteId=${note.id}&noteColor=${note.color}",
+                                            "?noteId=${note.id}&noteColor=${note.color}",
                                 )
                             },
                             onDeleteClick = {
@@ -206,5 +218,14 @@ fun NotesScreen(
                 }
             }
         }
+
     }
+    if (showSortSheet) {
+        SortBottomSheet(
+            currentSortOrder = state.sortOrder,
+            onSortSelected = { viewModel.onEvent(NotesEvent.SortNotes(it)) },
+            onDismiss = { showSortSheet = false }
+        )
+    }
+
 }

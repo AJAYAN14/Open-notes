@@ -18,18 +18,9 @@
 
 package com.opennotes.featureNode.presentation.notes
 
-import com.opennotes.featureNode.domain.model.Note
-
-sealed class NotesEvent {
-    data class DeleteNote(
-        val note: Note,
-    ) : NotesEvent()
-
-    object RestoreNote : NotesEvent()
-
-    data class SearchNote(
-        val query: String,
-    ) : NotesEvent()
-
-    data class SortNotes(val sortOrder: SortOrder) : NotesEvent()
+enum class SortOrder {
+    DATE_CREATED_NEW,
+    DATE_CREATED_OLD,
+    TITLE_A_Z,
+    TITLE_Z_A
 }

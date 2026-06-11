@@ -20,6 +20,7 @@ package com.opennotes.featureNode.presentation.notes
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opennotes.featureNode.domain.model.Note
@@ -36,15 +37,21 @@ class NotesViewModel
     @Inject
     constructor(
         private val noteUseCases: NoteUseCases,
+        private val savedStateHandle: SavedStateHandle
     ) : ViewModel() {
         private val _state = mutableStateOf(NotesState())
         val state: State<NotesState> = _state
         private var recentlyDeletedNote: Note? = null
         private var getNotesJob: Job? = null
 
-        init {
-            getNotes()
-        }
+    private val savedSortOrder = savedStateHandle
+        .get<String>("sortOrder")
+        ?.let { SortOrder.valueOf(it) }
+        ?: SortOrder.DATE_CREATED_NEW
+
+    init {
+        getNotes(SortOrder.DATE_CREATED_NEW)
+    }
 
         fun onEvent(event: NotesEvent) {
             when (event) {
@@ -67,19 +74,31 @@ class NotesViewModel
                     searchNotes(event.query)
                 }
 
+                is NotesEvent.SortNotes -> {
+                    savedStateHandle["sortOrder"] = event.sortOrder.name
+                    _state.value = state.value.copy(sortOrder = event.sortOrder)
+                    getNotes(event.sortOrder)
+                }
+
+
                 else -> {}
             }
         }
 
-        private fun getNotes() {
-            getNotesJob?.cancel()
-            getNotesJob =
-                noteUseCases
-                    .getNotes()
-                    .onEach { notes ->
-                        _state.value = state.value.copy(notes = notes)
-                    }.launchIn(viewModelScope)
-        }
+    private fun getNotes(sortOrder: SortOrder) {
+        getNotesJob?.cancel()
+        getNotesJob = noteUseCases
+            .getNotes()
+            .onEach { notes ->
+                val sorted = when (sortOrder) {
+                    SortOrder.DATE_CREATED_NEW -> notes.sortedByDescending { it.timestamp }
+                    SortOrder.DATE_CREATED_OLD -> notes.sortedBy { it.timestamp }
+                    SortOrder.TITLE_A_Z -> notes.sortedBy { it.title.lowercase() }
+                    SortOrder.TITLE_Z_A -> notes.sortedByDescending { it.title.lowercase() }
+                }
+                _state.value = state.value.copy(notes = sorted, sortOrder = sortOrder)
+            }.launchIn(viewModelScope)
+    }
 
         private fun searchNotes(query: String) {
             getNotesJob?.cancel()

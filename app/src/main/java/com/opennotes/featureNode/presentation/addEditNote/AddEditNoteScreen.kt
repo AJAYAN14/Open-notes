@@ -247,12 +247,13 @@ fun AddEditNoteScreen(
                         .background(backgroundColor)
                         .padding(paddingValues)
                         .padding(16.dp)
-                        .imePadding()
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                         ) {
-                            contentFocusRequester.requestFocus()
+                            if (!isPreviewMode) {
+                                contentFocusRequester.requestFocus()
+                            }
                         },
             ) {
                 Spacer(modifier = Modifier.height(16.dp))

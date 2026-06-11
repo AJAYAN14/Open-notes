@@ -23,4 +23,5 @@ import com.opennotes.featureNode.domain.model.Note
 data class NotesState(
     val notes: List<Note> = emptyList(),
     val searchQuery: String = "",
+    val sortOrder: SortOrder = SortOrder.DATE_CREATED_NEW
 )
