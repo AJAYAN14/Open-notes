@@ -30,8 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.dynamicColorScheme
-import com.opennotes.feature_node.presentation.settings.Settings
-import com.opennotes.feature_node.presentation.settings.ThemeMode
+import com.opennotes.featureNode.presentation.settings.Settings
+import com.opennotes.featureNode.presentation.settings.ThemeMode
 
 // AMOLED Color Scheme - preserves Material Design colors with black background
 private val AmoledColorScheme =

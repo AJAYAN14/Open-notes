@@ -20,39 +20,63 @@ package com.opennotes.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PureBlack = Color(0xFF000000)
-val SoftWhite = Color(0xFFF5F5F5)
+val DefaultDark = Color(0xFF000000)
+val DefaultLight = Color(0xFFF5F5F5)
 
-val RedOrange = Color(0xffffab91)
-val RedPink = Color(0xfff48fb1)
-val BabyBlue = Color(0xff81deea)
-val Violet = Color(0xffcf94da)
-val LightGreen = Color(0xffe7ed9b)
+val RedLight = Color(0xFFF28B82)
+val OrangeLight = Color(0xFFFBBC04)
+val YellowLight = Color(0xFFFFF475)
+val GreenLight = Color(0xFFCCFF90)
+val TealLight = Color(0xFFA7FFEB)
+val BlueLight = Color(0xFFCBF0F8)
+val DarkBlueLight = Color(0xFFAECBFA)
+val PurpleLight = Color(0xFFD7AEFB)
+val PinkLight = Color(0xFFFDCFE8)
+val BrownLight = Color(0xFFE6C9A8)
+val GrayLight = Color(0xFFE8EAED)
 
-val RedOrangeDark = Color(0xFF5D2A1E)
-val RedPinkDark = Color(0xFF5A1F3D)
-val BabyBlueDark = Color(0xFF1C3C40)
-val VioletDark = Color(0xFF3E1F47)
-val GreenDark = Color(0xFF3A3F1B)
+val RedDark = Color(0xFF5C2B29)
+val OrangeDark = Color(0xFF614A19)
+val YellowDark = Color(0xFF635D19)
+val GreenDark = Color(0xFF345920)
+val TealDark = Color(0xFF16504B)
+val BlueDark = Color(0xFF2D555E)
+val DarkBlueDark = Color(0xFF1E3A5F)
+val PurpleDark = Color(0xFF42275E)
+val PinkDark = Color(0xFF5B2245)
+val BrownDark = Color(0xFF442F19)
+val GrayDark = Color(0xFF3C3F41)
 
 val LightNoteColors =
     listOf(
-        SoftWhite,
-        RedOrange,
-        LightGreen,
-        Violet,
-        BabyBlue,
-        RedPink,
+        DefaultLight,
+        RedLight,
+        OrangeLight,
+        YellowLight,
+        GreenLight,
+        TealLight,
+        BlueLight,
+        DarkBlueLight,
+        PurpleLight,
+        PinkLight,
+        BrownLight,
+        GrayLight,
     )
 
 val DarkNoteColors =
     listOf(
-        PureBlack,
-        RedOrangeDark,
+        DefaultDark,
+        RedDark,
+        OrangeDark,
+        YellowDark,
         GreenDark,
-        VioletDark,
-        BabyBlueDark,
-        RedPinkDark,
+        TealDark,
+        BlueDark,
+        DarkBlueDark,
+        PurpleDark,
+        PinkDark,
+        BrownDark,
+        GrayDark,
     )
 
 object NoteColorPalette {
