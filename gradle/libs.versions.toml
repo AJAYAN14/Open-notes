@@ -20,6 +20,7 @@ junit = "4.13.2"
 androidx-junit = "1.2.1"
 espresso = "3.6.1"
 ktlint = "14.2.0"
+material3 = "1.4.0"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
@@ -57,6 +58,7 @@ glance-material3 = { module = "androidx.glance:glance-material3", version.ref = 
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
 espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.9.1" }

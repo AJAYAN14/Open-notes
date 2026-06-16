@@ -216,7 +216,7 @@ fun SettingsScreen(
         ) {
             item {
                 SettingItem(
-                    title = "Backup & Restore",
+                    title = "Backup and Restore",
                     subtitle = "Export and import your notes",
                     icon = Icons.Default.Cloud,
                     onClick = { navController.navigate(Screen.BackupScreen.route) },

@@ -151,20 +151,23 @@ fun NotesScreen(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search Notes",
+                                modifier = Modifier.size(25.dp)
                             )
                         },
                         trailingIcon = {
                             Row {
                                 IconButton(onClick = { showSortSheet = true }) {
                                     Icon(
-                                        imageVector = Icons.Rounded.SwapVert,
+                                        imageVector = Icons.Default.SwapVert,
                                         contentDescription = "Sort notes",
+                                        modifier = Modifier.size(25.dp)
                                     )
                                 }
                                 IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
                                     Icon(
-                                        imageVector = Icons.Rounded.Settings,
+                                        imageVector = Icons.Default.Settings,
                                         contentDescription = "Settings",
+                                        modifier = Modifier.size(25.dp)
                                     )
                                 }
                             }
@@ -173,8 +176,8 @@ fun NotesScreen(
                         singleLine = true,
                         colors =
                             OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                focusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                                 focusedBorderColor = Color.Transparent,
                                 unfocusedBorderColor = Color.Transparent,
                                 cursorColor = MaterialTheme.colorScheme.primary,
@@ -182,8 +185,9 @@ fun NotesScreen(
                                 unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                                 unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface
+
                             ),
                     )
                 }

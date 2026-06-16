@@ -148,7 +148,7 @@ fun PrivacySettingsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Privacy & Security",
+                        text = "Privacy and Security",
                         style =
                             MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.SemiBold,

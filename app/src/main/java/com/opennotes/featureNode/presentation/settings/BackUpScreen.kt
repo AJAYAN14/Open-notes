@@ -101,7 +101,7 @@ fun BackupScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Backup & Restore",
+                        text = "Backup and Restore",
                         style =
                             MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.SemiBold,
