@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
@@ -57,15 +58,45 @@ import com.opennotes.featureNode.presentation.util.Screen
 import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
+
+    private lateinit var biometricPrompt: BiometricPrompt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { !settingsViewModel.isLoaded.value }
+
+        biometricPrompt = BiometricPrompt(
+            this,
+            ContextCompat.getMainExecutor(this),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    settingsViewModel.setAppUnlocked(true)
+                }
+
+                override fun onAuthenticationError(
+                    errorCode: Int,
+                    errString: CharSequence,
+                ) {
+                    handleBiometricError(errorCode) {
+                        settingsViewModel.setAppUnlocked(true)
+                    }
+                }
+
+                override fun onAuthenticationFailed() = Unit
+            },
+        )
 
         setContent {
             val currentSettings by settingsViewModel.settings.collectAsState()
@@ -73,23 +104,27 @@ class MainActivity : FragmentActivity() {
             val isLoaded by settingsViewModel.isLoaded.collectAsState()
 
             var showContent by remember { mutableStateOf(false) }
+            var hasPrompted by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
 
             LaunchedEffect(isAppUnlocked, currentSettings.biometricLock, isLoaded) {
                 if (!isLoaded) return@LaunchedEffect // wait for real settings to load
                 when {
                     !currentSettings.biometricLock || isAppUnlocked -> showContent = true
                     else -> {
-                        showBiometricPrompt(
-                            onSuccess = {
-                                settingsViewModel.setAppUnlocked(true)
-                                showContent = true
-                            },
-                            onError = { errorCode, errString ->
-                                handleBiometricError(errorCode) {
-                                    showContent = true
-                                }
-                            },
-                        )
+                        if (!hasPrompted) {
+                            hasPrompted = true
+                            val promptInfo =
+                                BiometricPrompt.PromptInfo
+                                    .Builder()
+                                    .setTitle("Unlock OpenNotes")
+                                    .setSubtitle("Confirm your identity to access your notes")
+                                    .setAllowedAuthenticators(
+                                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                            BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                            BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                                    ).build()
+                            biometricPrompt.authenticate(promptInfo)
+                        }
                     }
                 }
             }
@@ -180,47 +215,20 @@ class MainActivity : FragmentActivity() {
                             }
                         }
                     } else {
-                        Surface(color = MaterialTheme.colorScheme.background) {}
+                        Surface(color = MaterialTheme.colorScheme.background) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LoadingIndicator()
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun showBiometricPrompt(
-        onSuccess: () -> Unit,
-        onError: (Int, CharSequence) -> Unit,
-    ) {
-        val promptInfo =
-            BiometricPrompt.PromptInfo
-                .Builder()
-                .setTitle("Unlock OpenNotes")
-                .setSubtitle("Confirm your identity to access your notes")
-                .setAllowedAuthenticators(
-                    BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL,
-                ).build()
-
-        BiometricPrompt(
-            this,
-            ContextCompat.getMainExecutor(this),
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    onSuccess()
-                }
-
-                override fun onAuthenticationError(
-                    errorCode: Int,
-                    errString: CharSequence,
-                ) {
-                    onError(errorCode, errString)
-                }
-
-                override fun onAuthenticationFailed() = Unit
-            },
-        ).authenticate(promptInfo)
-    }
 
     private fun handleBiometricError(
         errorCode: Int,

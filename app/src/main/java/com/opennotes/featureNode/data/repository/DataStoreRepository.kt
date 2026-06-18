@@ -46,6 +46,7 @@ class DataStoreRepository
             private val BLACK_THEME = booleanPreferencesKey("black_theme")
 
             private val COLOR_SCHEME = stringPreferencesKey("color_scheme")
+            private val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
             private val BIOMETRIC_LOCK = booleanPreferencesKey("biometric_lock")
 
             // Legacy settings for backward compatibility
@@ -63,6 +64,7 @@ class DataStoreRepository
                 prefs[BLACK_THEME] = settings.blackTheme
                 prefs[BIOMETRIC_LOCK] = settings.biometricLock
                 prefs[COLOR_SCHEME] = settings.colorScheme.toString()
+                prefs[DYNAMIC_COLOR] = settings.dynamicColor
                 // Also update legacy fields for compatibility
                 when (settings.themeMode) {
                     ThemeMode.SYSTEM -> {
@@ -120,6 +122,7 @@ class DataStoreRepository
                         blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
                         biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
                         colorScheme = prefs[COLOR_SCHEME]?.toLongOrNull() ?: 0L,
+                        dynamicColor = prefs[DYNAMIC_COLOR] ?: defaultSettings.dynamicColor,
                         // Legacy fields for compatibility
                         darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
                         systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
@@ -167,6 +170,7 @@ class DataStoreRepository
                 blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
                 biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
                 colorScheme = prefs[COLOR_SCHEME]?.toLongOrNull() ?: 0L,
+                dynamicColor = prefs[DYNAMIC_COLOR] ?: defaultSettings.dynamicColor,
                 // Legacy fields for compatibility
                 darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
                 systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,

@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Wallpaper
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
@@ -104,8 +105,27 @@ fun AppearanceSettingsScreen(
                 HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
             }
             item {
+                SettingItem(
+                    title = "Dynamic Color",
+                    subtitle = "Adapt theme colors from your wallpaper",
+                    icon = Icons.Default.Wallpaper,
+                    trailing = {
+                        SettingsSwitch(
+                            isChecked = settings.dynamicColor,
+                            onCheckedChange = { viewModel.updateDynamicColor(it) },
+                        )
+                    },
+                    isFirst = false,
+                    isLast = false,
+                )
+            }
+            item {
+                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
+            }
+            item {
                 ColorSchemePicker(
                     currentColor = settings.colorScheme,
+                    isDynamicColor = settings.dynamicColor,
                     onColorChange = { viewModel.updateColorScheme(it) },
                 )
             }

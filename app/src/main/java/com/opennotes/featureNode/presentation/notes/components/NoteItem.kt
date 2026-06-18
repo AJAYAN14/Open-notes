@@ -16,7 +16,7 @@
  *
  */
 
-package com.opennotes.featureNode.presentation.notes.Components
+package com.opennotes.featureNode.presentation.notes.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -49,10 +49,10 @@ import com.opennotes.featureNode.presentation.addEditNote.components.markdown.Ma
 @Composable
 fun NoteItem(
     note: Note,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 12.dp,
-    onDeleteClick: () -> Unit,
-    onNoteClick: () -> Unit = {},
+    onNoteClick: () -> Unit = {}
 ) {
     val backgroundColor = Color(note.color)
 

@@ -81,7 +81,7 @@ class SettingsViewModel
                 val suggestedFileName: String,
             ) : UiEvent()
 
-            object RequestBiometricAuthForEnable : UiEvent()
+            data class RequestBiometricAuth(val enable: Boolean) : UiEvent()
         }
 
         fun updateThemeMode(themeMode: ThemeMode) {
@@ -99,29 +99,32 @@ class SettingsViewModel
         }
 
         fun updateColorScheme(colorLong: Long) {
-            val newSettings = settings.value.copy(colorScheme = colorLong)
+            val newSettings = settings.value.copy(
+                colorScheme = colorLong,
+                dynamicColor = if (colorLong != 0L) false else settings.value.dynamicColor
+            )
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
+        fun updateDynamicColor(dynamicColor: Boolean) {
+            val newSettings = settings.value.copy(dynamicColor = dynamicColor)
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(newSettings)
             }
         }
 
         fun onBiometricLockToggleRequest(enable: Boolean) {
-            if (!enable) {
-                viewModelScope.launch {
-                    dataStoreRepository.saveSettings(settings.value.copy(biometricLock = false))
-                }
-                return
-            }
-
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.RequestBiometricAuthForEnable)
+                _uiEvent.send(UiEvent.RequestBiometricAuth(enable))
             }
         }
 
-        fun onBiometricAuthSuccess() {
+        fun onBiometricAuthSuccess(enable: Boolean) {
             viewModelScope.launch {
-                dataStoreRepository.saveSettings(settings.value.copy(biometricLock = true))
-                _uiEvent.send(UiEvent.ShowSnackbar("Biometric lock enabled"))
+                dataStoreRepository.saveSettings(settings.value.copy(biometricLock = enable))
+                _uiEvent.send(UiEvent.ShowSnackbar(if (enable) "Biometric lock enabled" else "Biometric lock disabled"))
             }
         }
 

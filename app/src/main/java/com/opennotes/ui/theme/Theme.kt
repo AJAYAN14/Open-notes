@@ -111,23 +111,20 @@ fun OpenNotesTheme(
 
     val colorScheme =
         when {
-            // Custom color scheme selected
-            settings.colorScheme != 0L -> {
-                val seedColor = Color(settings.colorScheme)
-                if (isDarkTheme) {
-                    dynamicColorScheme(seedColor, isDark = true, isAmoled = settings.blackTheme)
-                } else {
-                    dynamicColorScheme(seedColor, isDark = false, isAmoled = false)
-                }
-            }
             // Dynamic colors on Android 12+
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                val baseColorScheme =
+            settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                val initialColorScheme =
                     if (isDarkTheme) {
                         dynamicDarkColorScheme(context)
                     } else {
                         dynamicLightColorScheme(context)
                     }
+                
+                // Override secondaryContainer to prevent unexpected OEM Monet colors (e.g., pink on green wallpaper)
+                val baseColorScheme = initialColorScheme.copy(
+                    secondaryContainer = initialColorScheme.primaryContainer,
+                    onSecondaryContainer = initialColorScheme.onPrimaryContainer
+                )
                 if (isDarkTheme && settings.blackTheme) {
                     baseColorScheme.copy(
                         background = Color.Black,
@@ -141,6 +138,15 @@ fun OpenNotesTheme(
                     )
                 } else {
                     baseColorScheme
+                }
+            }
+            // Custom color scheme selected
+            settings.colorScheme != 0L -> {
+                val seedColor = Color(settings.colorScheme)
+                if (isDarkTheme) {
+                    dynamicColorScheme(seedColor, isDark = true, isAmoled = settings.blackTheme)
+                } else {
+                    dynamicColorScheme(seedColor, isDark = false, isAmoled = false)
                 }
             }
             // Fallback

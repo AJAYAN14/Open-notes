@@ -120,7 +120,8 @@ fun SettingsScreen(
                     }
                 }
 
-                SettingsViewModel.UiEvent.RequestBiometricAuthForEnable -> {
+                is SettingsViewModel.UiEvent.RequestBiometricAuth -> {
+                    val enable = event.enable
                     if (activity == null) {
                         viewModel.onBiometricAuthFailed()
                         return@collectLatest
@@ -150,7 +151,7 @@ fun SettingsScreen(
                             object : BiometricPrompt.AuthenticationCallback() {
                                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                                     super.onAuthenticationSucceeded(result)
-                                    viewModel.onBiometricAuthSuccess()
+                                    viewModel.onBiometricAuthSuccess(enable)
                                 }
 
                                 override fun onAuthenticationError(
@@ -166,8 +167,8 @@ fun SettingsScreen(
                     val promptInfo =
                         BiometricPrompt.PromptInfo
                             .Builder()
-                            .setTitle("Enable biometric lock")
-                            .setSubtitle("Confirm your identity to enable app lock")
+                            .setTitle(if (enable) "Enable biometric lock" else "Disable biometric lock")
+                            .setSubtitle(if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock")
                             .setAllowedAuthenticators(
                                 BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                     BiometricManager.Authenticators.BIOMETRIC_WEAK or

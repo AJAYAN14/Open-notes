@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ColorSchemePicker(
     currentColor: Long,
+    isDynamicColor: Boolean,
     onColorChange: (Long) -> Unit,
 ) {
     val colorSchemes =
@@ -96,6 +97,11 @@ fun ColorSchemePicker(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
+                Text(
+                    text = if (isDynamicColor) "Dynamic" else "Color",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -103,7 +109,7 @@ fun ColorSchemePicker(
                     items(colorSchemes) { colorLong ->
                         ColorPickerButton(
                             color = if (colorLong == 0L) MaterialTheme.colorScheme.primary else Color(colorLong),
-                            isSelected = colorLong == currentColor,
+                            isSelected = !isDynamicColor && colorLong == currentColor,
                             onClick = { onColorChange(colorLong) },
                         )
                     }

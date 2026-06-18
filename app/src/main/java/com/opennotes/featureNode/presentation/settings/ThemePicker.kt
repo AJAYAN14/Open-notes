@@ -86,7 +86,6 @@ fun ThemePicker(
                                         ThemeMode.SYSTEM -> "System"
                                         ThemeMode.LIGHT -> "Light"
                                         ThemeMode.DARK -> "Dark"
-                                        else -> "System"
                                     },
                                 )
                             },

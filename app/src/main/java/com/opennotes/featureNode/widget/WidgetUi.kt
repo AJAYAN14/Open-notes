@@ -73,7 +73,7 @@ fun ZeroState(widgetId: Int) {
 fun SelectedNote(
     note: Note,
     widgetId: Int,
-) {
+){
     Column(
         modifier =
             GlanceModifier

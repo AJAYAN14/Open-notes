@@ -20,7 +20,7 @@ junit = "4.13.2"
 androidx-junit = "1.2.1"
 espresso = "3.6.1"
 ktlint = "14.2.0"
-material3 = "1.4.0"
+material3 = "1.4.0-alpha02"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
