@@ -24,4 +24,5 @@ data class NotesState(
     val notes: List<Note> = emptyList(),
     val searchQuery: String = "",
     val sortOrder: SortOrder = SortOrder.DATE_CREATED_NEW,
+    val selectedNotes: Set<Note> = emptySet(),
 )

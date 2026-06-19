@@ -116,7 +116,6 @@ class MainActivity : FragmentActivity() {
                     !currentSettings.biometricLock || isAppUnlocked -> showContent = true
                     else -> {
                         if (!hasPrompted) {
-                            hasPrompted = true
                             val promptInfo =
                                 BiometricPrompt.PromptInfo
                                     .Builder()

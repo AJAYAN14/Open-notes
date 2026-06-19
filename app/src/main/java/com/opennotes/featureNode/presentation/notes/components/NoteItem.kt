@@ -18,6 +18,8 @@
 
 package com.opennotes.featureNode.presentation.notes.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,17 +29,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
@@ -46,13 +50,15 @@ import androidx.compose.ui.unit.sp
 import com.opennotes.featureNode.domain.model.Note
 import com.opennotes.featureNode.presentation.addEditNote.components.markdown.MarkdownText
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteItem(
     note: Note,
-    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
     cornerRadius: Dp = 12.dp,
     onNoteClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
 ) {
     val backgroundColor = Color(note.color)
 
@@ -69,22 +75,33 @@ fun NoteItem(
         }
 
     val borderColor =
-        remember(backgroundColor) {
-            if (textColor == Color.White) {
-                Color.White.copy(alpha = 0.2f)
+        remember(backgroundColor, isSelected) {
+            if (isSelected) {
+                if (textColor == Color.White) Color.White else Color.Black
             } else {
-                Color.Black.copy(alpha = 0.15f)
+                if (textColor == Color.White) {
+                    Color.White.copy(alpha = 0.2f)
+                } else {
+                    Color.Black.copy(alpha = 0.15f)
+                }
             }
         }
+        
+    val borderWidth = if (isSelected) 3.dp else 1.dp
 
     Card(
-        onClick = onNoteClick,
         modifier =
-            modifier.border(
-                width = 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(cornerRadius),
-            ),
+            modifier
+                .border(
+                    width = borderWidth,
+                    color = borderColor,
+                    shape = RoundedCornerShape(cornerRadius),
+                )
+                .clip(RoundedCornerShape(cornerRadius))
+                .combinedClickable(
+                    onClick = onNoteClick,
+                    onLongClick = onLongClick,
+                ),
         shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation =
@@ -130,18 +147,16 @@ fun NoteItem(
                     )
                 }
             }
-            IconButton(
-                onClick = onDeleteClick,
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(36.dp),
-            ) {
+            if (isSelected) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete note",
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = "Selected",
                     tint = textColor,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                        .size(24.dp)
+                        .background(backgroundColor, CircleShape)
                 )
             }
         }

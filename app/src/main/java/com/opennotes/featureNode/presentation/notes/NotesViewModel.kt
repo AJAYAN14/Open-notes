@@ -70,6 +70,12 @@ class NotesViewModel
                     }
                 }
 
+                is NotesEvent.TogglePinNote -> {
+                    viewModelScope.launch {
+                        noteUseCases.addNote(event.note.copy(isPinned = !event.note.isPinned))
+                    }
+                }
+
                 is NotesEvent.SearchNote -> {
                     _state.value = state.value.copy(searchQuery = event.query)
                     searchNotes(event.query)
@@ -79,6 +85,44 @@ class NotesViewModel
                     savedStateHandle["sortOrder"] = event.sortOrder.name
                     _state.value = state.value.copy(sortOrder = event.sortOrder)
                     getNotes(event.sortOrder)
+                }
+
+                is NotesEvent.ToggleSelection -> {
+                    val currentSelection = state.value.selectedNotes.toMutableSet()
+                    // Use note ID for comparison if possible to avoid instance mismatch
+                    val existingNote = currentSelection.find { it.id == event.note.id }
+                    if (existingNote != null) {
+                        currentSelection.remove(existingNote)
+                    } else {
+                        currentSelection.add(event.note)
+                    }
+                    _state.value = state.value.copy(selectedNotes = currentSelection)
+                }
+
+                is NotesEvent.ClearSelection -> {
+                    _state.value = state.value.copy(selectedNotes = emptySet())
+                }
+
+                is NotesEvent.TogglePinSelectedNotes -> {
+                    viewModelScope.launch {
+                        val notesToUpdate = state.value.selectedNotes
+                        val allPinned = notesToUpdate.all { it.isPinned }
+                        notesToUpdate.forEach { note ->
+                            noteUseCases.addNote(note.copy(isPinned = !allPinned))
+                        }
+                        _state.value = state.value.copy(selectedNotes = emptySet())
+                    }
+                }
+
+                is NotesEvent.DeleteSelectedNotes -> {
+                    viewModelScope.launch {
+                        val notesToDelete = state.value.selectedNotes
+                        notesToDelete.forEach { note ->
+                            noteUseCases.deleteNote(note)
+                        }
+                        recentlyDeletedNote = null
+                        _state.value = state.value.copy(selectedNotes = emptySet())
+                    }
                 }
 
                 else -> {}
@@ -91,13 +135,14 @@ class NotesViewModel
                 noteUseCases
                     .getNotes()
                     .onEach { notes ->
-                        val sorted =
+                        val sortedByOrder =
                             when (sortOrder) {
                                 SortOrder.DATE_CREATED_NEW -> notes.sortedByDescending { it.timestamp }
                                 SortOrder.DATE_CREATED_OLD -> notes.sortedBy { it.timestamp }
                                 SortOrder.TITLE_A_Z -> notes.sortedBy { it.title.lowercase() }
                                 SortOrder.TITLE_Z_A -> notes.sortedByDescending { it.title.lowercase() }
                             }
+                        val sorted = sortedByOrder.sortedByDescending { it.isPinned }
                         _state.value = state.value.copy(notes = sorted, sortOrder = sortOrder)
                     }.launchIn(viewModelScope)
         }
@@ -108,7 +153,8 @@ class NotesViewModel
                 noteUseCases
                     .searchNotes(query)
                     .onEach { notes ->
-                        _state.value = state.value.copy(notes = notes)
+                        val sorted = notes.sortedByDescending { it.isPinned }
+                        _state.value = state.value.copy(notes = sorted)
                     }.launchIn(viewModelScope)
         }
     }

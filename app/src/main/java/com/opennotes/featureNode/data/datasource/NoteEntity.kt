@@ -28,6 +28,7 @@ data class NoteEntity(
     val content: String,
     val timestamp: Long,
     val color: Int,
+    val isPinned: Boolean = false,
     @PrimaryKey val id: Int? = null,
 ) {
     fun toNote(): Note {
@@ -36,6 +37,7 @@ data class NoteEntity(
             content = content,
             timestamp = timestamp,
             color = color,
+            isPinned = isPinned,
             id = id,
         )
     }
@@ -47,6 +49,7 @@ fun Note.toNoteEntity(): NoteEntity {
         content = content,
         timestamp = timestamp,
         color = color,
+        isPinned = isPinned,
         id = id,
     )
 }

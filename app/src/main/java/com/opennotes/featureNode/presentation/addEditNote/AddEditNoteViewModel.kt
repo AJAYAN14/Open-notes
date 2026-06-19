@@ -70,6 +70,7 @@ class AddEditNoteViewModel
         val eventFlow = _eventFlow.asSharedFlow()
 
         private var currentNoteId: Int? = null
+        private var currentIsPinned: Boolean = false
 
         init {
             savedStateHandle.get<Int>("noteId")?.let { noteId ->
@@ -77,6 +78,7 @@ class AddEditNoteViewModel
                     viewModelScope.launch {
                         noteUseCases.getNote(noteId)?.also { note ->
                             currentNoteId = note.id
+                            currentIsPinned = note.isPinned
                             if (savedStateHandle.get<String>("title") == null) {
                                 _noteTitle.value =
                                     noteTitle.value.copy(
@@ -139,6 +141,7 @@ class AddEditNoteViewModel
                                     content = noteContent.value.text,
                                     color = noteColor.value,
                                     timestamp = System.currentTimeMillis(),
+                                    isPinned = currentIsPinned,
                                     id = currentNoteId,
                                 ),
                             )

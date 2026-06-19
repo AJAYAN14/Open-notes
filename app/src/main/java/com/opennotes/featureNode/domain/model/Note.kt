@@ -24,6 +24,7 @@ data class Note(
     val content: String,
     val timestamp: Long,
     val color: Int,
+    val isPinned: Boolean = false,
     val id: Int? = null,
 )
 

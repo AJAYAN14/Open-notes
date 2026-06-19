@@ -18,9 +18,12 @@
 
 package com.opennotes.featureNode.presentation.notes
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,8 +31,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +49,7 @@ import com.opennotes.featureNode.presentation.notes.components.NoteItem
 import com.opennotes.featureNode.presentation.util.Screen
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(
     navController: NavController,
@@ -49,34 +58,43 @@ fun NotesScreen(
     val state = viewModel.state.value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val notePendingDeleteState = remember { mutableStateOf<Note?>(null) }
+    val notesPendingDeleteState = remember { mutableStateOf<Set<Note>?>(null) }
     var showSortSheet by remember { mutableStateOf(false) }
 
-    notePendingDeleteState.value?.let { noteToDelete ->
+    BackHandler(enabled = state.selectedNotes.isNotEmpty()) {
+        viewModel.onEvent(NotesEvent.ClearSelection)
+    }
+
+    notesPendingDeleteState.value?.let { notesToDelete ->
         AlertDialog(
-            onDismissRequest = { notePendingDeleteState.value = null },
+            onDismissRequest = { notesPendingDeleteState.value = null },
             title = {
                 Text(
-                    text = "Delete note",
+                    text = if (notesToDelete.size == 1) "Delete note" else "Delete ${notesToDelete.size} notes",
                     fontWeight = FontWeight.SemiBold,
                 )
             },
             text = {
-                Text("Are you sure you want to delete this note?")
+                Text(
+                    text = if (notesToDelete.size == 1) "Are you sure you want to delete this note?" 
+                           else "Are you sure you want to delete these notes?"
+                )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        notePendingDeleteState.value = null
-                        viewModel.onEvent(NotesEvent.DeleteNote(noteToDelete))
+                        notesPendingDeleteState.value = null
+                        viewModel.onEvent(NotesEvent.DeleteSelectedNotes)
                         scope.launch {
                             val result =
                                 snackbarHostState.showSnackbar(
-                                    message = "Note deleted",
+                                    message = if (notesToDelete.size == 1) "Note deleted" else "${notesToDelete.size} notes deleted",
                                     actionLabel = "Undo",
                                     duration = SnackbarDuration.Short,
                                 )
                             if (result == SnackbarResult.ActionPerformed) {
+                                // Note: Undo currently only restores one note. 
+                                // Implementing multi-restore would require a new event.
                                 viewModel.onEvent(NotesEvent.RestoreNote)
                             }
                         }
@@ -86,7 +104,7 @@ fun NotesScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { notePendingDeleteState.value = null }) {
+                TextButton(onClick = { notesPendingDeleteState.value = null }) {
                     Text("Cancel")
                 }
             },
@@ -131,61 +149,92 @@ fun NotesScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                 ) {
-                    OutlinedTextField(
-                        value = state.searchQuery,
-                        onValueChange = {
-                            viewModel.onEvent(NotesEvent.SearchNote(it))
-                        },
-                        modifier =
-                            Modifier
-                                .width(400.dp)
-                                .padding(bottom = 12.dp),
-                        shape = RoundedCornerShape(48.dp),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search Notes",
-                                modifier = Modifier.size(25.dp),
-                            )
-                        },
-                        trailingIcon = {
-                            Row {
-                                IconButton(onClick = { showSortSheet = true }) {
-                                    Icon(
-                                        imageVector = Icons.Default.SwapVert,
-                                        contentDescription = "Sort notes",
-                                        modifier = Modifier.size(25.dp),
-                                    )
-                                }
-                                IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = "Settings",
-                                        modifier = Modifier.size(25.dp),
-                                    )
-                                }
+                    if (state.selectedNotes.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { viewModel.onEvent(NotesEvent.ClearSelection) }) {
+                                Icon(Icons.Default.Close, "Clear selection")
                             }
-                        },
-                        placeholder = { Text("Search Notes") },
-                        singleLine = true,
-                        colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                                unfocusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                cursorColor = MaterialTheme.colorScheme.primary,
-                                focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                                unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                                unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
-                            ),
-                    )
+                            Text(
+                                text = "${state.selectedNotes.size}",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.weight(1f).padding(start = 16.dp)
+                            )
+                            val allPinned = state.selectedNotes.all { it.isPinned }
+                            IconButton(onClick = { viewModel.onEvent(NotesEvent.TogglePinSelectedNotes) }) {
+                                Icon(
+                                    imageVector = if (allPinned) Icons.Outlined.PushPin else Icons.Filled.PushPin,
+                                    contentDescription = "Toggle Pin"
+                                )
+                            }
+                            IconButton(onClick = { notesPendingDeleteState.value = state.selectedNotes }) {
+                                Icon(Icons.Default.Delete, "Delete selected")
+                            }
+                        }
+                    } else {
+                        OutlinedTextField(
+                            value = state.searchQuery,
+                            onValueChange = {
+                                viewModel.onEvent(NotesEvent.SearchNote(it))
+                            },
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 12.dp),
+                            shape = RoundedCornerShape(48.dp),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search Notes",
+                                    modifier = Modifier.size(25.dp),
+                                )
+                            },
+                            trailingIcon = {
+                                Row {
+                                    IconButton(onClick = { showSortSheet = true }) {
+                                        Icon(
+                                            imageVector = Icons.Default.SwapVert,
+                                            contentDescription = "Sort notes",
+                                            modifier = Modifier.size(25.dp),
+                                        )
+                                    }
+                                    IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Settings,
+                                            contentDescription = "Settings",
+                                            modifier = Modifier.size(25.dp),
+                                        )
+                                    }
+                                }
+                            },
+                            placeholder = { Text("Search Notes") },
+                            singleLine = true,
+                            colors =
+                                OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                    focusedBorderColor = Color.Transparent,
+                                    unfocusedBorderColor = Color.Transparent,
+                                    cursorColor = MaterialTheme.colorScheme.primary,
+                                    focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
+                                ),
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+
+                val pinnedNotes = state.notes.filter { it.isPinned }
+                val otherNotes = state.notes.filter { !it.isPinned }
 
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Fixed(2),
@@ -194,23 +243,72 @@ fun NotesScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalItemSpacing = 8.dp,
                 ) {
-                    items(
-                        items = state.notes,
-                        key = { note -> note.id ?: 0 },
-                    ) { note ->
-                        NoteItem(
-                            note = note,
-                            modifier = Modifier.fillMaxWidth(),
-                            onNoteClick = {
-                                navController.navigate(
-                                    Screen.AddEditNoteScreen.route +
-                                        "?noteId=${note.id}&noteColor=${note.color}",
+                    if (pinnedNotes.isNotEmpty()) {
+                        item(span = StaggeredGridItemSpan.FullLine) {
+                            Text(
+                                text = "PINNED",
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(bottom = 8.dp, start = 8.dp)
+                            )
+                        }
+                        items(
+                            items = pinnedNotes,
+                            key = { note -> note.id ?: note.hashCode() },
+                        ) { note ->
+                            NoteItem(
+                                note = note,
+                                isSelected = state.selectedNotes.contains(note),
+                                modifier = Modifier.fillMaxWidth(),
+                                onNoteClick = {
+                                    if (state.selectedNotes.isNotEmpty()) {
+                                        viewModel.onEvent(NotesEvent.ToggleSelection(note))
+                                    } else {
+                                        navController.navigate(
+                                            Screen.AddEditNoteScreen.route +
+                                                "?noteId=${note.id}&noteColor=${note.color}",
+                                        )
+                                    }
+                                },
+                                onLongClick = {
+                                    viewModel.onEvent(NotesEvent.ToggleSelection(note))
+                                },
+                            )
+                        }
+                    }
+                    
+                    if (otherNotes.isNotEmpty()) {
+                        if (pinnedNotes.isNotEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                Text(
+                                    text = "OTHERS",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, start = 8.dp)
                                 )
-                            },
-                            onDeleteClick = {
-                                notePendingDeleteState.value = note
-                            },
-                        )
+                            }
+                        }
+                        items(
+                            items = otherNotes,
+                            key = { note -> note.id ?: note.hashCode() },
+                        ) { note ->
+                            NoteItem(
+                                note = note,
+                                isSelected = state.selectedNotes.contains(note),
+                                modifier = Modifier.fillMaxWidth(),
+                                onNoteClick = {
+                                    if (state.selectedNotes.isNotEmpty()) {
+                                        viewModel.onEvent(NotesEvent.ToggleSelection(note))
+                                    } else {
+                                        navController.navigate(
+                                            Screen.AddEditNoteScreen.route +
+                                                "?noteId=${note.id}&noteColor=${note.color}",
+                                        )
+                                    }
+                                },
+                                onLongClick = {
+                                    viewModel.onEvent(NotesEvent.ToggleSelection(note))
+                                },
+                            )
+                        }
                     }
                 }
             }

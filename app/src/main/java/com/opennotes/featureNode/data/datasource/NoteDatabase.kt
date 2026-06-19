@@ -20,16 +20,24 @@ package com.opennotes.featureNode.data.datasource
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 
 @Database(
     entities = [NoteEntity::class],
-    version = 2,
+    version = 3,
 )
 abstract class NoteDatabase : RoomDatabase() {
     abstract val noteDao: NoteDao
 
     companion object {
         const val DATABASE_NAME = "notes_db"
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE Note ADD COLUMN isPinned INTEGER NOT NULL DEFAULT 0")
+            }
+        }
     }
 }

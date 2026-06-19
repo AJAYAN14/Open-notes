@@ -25,6 +25,10 @@ sealed class NotesEvent {
         val note: Note,
     ) : NotesEvent()
 
+    data class TogglePinNote(
+        val note: Note,
+    ) : NotesEvent()
+
     object RestoreNote : NotesEvent()
 
     data class SearchNote(
@@ -34,4 +38,14 @@ sealed class NotesEvent {
     data class SortNotes(
         val sortOrder: SortOrder,
     ) : NotesEvent()
+
+    data class ToggleSelection(
+        val note: Note,
+    ) : NotesEvent()
+
+    object ClearSelection : NotesEvent()
+
+    object TogglePinSelectedNotes : NotesEvent()
+
+    object DeleteSelectedNotes : NotesEvent()
 }
