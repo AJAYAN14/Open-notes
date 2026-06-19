@@ -55,14 +55,14 @@ class CodeBlockProcessor : MarkdownLineProcessor {
 }
 
 class CheckboxProcessor : MarkdownLineProcessor {
-    override fun canProcessLine(line: String): Boolean = line.matches(Regex("^\\[[ xX]]( .*)?"))
+    override fun canProcessLine(line: String): Boolean = line.matches(Regex("^([\\-*]\\s*)?\\[[ xX]]( .*)?"))
 
     override fun processLine(
         line: String,
         builder: MarkdownBuilder,
     ) {
-        val checked = line.contains(Regex("^\\[[Xx]]"))
-        val text = line.replace(Regex("^\\[[ xX]] ?"), "").trim()
+        val checked = line.contains(Regex("\\[[Xx]]"))
+        val text = line.replace(Regex("^([\\-*]\\s*)?\\[[ xX]] ?"), "").trim()
         builder.add(CheckboxItem(text, checked, builder.lineIndex))
     }
 }
@@ -149,28 +149,50 @@ fun String.stripMarkdown(): String {
     var inCodeBlock = false
 
     for (line in lines) {
-        when {
-            line.startsWith("```") -> inCodeBlock = !inCodeBlock
-            inCodeBlock -> result.appendLine(line) // keep code content as plain text
-            line.startsWith("#") -> result.appendLine(line.dropWhile { it == '#' }.trim())
-            line.trim().startsWith(">") -> result.appendLine(line.dropWhile { it == '>' }.trim())
-            line.trim().startsWith("- ") || line.trim().startsWith("+ ") || line.trim().startsWith("* ") ->
-                result.appendLine(
-                    "• " + line.trim().drop(2),
-                )
-            line.matches(Regex("^\\d+\\. .*")) -> result.appendLine(line.substringAfter(". "))
-            line.trim() == "---" -> {} // skip horizontal rules
-            line.trim().startsWith("!(") -> {} // skip images
-            else ->
-                result.appendLine(
-                    line
-                        .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
-                        .replace(Regex("\\*(.+?)\\*"), "$1")
-                        .replace(Regex("~~(.+?)~~"), "$1")
-                        .replace(Regex("`(.+?)`"), "$1")
-                        .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1"),
-                )
+        if (line.trim().startsWith("```")) {
+            inCodeBlock = !inCodeBlock
+            continue
         }
+        if (inCodeBlock) {
+            result.appendLine(line)
+            continue
+        }
+        if (line.trim() == "---" || line.trim().startsWith("!(")) {
+            continue
+        }
+
+        var processedLine = line
+
+        // Handle block-level formatting
+        when {
+            processedLine.trim().startsWith("#") -> {
+                processedLine = processedLine.trim().dropWhile { it == '#' }.trim()
+            }
+            processedLine.trim().startsWith(">") -> {
+                processedLine = processedLine.dropWhile { it == '>' }.trim()
+            }
+            processedLine.trim().matches(Regex("^([\\-*]\\s*)?\\[[ xX]]( .*)?")) -> {
+                val isChecked = processedLine.contains(Regex("\\[[Xx]]"))
+                val text = processedLine.trim().replace(Regex("^([\\-*]\\s*)?\\[[ xX]] ?"), "").trim()
+                processedLine = (if (isChecked) "[✓] " else "[ ] ") + text
+            }
+            processedLine.trim().startsWith("- ") || processedLine.trim().startsWith("+ ") || processedLine.trim().startsWith("* ") -> {
+                processedLine = "• " + processedLine.trim().drop(2)
+            }
+            processedLine.matches(Regex("^\\d+\\. .*")) -> {
+                processedLine = processedLine.substringAfter(". ")
+            }
+        }
+
+        // Apply inline markdown stripping to the processed line
+        processedLine = processedLine
+            .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
+            .replace(Regex("\\*(.+?)\\*"), "$1")
+            .replace(Regex("~~(.+?)~~"), "$1")
+            .replace(Regex("`(.+?)`"), "$1")
+            .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1")
+
+        result.appendLine(processedLine)
     }
 
     return result.toString().trim()

@@ -73,12 +73,17 @@ fun ZeroState(widgetId: Int) {
 fun SelectedNote(
     note: Note,
     widgetId: Int,
-){
+) {
+    val isDefaultColor = note.color == 0xFF000000.toInt() || note.color == 0xFFF5F5F5.toInt()
+
     Column(
         modifier =
             GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(day = Color(note.color), night = Color(note.color)))
+                .background(
+                    if (isDefaultColor) GlanceTheme.colors.surfaceVariant
+                    else ColorProvider(day = Color(note.color), night = Color(note.color))
+                )
                 .cornerRadius(16.dp)
                 .padding(16.dp)
                 .clickable(
@@ -93,33 +98,28 @@ fun SelectedNote(
                 ),
     ) {
         val contentColor =
-            if (Color(note.color).luminance() < 0.5f) {
+            if (isDefaultColor) {
+                GlanceTheme.colors.primary
+            } else if (Color(note.color).luminance() < 0.5f) {
                 ColorProvider(day = Color.White, night = Color.White)
             } else {
                 ColorProvider(day = Color.Black, night = Color.Black)
             }
 
         if (note.title.isNotBlank()) {
-            Text(
-                text = note.title,
-                style =
-                    TextStyle(
-                        color = contentColor,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                    ),
-                maxLines = 2,
+            WidgetText(
+                markdown = note.title,
+                weight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = contentColor,
+                onContentChange = {}
             )
             Spacer(modifier = GlanceModifier.height(8.dp))
         }
-        Text(
-            text = note.content.stripMarkdown().ifBlank { "No content" },
-            style =
-                TextStyle(
-                    color = contentColor,
-                    fontSize = 13.sp,
-                ),
-            maxLines = 6,
+        WidgetText(
+            markdown = note.content,
+            color = contentColor,
+            onContentChange = {}
         )
     }
 }

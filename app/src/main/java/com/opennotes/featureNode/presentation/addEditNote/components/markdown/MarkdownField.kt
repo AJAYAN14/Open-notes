@@ -26,12 +26,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -40,8 +35,6 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.opennotes.featureNode.presentation.addEditNote.components.TransParentHintTextField
-
-
 
 @Composable
 fun MarkdownField(
@@ -56,13 +49,14 @@ fun MarkdownField(
     onTitleFocusChange: (FocusState) -> Unit,
     onContentChange: (String) -> Unit,
     onContentFocusChange: (FocusState) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isPreviewMode) {
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(8.dp)
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
         ) {
             MarkdownText(
                 radius = 8,
@@ -73,7 +67,7 @@ fun MarkdownField(
                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                 onContentChange = {},
                 settingsViewModel = null,
-                textColor = contentColor
+                textColor = contentColor,
             )
             Spacer(modifier = Modifier.height(16.dp))
             MarkdownText(
@@ -81,12 +75,13 @@ fun MarkdownField(
                 markdown = contentText.ifBlank { "No content to preview" },
                 isPreview = false,
                 isEnabled = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 onContentChange = {},
                 settingsViewModel = null,
-                textColor = contentColor
+                textColor = contentColor,
             )
         }
     } else {
@@ -99,19 +94,18 @@ fun MarkdownField(
                 singleLine = true,
                 textStyle = MaterialTheme.typography.headlineSmall.copy(color = contentColor),
                 focusRequester = titleFocusRequester,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(16.dp))
-            val scrollState = rememberScrollState()
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) { contentFocusRequester.requestFocus() }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                        ) { contentFocusRequester.requestFocus() },
             ) {
                 TransParentHintTextField(
                     text = contentText,
@@ -121,9 +115,9 @@ fun MarkdownField(
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
                     singleLine = false,
                     focusRequester = contentFocusRequester,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(unbounded = true)
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
                 )
             }
         }
