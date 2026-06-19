@@ -106,29 +106,30 @@ class MainActivity : FragmentActivity() {
             val isAppUnlocked by settingsViewModel.isAppUnlocked.collectAsState()
             val isLoaded by settingsViewModel.isLoaded.collectAsState()
 
-            var showContent by remember { mutableStateOf(false) }
+            val showContent = isLoaded && (!currentSettings.biometricLock || isAppUnlocked)
+
             var hasPrompted by androidx.compose.runtime.saveable
                 .rememberSaveable { mutableStateOf(false) }
 
             LaunchedEffect(isAppUnlocked, currentSettings.biometricLock, isLoaded) {
                 if (!isLoaded) return@LaunchedEffect // wait for real settings to load
-                when {
-                    !currentSettings.biometricLock || isAppUnlocked -> showContent = true
-                    else -> {
-                        if (!hasPrompted) {
-                            val promptInfo =
-                                BiometricPrompt.PromptInfo
-                                    .Builder()
-                                    .setTitle("Unlock OpenNotes")
-                                    .setSubtitle("Confirm your identity to access your notes")
-                                    .setAllowedAuthenticators(
-                                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                            BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                            BiometricManager.Authenticators.DEVICE_CREDENTIAL,
-                                    ).build()
-                            biometricPrompt.authenticate(promptInfo)
-                        }
+                if (currentSettings.biometricLock && !isAppUnlocked) {
+                    if (!hasPrompted) {
+                        val promptInfo =
+                            BiometricPrompt.PromptInfo
+                                .Builder()
+                                .setTitle("Unlock OpenNotes")
+                                .setSubtitle("Confirm your identity to access your notes")
+                                .setAllowedAuthenticators(
+                                    BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                        BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                                ).build()
+                        biometricPrompt.authenticate(promptInfo)
+                        hasPrompted = true
                     }
+                } else {
+                    hasPrompted = false
                 }
             }
 

@@ -77,12 +77,20 @@ fun LicenseBottomSheet(
             fontFamily = typography.bodyLarge.fontFamily,
         )
 
+    val linkStyle =
+        SpanStyle(
+            color = colorScheme.primary,
+            textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline,
+        )
+
     val paragraphs =
         remember {
             listOf(
                 buildAnnotatedString {
                     append("Copyright © 2007 Free Software Foundation, Inc. <")
-                    withLink(LinkAnnotation.Url("https://fsf.org/")) { append("https://fsf.org/") }
+                    withLink(LinkAnnotation.Url("https://fsf.org/")) { 
+                        withStyle(linkStyle) { append("https://fsf.org/") }
+                    }
                     append(
                         ">\n\n" +
                             "Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.",
@@ -355,7 +363,7 @@ fun LicenseBottomSheet(
                             "You should also get your employer (if you work as a programmer) or school, if any, to sign a “copyright disclaimer” for the program, if necessary. For more information on this, and how to apply and follow the GNU GPL, see <",
                     )
                     withLink(LinkAnnotation.Url("https://www.gnu.org/licenses/")) {
-                        append("https://www.gnu.org/licenses/")
+                        withStyle(linkStyle) { append("https://www.gnu.org/licenses/") }
                     }
                     append(
                         ">.\n" +
@@ -363,7 +371,7 @@ fun LicenseBottomSheet(
                             "The GNU General Public License does not permit incorporating your program into proprietary programs. If your program is a subroutine library, you may consider it more useful to permit linking proprietary applications with the library. If this is what you want to do, use the GNU Lesser General Public License instead of this License. But first, please read <",
                     )
                     withLink(LinkAnnotation.Url("https://www.gnu.org/licenses/why-not-lgpl.html")) {
-                        append("https://www.gnu.org/licenses/why-not-lgpl.html")
+                        withStyle(linkStyle) { append("https://www.gnu.org/licenses/why-not-lgpl.html") }
                     }
                     append(">.")
                 },
