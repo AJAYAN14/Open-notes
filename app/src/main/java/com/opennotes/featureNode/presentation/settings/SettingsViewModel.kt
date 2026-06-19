@@ -22,13 +22,15 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opennotes.featureNode.data.repository.DataStoreRepository
+import com.opennotes.featureNode.domain.model.AppIcon
+import com.opennotes.featureNode.domain.model.Settings
+import com.opennotes.featureNode.domain.model.ThemeMode
 import com.opennotes.featureNode.domain.usecase.NoteUseCases
 import com.opennotes.featureNode.domain.util.ExportResult
 import com.opennotes.featureNode.domain.util.ImportResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import com.opennotes.featureNode.domain.model.AppIcon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -154,7 +156,7 @@ class SettingsViewModel
 
         fun onExportUriSelected(fileUri: Uri) {
             viewModelScope.launch(Dispatchers.IO) {
-                when (val result = noteUseCases.exportNotes(fileUri)) {
+                when (val result = noteUseCases.exportNotes(fileUri.toString())) {
                     is ExportResult.Success ->
                         _uiEvent.send(
                             UiEvent.ShowSnackbar("Notes exported successfully"),
@@ -166,7 +168,7 @@ class SettingsViewModel
 
         fun onImportClick(fileUri: Uri) {
             viewModelScope.launch(Dispatchers.IO) {
-                when (val result = noteUseCases.importNotes(fileUri)) {
+                when (val result = noteUseCases.importNotes(fileUri.toString())) {
                     is ImportResult.Success ->
                         _uiEvent.send(UiEvent.ShowSnackbar("Notes imported"))
                     is ImportResult.Error ->

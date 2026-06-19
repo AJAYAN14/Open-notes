@@ -18,11 +18,9 @@
 
 package com.opennotes.featureNode.domain.util
 
-import android.net.Uri
-
 sealed class ExportResult {
     data class Success(
-        val uri: Uri,
+        val uriString: String,
     ) : ExportResult()
 
     data class Error(

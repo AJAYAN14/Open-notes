@@ -29,7 +29,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.opennotes.R
 import com.opennotes.featureNode.presentation.addEditNote.components.markdown.*
 import java.io.File
 
@@ -40,17 +39,18 @@ fun WidgetText(
     weight: FontWeight = FontWeight.Normal,
     fontSize: TextUnit = 15.sp,
     color: ColorProvider,
-    onContentChange: (String) -> Unit = {}
+    onContentChange: (String) -> Unit = {},
 ) {
     val lines = markdown.lines()
-    val lineProcessors = listOf(
-        HeadingProcessor(),
-        ListItemProcessor(),
-        CodeBlockProcessor(),
-        QuoteProcessor(),
-        ImageInsertionProcessor(),
-        CheckboxProcessor()
-    )
+    val lineProcessors =
+        listOf(
+            HeadingProcessor(),
+            ListItemProcessor(),
+            CodeBlockProcessor(),
+            QuoteProcessor(),
+            ImageInsertionProcessor(),
+            CheckboxProcessor(),
+        )
     val markdownBuilder = MarkdownBuilder(lines, lineProcessors)
     markdownBuilder.parse()
     MarkdownWidgetContent(
@@ -60,7 +60,7 @@ fun WidgetText(
         lines = lines,
         fontSize = fontSize,
         color = color,
-        onContentChange = onContentChange
+        onContentChange = onContentChange,
     )
 }
 
@@ -72,18 +72,18 @@ fun MarkdownWidgetContent(
     lines: List<String>,
     color: ColorProvider,
     fontSize: TextUnit,
-    onContentChange: (String) -> Unit
+    onContentChange: (String) -> Unit,
 ) {
     if (content.isEmpty()) {
         Text(
             text = "No content",
-            style = TextStyle(color = color, fontSize = fontSize)
+            style = TextStyle(color = color, fontSize = fontSize),
         )
         return
     }
 
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
     ) {
         items(content.size) { index ->
             WidgetMarkdownElement(
@@ -94,7 +94,7 @@ fun MarkdownWidgetContent(
                 weight = weight,
                 fontSize = fontSize,
                 lines = lines,
-                onContentChange = onContentChange
+                onContentChange = onContentChange,
             )
         }
     }
@@ -109,27 +109,29 @@ fun WidgetMarkdownElement(
     color: ColorProvider,
     weight: FontWeight,
     fontSize: TextUnit,
-    onContentChange: (String) -> Unit
+    onContentChange: (String) -> Unit,
 ) {
     val element = content[index]
     val context = LocalContext.current
 
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.Vertical.CenterVertically
+        verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         when (element) {
             is Heading -> {
                 Text(
                     text = element.text.stripMarkdown(),
-                    style = TextStyle(
-                        fontSize = when (element.level) {
-                            in 1..6 -> (24 - (2 * element.level)).sp
-                            else -> fontSize
-                        },
-                        fontWeight = FontWeight.Bold,
-                        color = color
-                    )
+                    style =
+                        TextStyle(
+                            fontSize =
+                                when (element.level) {
+                                    in 1..6 -> (24 - (2 * element.level)).sp
+                                    else -> fontSize
+                                },
+                            fontWeight = FontWeight.Bold,
+                            color = color,
+                        ),
                 )
             }
             is ImageInsertion -> {
@@ -142,18 +144,20 @@ fun WidgetMarkdownElement(
                             provider = ImageProvider(bitmap),
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
-                            modifier = GlanceModifier
-                                .padding(6.dp)
-                                .wrapContentHeight()
+                            modifier =
+                                GlanceModifier
+                                    .padding(6.dp)
+                                    .wrapContentHeight(),
                         )
                     } else {
                         Text(
                             text = "Unsupported image size",
-                            style = TextStyle(
-                                fontSize = fontSize,
-                                fontWeight = weight,
-                                color = GlanceTheme.colors.error
-                            )
+                            style =
+                                TextStyle(
+                                    fontSize = fontSize,
+                                    fontWeight = weight,
+                                    color = GlanceTheme.colors.error,
+                                ),
                         )
                     }
                 }
@@ -162,11 +166,12 @@ fun WidgetMarkdownElement(
                 if (element.text.isNotBlank()) {
                     Text(
                         text = element.text.stripMarkdown(),
-                        style = TextStyle(
-                            fontSize = fontSize,
-                            fontWeight = weight,
-                            color = color
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = fontSize,
+                                fontWeight = weight,
+                                color = color,
+                            ),
                     )
                 }
             }
@@ -175,48 +180,52 @@ fun WidgetMarkdownElement(
                     content = {
                         Text(
                             text = element.text.stripMarkdown(),
-                            style = TextStyle(
-                                fontSize = fontSize,
-                                fontWeight = weight,
-                                color = color
-                            ),
+                            style =
+                                TextStyle(
+                                    fontSize = fontSize,
+                                    fontWeight = weight,
+                                    color = color,
+                                ),
                             maxLines = 1,
-                            modifier = GlanceModifier.padding(start = 4.dp)
+                            modifier = GlanceModifier.padding(start = 4.dp),
                         )
                     },
                     checked = element.checked,
-                    onCheckedChange = null // Read-only in widget for now
+                    onCheckedChange = null, // Read-only in widget for now
                 )
             }
             is ListItem -> {
                 val prefix = if (element.isNumbered && element.number != null) "${element.number}. " else "• "
                 Text(
                     text = (prefix + element.text).stripMarkdown(),
-                    style = TextStyle(
-                        fontSize = fontSize,
-                        fontWeight = weight,
-                        color = color
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = fontSize,
+                            fontWeight = weight,
+                            color = color,
+                        ),
                 )
             }
             is Quote -> {
                 Row(
-                    verticalAlignment = Alignment.Vertical.CenterVertically
+                    verticalAlignment = Alignment.Vertical.CenterVertically,
                 ) {
                     Box(
-                        modifier = GlanceModifier
-                            .height(22.dp)
-                            .width(4.dp)
-                            .background(color)
+                        modifier =
+                            GlanceModifier
+                                .height(22.dp)
+                                .width(4.dp)
+                                .background(color),
                     ) {}
                     Spacer(modifier = GlanceModifier.width(6.dp))
                     Text(
                         text = element.text.stripMarkdown(),
-                        style = TextStyle(
-                            fontSize = fontSize,
-                            fontWeight = weight,
-                            color = color
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = fontSize,
+                                fontWeight = weight,
+                                color = color,
+                            ),
                     )
                 }
             }
@@ -225,41 +234,45 @@ fun WidgetMarkdownElement(
                     MarkdownWidgetCodeBlock(color = GlanceTheme.colors.surfaceVariant) {
                         Text(
                             text = element.code.dropLast(1),
-                            style = TextStyle(
-                                fontSize = fontSize,
-                                fontWeight = weight,
-                                fontFamily = FontFamily.Monospace,
-                                color = color
-                            )
+                            style =
+                                TextStyle(
+                                    fontSize = fontSize,
+                                    fontWeight = weight,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = color,
+                                ),
                         )
                     }
                 } else {
                     Text(
                         text = element.firstLine,
-                        style = TextStyle(
-                            fontSize = fontSize,
-                            fontWeight = weight,
-                            color = color
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = fontSize,
+                                fontWeight = weight,
+                                color = color,
+                            ),
                     )
                 }
             }
             is Link -> {
                 Text(
                     text = element.fullText.stripMarkdown(),
-                    style = TextStyle(
-                        fontSize = fontSize,
-                        fontWeight = weight,
-                        color = color
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = fontSize,
+                            fontWeight = weight,
+                            color = color,
+                        ),
                 )
             }
             is HorizontalRule -> {
                 Box(
-                    modifier = GlanceModifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color)
+                    modifier =
+                        GlanceModifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(color),
                 ) {}
             }
         }
@@ -273,12 +286,12 @@ fun MarkdownWidgetCheck(
     onCheckedChange: ((Boolean) -> Unit)? = null,
 ) {
     Row(
-        verticalAlignment = Alignment.Vertical.CenterVertically
+        verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         CheckBox(
             checked = checked,
             onCheckedChange = null, // Ensure read-only UI behavior in glance checkbox
-            modifier = GlanceModifier.padding(end = 4.dp)
+            modifier = GlanceModifier.padding(end = 4.dp),
         )
         content()
     }
@@ -287,17 +300,18 @@ fun MarkdownWidgetCheck(
 @Composable
 fun MarkdownWidgetCodeBlock(
     color: ColorProvider,
-    text: @Composable () -> Unit
+    text: @Composable () -> Unit,
 ) {
     Box(
-        modifier = GlanceModifier.padding(top = 6.dp)
+        modifier = GlanceModifier.padding(top = 6.dp),
     ) {
         Box(
-            modifier = GlanceModifier
-                .padding(6.dp)
-                .cornerRadius(6.dp)
-                .background(color)
-                .fillMaxWidth(),
+            modifier =
+                GlanceModifier
+                    .padding(6.dp)
+                    .cornerRadius(6.dp)
+                    .background(color)
+                    .fillMaxWidth(),
         ) {
             text()
         }

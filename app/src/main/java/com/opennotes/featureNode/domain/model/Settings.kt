@@ -16,17 +16,13 @@
  *
  */
 
-package com.opennotes.featureNode.presentation.settings
-
-import com.opennotes.featureNode.domain.model.AppIcon
+package com.opennotes.featureNode.domain.model
 
 enum class ThemeMode {
     SYSTEM,
     LIGHT,
     DARK,
 }
-
-
 
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,

@@ -43,7 +43,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.opennotes.featureNode.domain.model.Note
-import com.opennotes.featureNode.presentation.addEditNote.components.markdown.stripMarkdown
 
 @Composable
 fun ZeroState(widgetId: Int) {
@@ -81,10 +80,12 @@ fun SelectedNote(
             GlanceModifier
                 .fillMaxSize()
                 .background(
-                    if (isDefaultColor) GlanceTheme.colors.surfaceVariant
-                    else ColorProvider(day = Color(note.color), night = Color(note.color))
-                )
-                .cornerRadius(16.dp)
+                    if (isDefaultColor) {
+                        GlanceTheme.colors.surfaceVariant
+                    } else {
+                        ColorProvider(day = Color(note.color), night = Color(note.color))
+                    },
+                ).cornerRadius(16.dp)
                 .padding(16.dp)
                 .clickable(
                     actionStartActivity(
@@ -112,14 +113,14 @@ fun SelectedNote(
                 weight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = contentColor,
-                onContentChange = {}
+                onContentChange = {},
             )
             Spacer(modifier = GlanceModifier.height(8.dp))
         }
         WidgetText(
             markdown = note.content,
             color = contentColor,
-            onContentChange = {}
+            onContentChange = {},
         )
     }
 }

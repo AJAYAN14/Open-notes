@@ -29,15 +29,15 @@ sealed class AddEditNoteEvent {
         val value: String,
     ) : AddEditNoteEvent()
 
-    data class changeTitleFocus(
+    data class ChangeTitleFocus(
         val focusState: FocusState,
     ) : AddEditNoteEvent()
 
-    data class changeContentFocus(
+    data class ChangeContentFocus(
         val focusState: FocusState,
     ) : AddEditNoteEvent()
 
-    data class changeColor(
+    data class ChangeColor(
         val color: Int,
     ) : AddEditNoteEvent()
 

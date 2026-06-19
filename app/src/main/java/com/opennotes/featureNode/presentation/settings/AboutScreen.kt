@@ -38,7 +38,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Notes
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Support
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -199,8 +198,6 @@ fun AboutScreen(navController: NavController) {
                         }
                     }
 
-
-
                     if (showLicenseBottomSheet) {
                         LicenseBottomSheet(
                             onDismissRequest = { showLicenseBottomSheet = false },
@@ -222,9 +219,10 @@ fun AboutScreen(navController: NavController) {
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         ListItem(
-                            modifier = Modifier.clickable {
-                                uriHandler.openUri("https://github.com/sponsors/Fandroid745")
-                            },
+                            modifier =
+                                Modifier.clickable {
+                                    uriHandler.openUri("https://github.com/sponsors/Fandroid745")
+                                },
                             leadingContent = {
                                 Icon(
                                     imageVector = Icons.Default.Support,

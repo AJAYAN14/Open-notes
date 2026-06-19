@@ -32,15 +32,15 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 interface FileHandler {
-    suspend fun readTextFromUri(uri: Uri): String
+    suspend fun readTextFromUri(uriString: String): String
 
     suspend fun saveToFile(
         filename: String,
         content: String,
-    ): Uri?
+    ): String?
 
     suspend fun writeTextToUri(
-        uri: Uri,
+        uriString: String,
         content: String,
     ): Boolean
 }
@@ -48,9 +48,9 @@ interface FileHandler {
 class AndroidFileHandler(
     private val application: Application,
 ) : FileHandler {
-    override suspend fun readTextFromUri(uri: Uri): String =
+    override suspend fun readTextFromUri(uriString: String): String =
         withContext(Dispatchers.IO) {
-            application.contentResolver.openInputStream(uri)?.use { inputStream ->
+            application.contentResolver.openInputStream(Uri.parse(uriString))?.use { inputStream ->
                 BufferedReader(InputStreamReader(inputStream)).readText()
             } ?: throw IOException("Could not read from URI")
         }
@@ -58,7 +58,7 @@ class AndroidFileHandler(
     override suspend fun saveToFile(
         filename: String,
         content: String,
-    ): Uri? =
+    ): String? =
         withContext(Dispatchers.IO) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val resolver = application.contentResolver
@@ -83,7 +83,7 @@ class AndroidFileHandler(
                     values.put(MediaStore.Downloads.IS_PENDING, 0)
                     resolver.update(itemUri, values, null, null)
 
-                    return@withContext itemUri
+                    return@withContext itemUri.toString()
                 } catch (_: Exception) {
                     resolver.delete(itemUri, null, null)
                     return@withContext null
@@ -99,19 +99,19 @@ class AndroidFileHandler(
             val file = File(downloadsDir, filename)
             return@withContext try {
                 file.writeText(content)
-                Uri.fromFile(file)
+                Uri.fromFile(file).toString()
             } catch (_: Exception) {
                 null
             }
         }
 
     override suspend fun writeTextToUri(
-        uri: Uri,
+        uriString: String,
         content: String,
     ): Boolean =
         withContext(Dispatchers.IO) {
             return@withContext try {
-                application.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                application.contentResolver.openOutputStream(Uri.parse(uriString))?.use { outputStream ->
                     outputStream.write(content.toByteArray())
                 } ?: return@withContext false
                 true

@@ -25,8 +25,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.opennotes.featureNode.domain.model.AppIcon
-import com.opennotes.featureNode.presentation.settings.Settings
-import com.opennotes.featureNode.presentation.settings.ThemeMode
+import com.opennotes.featureNode.domain.model.Settings
+import com.opennotes.featureNode.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -103,8 +103,7 @@ class DataStoreRepository
                     } else {
                         throw exception
                     }
-                }
-                .map { preferences ->
+                }.map { preferences ->
                     val themeModeName = preferences[THEME_MODE] ?: ThemeMode.SYSTEM.name
                     val themeMode =
                         try {

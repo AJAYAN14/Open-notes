@@ -1,6 +1,10 @@
 package com.opennotes.featureNode.domain.model
 
-enum class AppIcon(val componentClass: String, val title: String, val colorHex: Long) {
+enum class AppIcon(
+    val componentClass: String,
+    val title: String,
+    val colorHex: Long,
+) {
     DEFAULT("com.opennotes.featureNode.presentation.MainActivityDefault", "Default (Orange)", 0xFFFF9800),
     RED("com.opennotes.featureNode.presentation.MainActivityRed", "Red", 0xFFF44336),
     PINK("com.opennotes.featureNode.presentation.MainActivityPink", "Pink", 0xFFE91E63),
@@ -21,5 +25,5 @@ enum class AppIcon(val componentClass: String, val title: String, val colorHex: 
     BROWN("com.opennotes.featureNode.presentation.MainActivityBrown", "Brown", 0xFF795548),
     GREY("com.opennotes.featureNode.presentation.MainActivityGrey", "Grey", 0xFF9E9E9E),
     BLUE_GREY("com.opennotes.featureNode.presentation.MainActivityBlueGrey", "Blue Grey", 0xFF607D8B),
-    BLACK("com.opennotes.featureNode.presentation.MainActivityBlack", "Black", 0xFF000000)
+    BLACK("com.opennotes.featureNode.presentation.MainActivityBlack", "Black", 0xFF000000),
 }

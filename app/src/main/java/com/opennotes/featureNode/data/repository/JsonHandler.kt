@@ -22,16 +22,10 @@ import com.google.gson.GsonBuilder
 
 // In your data/repository directory
 
-import java.lang.reflect.Type
-
 interface JsonHandler {
     fun <T> toJson(data: T): String
 
-    // The second parameter is now of type `Type`
-    fun <T> fromJson(
-        json: String,
-        type: Type,
-    ): T
+    fun fromJsonToNoteMapList(json: String): List<Map<String, Any?>>
 }
 
 class GsonJsonHandler : JsonHandler {
@@ -39,8 +33,8 @@ class GsonJsonHandler : JsonHandler {
 
     override fun <T> toJson(data: T): String = gson.toJson(data)
 
-    override fun <T> fromJson(
-        json: String,
-        type: Type,
-    ): T = gson.fromJson(json, type)
+    override fun fromJsonToNoteMapList(json: String): List<Map<String, Any?>> {
+        val noteListType = object : com.google.gson.reflect.TypeToken<List<Map<String, Any?>>>() {}.type
+        return gson.fromJson(json, noteListType)
+    }
 }

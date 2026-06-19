@@ -185,12 +185,13 @@ fun String.stripMarkdown(): String {
         }
 
         // Apply inline markdown stripping to the processed line
-        processedLine = processedLine
-            .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
-            .replace(Regex("\\*(.+?)\\*"), "$1")
-            .replace(Regex("~~(.+?)~~"), "$1")
-            .replace(Regex("`(.+?)`"), "$1")
-            .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1")
+        processedLine =
+            processedLine
+                .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
+                .replace(Regex("\\*(.+?)\\*"), "$1")
+                .replace(Regex("~~(.+?)~~"), "$1")
+                .replace(Regex("`(.+?)`"), "$1")
+                .replace(Regex("\\[(.+?)\\]\\(.*?\\)"), "$1")
 
         result.appendLine(processedLine)
     }

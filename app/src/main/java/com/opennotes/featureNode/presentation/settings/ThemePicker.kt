@@ -1,4 +1,5 @@
-package com.opennotes.featureNode.presentation.settings/*
+package com.opennotes.featureNode.presentation.settings
+/*
  *
  *  *  Copyright (c) 2026 Dhanush Sugganahalli <dhanush41230@gmail.com>
  *  *
@@ -39,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.opennotes.featureNode.domain.model.ThemeMode
 
 @Composable
 fun ThemePicker(

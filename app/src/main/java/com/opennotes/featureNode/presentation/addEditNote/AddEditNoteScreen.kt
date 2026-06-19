@@ -273,11 +273,11 @@ fun AddEditNoteScreen(
                     contentFocusRequester = contentFocusRequester,
                     titleFocusRequester = titleFocusRequester,
                     onTitleChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
-                    onTitleFocusChange = { viewModel.onEvent(AddEditNoteEvent.changeTitleFocus(it)) },
+                    onTitleFocusChange = { viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it)) },
                     onContentChange = { viewModel.onEvent(AddEditNoteEvent.EnteredContent(it)) },
                     onContentFocusChange = {
                         viewModel.onEvent(
-                            AddEditNoteEvent.changeContentFocus(
+                            AddEditNoteEvent.ChangeContentFocus(
                                 it,
                             ),
                         )
@@ -348,7 +348,7 @@ fun AddEditNoteScreen(
                                             animationSpec = tween(durationMillis = 500),
                                         )
                                     }
-                                    viewModel.onEvent(AddEditNoteEvent.changeColor(colorInt))
+                                    viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
                                 },
                     ) {
                         if (isSelected) {

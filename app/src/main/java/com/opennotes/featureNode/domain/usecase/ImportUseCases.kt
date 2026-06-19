@@ -18,8 +18,6 @@
 
 package com.opennotes.featureNode.domain.usecase
 
-import android.net.Uri
-import com.google.gson.reflect.TypeToken
 import com.opennotes.featureNode.data.repository.FileHandler
 import com.opennotes.featureNode.data.repository.JsonHandler
 import com.opennotes.featureNode.domain.model.Note
@@ -31,19 +29,18 @@ class ImportUseCases(
     private val fileHandler: FileHandler,
     private val jsonHandler: JsonHandler,
 ) {
-    suspend operator fun invoke(fileUri: Uri): ImportResult {
+    suspend operator fun invoke(fileUriString: String): ImportResult {
         return try {
-            val notesJson = fileHandler.readTextFromUri(fileUri)
+            val notesJson = fileHandler.readTextFromUri(fileUriString)
 
             if (notesJson.isBlank()) {
                 return ImportResult.Error("File is empty")
             }
 
             // Deserialize with validation - catch invalid JSON first
-            val noteListType = object : TypeToken<List<Map<String, Any?>>>() {}.type
             val rawNotes: List<Map<String, Any?>> =
                 try {
-                    jsonHandler.fromJson(notesJson, noteListType)
+                    jsonHandler.fromJsonToNoteMapList(notesJson)
                 } catch (e: Exception) {
                     return ImportResult.Error("Invalid JSON format: ${e.message}")
                 }

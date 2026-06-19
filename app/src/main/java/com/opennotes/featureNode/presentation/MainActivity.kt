@@ -51,6 +51,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.opennotes.featureNode.domain.model.ThemeMode
 import com.opennotes.featureNode.presentation.addEditNote.AddEditNoteScreen
 import com.opennotes.featureNode.presentation.notes.NotesScreen
 import com.opennotes.featureNode.presentation.settings.AboutScreen
@@ -59,7 +60,6 @@ import com.opennotes.featureNode.presentation.settings.BackupScreen
 import com.opennotes.featureNode.presentation.settings.PrivacySettingsScreen
 import com.opennotes.featureNode.presentation.settings.SettingsScreen
 import com.opennotes.featureNode.presentation.settings.SettingsViewModel
-import com.opennotes.featureNode.presentation.settings.ThemeMode
 import com.opennotes.featureNode.presentation.util.Screen
 import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme

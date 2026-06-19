@@ -43,7 +43,7 @@ import com.opennotes.featureNode.domain.model.AppIcon
 @Composable
 fun AppIconPicker(
     currentIcon: AppIcon,
-    onIconChange: (AppIcon) -> Unit
+    onIconChange: (AppIcon) -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var pendingIcon by remember { mutableStateOf<AppIcon?>(null) }
@@ -58,46 +58,48 @@ fun AppIconPicker(
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = "Expand",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             isFirst = false,
-            isLast = !isExpanded // If expanded, the row below will be the 'last' visual element
+            isLast = !isExpanded, // If expanded, the row below will be the 'last' visual element
         )
 
         AnimatedVisibility(
             visible = isExpanded,
             enter = expandVertically(animationSpec = tween(300)),
-            exit = shrinkVertically(animationSpec = tween(300))
+            exit = shrinkVertically(animationSpec = tween(300)),
         ) {
             LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp, top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp, top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 item { Spacer(modifier = Modifier.width(4.dp)) }
                 items(AppIcon.values()) { icon ->
                     val color = Color(icon.colorHex)
                     val isSelected = currentIcon == icon
-                    
+
                     Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .clickable {
-                                if (currentIcon != icon) {
-                                    pendingIcon = icon
-                                }
-                            },
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                                .clickable {
+                                    if (currentIcon != icon) {
+                                        pendingIcon = icon
+                                    }
+                                },
+                        contentAlignment = Alignment.Center,
                     ) {
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Selected",
-                                tint = if (color.luminance() > 0.5) Color.Black else Color.White
+                                tint = if (color.luminance() > 0.5) Color.Black else Color.White,
                             )
                         }
                     }
@@ -111,8 +113,8 @@ fun AppIconPicker(
         AlertDialog(
             onDismissRequest = { },
             title = { Text("Change App Icon?") },
-            text = { 
-                Text("Changing the app icon requires the app to restart. Your home screen may momentarily refresh. Do you wish to proceed?") 
+            text = {
+                Text("Changing the app icon requires the app to restart. Your home screen may momentarily refresh. Do you wish to proceed?")
             },
             confirmButton = {
                 TextButton(onClick = {
@@ -125,7 +127,7 @@ fun AppIconPicker(
                 TextButton(onClick = { }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }
