@@ -30,12 +30,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -92,7 +95,7 @@ import com.opennotes.ui.theme.NoteColorPalette
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AddEditNoteScreen(
     navController: NavController,
@@ -210,24 +213,26 @@ fun AddEditNoteScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = backgroundColor,
-                contentColor = contentColor,
-            ) {
-                FilledIconButton(
-                    onClick = { showColorPicker = true },
-                    colors =
-                        IconButtonDefaults.filledIconButtonColors(
-                            containerColor = contentColor.copy(alpha = 0.15f),
-                            contentColor = contentColor,
-                        ),
+            if (!WindowInsets.isImeVisible) {
+                BottomAppBar(
+                    containerColor = backgroundColor,
+                    contentColor = contentColor,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Palette,
-                        contentDescription = "Change color",
-                        tint = contentColor,
-                        modifier = Modifier.size(28.dp),
-                    )
+                    FilledIconButton(
+                        onClick = { showColorPicker = true },
+                        colors =
+                            IconButtonDefaults.filledIconButtonColors(
+                                containerColor = contentColor.copy(alpha = 0.15f),
+                                contentColor = contentColor,
+                            ),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Palette,
+                            contentDescription = "Change color",
+                            tint = contentColor,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
                 }
             }
         },
@@ -246,6 +251,7 @@ fun AddEditNoteScreen(
                         .fillMaxSize()
                         .background(backgroundColor)
                         .padding(paddingValues)
+                        .imePadding()
                         .padding(16.dp)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },

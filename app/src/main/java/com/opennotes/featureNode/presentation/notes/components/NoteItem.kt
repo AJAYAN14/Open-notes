@@ -52,7 +52,7 @@ fun NoteItem(
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 12.dp,
-    onNoteClick: () -> Unit = {}
+    onNoteClick: () -> Unit = {},
 ) {
     val backgroundColor = Color(note.color)
 

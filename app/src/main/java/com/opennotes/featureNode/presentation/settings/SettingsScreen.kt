@@ -168,8 +168,9 @@ fun SettingsScreen(
                         BiometricPrompt.PromptInfo
                             .Builder()
                             .setTitle(if (enable) "Enable biometric lock" else "Disable biometric lock")
-                            .setSubtitle(if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock")
-                            .setAllowedAuthenticators(
+                            .setSubtitle(
+                                if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock",
+                            ).setAllowedAuthenticators(
                                 BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                     BiometricManager.Authenticators.BIOMETRIC_WEAK or
                                     BiometricManager.Authenticators.DEVICE_CREDENTIAL,

@@ -22,5 +22,5 @@ enum class SortOrder {
     DATE_CREATED_NEW,
     DATE_CREATED_OLD,
     TITLE_A_Z,
-    TITLE_Z_A
+    TITLE_Z_A,
 }

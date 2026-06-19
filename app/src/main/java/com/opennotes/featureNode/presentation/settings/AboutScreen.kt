@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,10 +36,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Notes
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Support
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -70,7 +68,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.opennotes.R
 
@@ -202,93 +199,7 @@ fun AboutScreen(navController: NavController) {
                         }
                     }
 
-                    Card(
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 4.dp,
-                                topEnd = 4.dp,
-                                bottomStart = 12.dp,
-                                bottomEnd = 12.dp,
-                            ),
-                        colors =
-                            CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            ),
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                    ) {
-                        Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp),
-                        ) {
-                            Row(
-                                modifier =
-                                    Modifier
-                                        .align(Alignment.BottomStart)
-                                        .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(40.dp),
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
 
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Column {
-                                    Text(
-                                        text = "Dhanush Sugganahalli",
-                                        style =
-                                            MaterialTheme.typography.titleLarge.copy(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                    )
-                                    Text(
-                                        text = "Developer",
-                                        style =
-                                            MaterialTheme.typography.bodyMedium.copy(
-                                                color = MaterialTheme.colorScheme.primary,
-                                                fontWeight = FontWeight.Medium,
-                                            ),
-                                        letterSpacing = 0.15.sp,
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    ) {
-                                        IconButton(
-                                            onClick = { uriHandler.openUri("https://github.com/Fandroid745") },
-                                            modifier = Modifier.size(40.dp),
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.github),
-                                                contentDescription = "GitHub",
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(30.dp),
-                                            )
-                                        }
-                                        IconButton(
-                                            onClick = { uriHandler.openUri("mailto:dhanush41230@gmail.com") },
-                                            modifier = Modifier.size(40.dp),
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Email,
-                                                contentDescription = "Email",
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(30.dp),
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
 
                     if (showLicenseBottomSheet) {
                         LicenseBottomSheet(
@@ -308,14 +219,12 @@ fun AboutScreen(navController: NavController) {
                             CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                             ),
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    uriHandler.openUri("https://github.com/sponsors/Fandroid745")
-                                },
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         ListItem(
+                            modifier = Modifier.clickable {
+                                uriHandler.openUri("https://github.com/sponsors/Fandroid745")
+                            },
                             leadingContent = {
                                 Icon(
                                     imageVector = Icons.Default.Support,

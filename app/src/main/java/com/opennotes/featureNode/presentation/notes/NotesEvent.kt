@@ -31,5 +31,7 @@ sealed class NotesEvent {
         val query: String,
     ) : NotesEvent()
 
-    data class SortNotes(val sortOrder: SortOrder) : NotesEvent()
+    data class SortNotes(
+        val sortOrder: SortOrder,
+    ) : NotesEvent()
 }

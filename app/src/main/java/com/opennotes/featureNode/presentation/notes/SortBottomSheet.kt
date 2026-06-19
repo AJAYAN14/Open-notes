@@ -37,29 +37,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SortBottomSheet(
     currentSortOrder: SortOrder,
     onSortSelected: (SortOrder) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 32.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 32.dp),
         ) {
             Text(
                 text = "Sort by",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-                modifier = Modifier.padding(bottom = 12.dp)
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                modifier = Modifier.padding(bottom = 12.dp),
             )
             SortOption(
                 label = "Newest first",
@@ -67,7 +66,7 @@ fun SortBottomSheet(
                 onClick = {
                     onSortSelected(SortOrder.DATE_CREATED_NEW)
                     onDismiss()
-                }
+                },
             )
             SortOption(
                 label = "Oldest first",
@@ -75,7 +74,7 @@ fun SortBottomSheet(
                 onClick = {
                     onSortSelected(SortOrder.DATE_CREATED_OLD)
                     onDismiss()
-                }
+                },
             )
             SortOption(
                 label = "Title A–Z",
@@ -83,7 +82,7 @@ fun SortBottomSheet(
                 onClick = {
                     onSortSelected(SortOrder.TITLE_A_Z)
                     onDismiss()
-                }
+                },
             )
             SortOption(
                 label = "Title Z–A",
@@ -91,7 +90,7 @@ fun SortBottomSheet(
                 onClick = {
                     onSortSelected(SortOrder.TITLE_Z_A)
                     onDismiss()
-                }
+                },
             )
         }
     }
@@ -101,25 +100,26 @@ fun SortBottomSheet(
 private fun SortOption(
     label: String,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
         if (selected) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
         }
     }

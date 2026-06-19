@@ -128,8 +128,9 @@ fun PrivacySettingsScreen(
                         androidx.biometric.BiometricPrompt.PromptInfo
                             .Builder()
                             .setTitle(if (enable) "Enable biometric lock" else "Disable biometric lock")
-                            .setSubtitle(if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock")
-                            .setAllowedAuthenticators(
+                            .setSubtitle(
+                                if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock",
+                            ).setAllowedAuthenticators(
                                 androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                     androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
                                     androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL,

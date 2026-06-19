@@ -95,7 +95,6 @@ fun NotesScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -146,7 +145,7 @@ fun NotesScreen(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search Notes",
-                                modifier = Modifier.size(25.dp)
+                                modifier = Modifier.size(25.dp),
                             )
                         },
                         trailingIcon = {
@@ -155,14 +154,14 @@ fun NotesScreen(
                                     Icon(
                                         imageVector = Icons.Default.SwapVert,
                                         contentDescription = "Sort notes",
-                                        modifier = Modifier.size(25.dp)
+                                        modifier = Modifier.size(25.dp),
                                     )
                                 }
                                 IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
                                     Icon(
                                         imageVector = Icons.Default.Settings,
                                         contentDescription = "Settings",
-                                        modifier = Modifier.size(25.dp)
+                                        modifier = Modifier.size(25.dp),
                                     )
                                 }
                             }
@@ -181,8 +180,7 @@ fun NotesScreen(
                                 focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                                 unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface
-
+                                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface,
                             ),
                     )
                 }
@@ -206,7 +204,7 @@ fun NotesScreen(
                             onNoteClick = {
                                 navController.navigate(
                                     Screen.AddEditNoteScreen.route +
-                                            "?noteId=${note.id}&noteColor=${note.color}",
+                                        "?noteId=${note.id}&noteColor=${note.color}",
                                 )
                             },
                             onDeleteClick = {
@@ -217,14 +215,12 @@ fun NotesScreen(
                 }
             }
         }
-
     }
     if (showSortSheet) {
         SortBottomSheet(
             currentSortOrder = state.sortOrder,
             onSortSelected = { viewModel.onEvent(NotesEvent.SortNotes(it)) },
-            onDismiss = { showSortSheet = false }
+            onDismiss = { showSortSheet = false },
         )
     }
-
 }

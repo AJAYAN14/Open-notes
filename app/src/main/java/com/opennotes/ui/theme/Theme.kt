@@ -119,12 +119,13 @@ fun OpenNotesTheme(
                     } else {
                         dynamicLightColorScheme(context)
                     }
-                
+
                 // Override secondaryContainer to prevent unexpected OEM Monet colors (e.g., pink on green wallpaper)
-                val baseColorScheme = initialColorScheme.copy(
-                    secondaryContainer = initialColorScheme.primaryContainer,
-                    onSecondaryContainer = initialColorScheme.onPrimaryContainer
-                )
+                val baseColorScheme =
+                    initialColorScheme.copy(
+                        secondaryContainer = initialColorScheme.primaryContainer,
+                        onSecondaryContainer = initialColorScheme.onPrimaryContainer,
+                    )
                 if (isDarkTheme && settings.blackTheme) {
                     baseColorScheme.copy(
                         background = Color.Black,
