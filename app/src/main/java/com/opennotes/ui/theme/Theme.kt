@@ -109,11 +109,11 @@ fun OpenNotesTheme(
             ThemeMode.DARK -> true
         }
 
-    val colorScheme =
+    val initialColorScheme =
         when {
             // Dynamic colors on Android 12+
             settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                val initialColorScheme =
+                val scheme =
                     if (isDarkTheme) {
                         dynamicDarkColorScheme(context)
                     } else {
@@ -121,34 +121,15 @@ fun OpenNotesTheme(
                     }
 
                 // Override secondaryContainer to prevent unexpected OEM Monet colors (e.g., pink on green wallpaper)
-                val baseColorScheme =
-                    initialColorScheme.copy(
-                        secondaryContainer = initialColorScheme.primaryContainer,
-                        onSecondaryContainer = initialColorScheme.onPrimaryContainer,
-                    )
-                if (isDarkTheme && settings.blackTheme) {
-                    baseColorScheme.copy(
-                        background = Color.Black,
-                        surface = Color.Black,
-                        surfaceVariant = Color(0xFF111111),
-                        surfaceContainer = Color(0xFF111111),
-                        surfaceContainerLow = Color(0xFF0A0A0A),
-                        surfaceContainerLowest = Color.Black,
-                        surfaceContainerHigh = Color(0xFF1A1A1A),
-                        surfaceContainerHighest = Color(0xFF262626),
-                    )
-                } else {
-                    baseColorScheme
-                }
+                scheme.copy(
+                    secondaryContainer = scheme.primaryContainer,
+                    onSecondaryContainer = scheme.onPrimaryContainer,
+                )
             }
             // Custom color scheme selected
             settings.colorScheme != 0L -> {
                 val seedColor = Color(settings.colorScheme)
-                if (isDarkTheme) {
-                    dynamicColorScheme(seedColor, isDark = true, isAmoled = settings.blackTheme)
-                } else {
-                    dynamicColorScheme(seedColor, isDark = false, isAmoled = false)
-                }
+                dynamicColorScheme(seedColor, isDark = isDarkTheme, isAmoled = isDarkTheme && settings.blackTheme)
             }
             // Fallback
             else -> {
@@ -158,6 +139,22 @@ fun OpenNotesTheme(
                     else -> LightColorScheme
                 }
             }
+        }
+
+    val colorScheme =
+        if (isDarkTheme && settings.blackTheme) {
+            initialColorScheme.copy(
+                background = Color.Black,
+                surface = Color.Black,
+                surfaceVariant = Color(0xFF111111),
+                surfaceContainer = Color(0xFF111111),
+                surfaceContainerLow = Color(0xFF0A0A0A),
+                surfaceContainerLowest = Color.Black,
+                surfaceContainerHigh = Color(0xFF1A1A1A),
+                surfaceContainerHighest = Color(0xFF262626),
+            )
+        } else {
+            initialColorScheme
         }
 
     MaterialTheme(
