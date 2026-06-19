@@ -28,6 +28,7 @@ import com.opennotes.featureNode.domain.util.ImportResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import com.opennotes.featureNode.domain.model.AppIcon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -66,6 +67,12 @@ class SettingsViewModel
             _isAppUnlocked.value = unlocked
         }
 
+        fun setAppIcon(icon: AppIcon) {
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(settings.value.copy(appIcon = icon))
+            }
+        }
+
         private val _isLoaded = MutableStateFlow(false)
         val isLoaded: StateFlow<Boolean> = _isLoaded.asStateFlow()
 
@@ -81,7 +88,9 @@ class SettingsViewModel
                 val suggestedFileName: String,
             ) : UiEvent()
 
-            data class RequestBiometricAuth(val enable: Boolean) : UiEvent()
+            data class RequestBiometricAuth(
+                val enable: Boolean,
+            ) : UiEvent()
         }
 
         fun updateThemeMode(themeMode: ThemeMode) {
@@ -99,10 +108,11 @@ class SettingsViewModel
         }
 
         fun updateColorScheme(colorLong: Long) {
-            val newSettings = settings.value.copy(
-                colorScheme = colorLong,
-                dynamicColor = if (colorLong != 0L) false else settings.value.dynamicColor
-            )
+            val newSettings =
+                settings.value.copy(
+                    colorScheme = colorLong,
+                    dynamicColor = if (colorLong != 0L) false else settings.value.dynamicColor,
+                )
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(newSettings)
             }

@@ -26,6 +26,10 @@ import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -34,10 +38,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -58,12 +64,6 @@ import com.opennotes.featureNode.presentation.util.Screen
 import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @AndroidEntryPoint
@@ -77,26 +77,29 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { !settingsViewModel.isLoaded.value }
 
-        biometricPrompt = BiometricPrompt(
-            this,
-            ContextCompat.getMainExecutor(this),
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    settingsViewModel.setAppUnlocked(true)
-                }
-
-                override fun onAuthenticationError(
-                    errorCode: Int,
-                    errString: CharSequence,
-                ) {
-                    handleBiometricError(errorCode) {
+        biometricPrompt =
+            BiometricPrompt(
+                this,
+                ContextCompat.getMainExecutor(this),
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         settingsViewModel.setAppUnlocked(true)
                     }
-                }
 
-                override fun onAuthenticationFailed() = Unit
-            },
-        )
+                    override fun onAuthenticationError(
+                        errorCode: Int,
+                        errString: CharSequence,
+                    ) {
+                        handleBiometricError(errorCode) {
+                            settingsViewModel.setAppUnlocked(true)
+                        }
+                    }
+
+                    override fun onAuthenticationFailed() = Unit
+                },
+            )
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val currentSettings by settingsViewModel.settings.collectAsState()
@@ -104,7 +107,8 @@ class MainActivity : FragmentActivity() {
             val isLoaded by settingsViewModel.isLoaded.collectAsState()
 
             var showContent by remember { mutableStateOf(false) }
-            var hasPrompted by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+            var hasPrompted by androidx.compose.runtime.saveable
+                .rememberSaveable { mutableStateOf(false) }
 
             LaunchedEffect(isAppUnlocked, currentSettings.biometricLock, isLoaded) {
                 if (!isLoaded) return@LaunchedEffect // wait for real settings to load
@@ -218,7 +222,7 @@ class MainActivity : FragmentActivity() {
                         Surface(color = MaterialTheme.colorScheme.background) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 LoadingIndicator()
                             }
@@ -228,7 +232,6 @@ class MainActivity : FragmentActivity() {
             }
         }
     }
-
 
     private fun handleBiometricError(
         errorCode: Int,

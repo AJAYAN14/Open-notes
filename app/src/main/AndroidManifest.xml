@@ -36,16 +36,25 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.OpenNotes">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="opennotes" android:host="note" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityDefault"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="opennotes" android:host="note" />
-            </intent-filter>
-        </activity>
+        </activity-alias>
 
         <activity
             android:name=".featureNode.widget.NotesWidgetConfigActivity"
@@ -89,6 +98,266 @@
         </receiver>
 
 
+
+    
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityRed"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_red"
+            android:roundIcon="@mipmap/ic_launcher_red_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityPink"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_pink"
+            android:roundIcon="@mipmap/ic_launcher_pink_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityPurple"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_purple"
+            android:roundIcon="@mipmap/ic_launcher_purple_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityDeepPurple"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_deep_purple"
+            android:roundIcon="@mipmap/ic_launcher_deep_purple_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityIndigo"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_indigo"
+            android:roundIcon="@mipmap/ic_launcher_indigo_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityBlue"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:roundIcon="@mipmap/ic_launcher_blue_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityLightBlue"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_light_blue"
+            android:roundIcon="@mipmap/ic_launcher_light_blue_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityCyan"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_cyan"
+            android:roundIcon="@mipmap/ic_launcher_cyan_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityTeal"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_teal"
+            android:roundIcon="@mipmap/ic_launcher_teal_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityGreen"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_green"
+            android:roundIcon="@mipmap/ic_launcher_green_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityLightGreen"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_light_green"
+            android:roundIcon="@mipmap/ic_launcher_light_green_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityLime"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_lime"
+            android:roundIcon="@mipmap/ic_launcher_lime_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityYellow"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_yellow"
+            android:roundIcon="@mipmap/ic_launcher_yellow_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityAmber"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_amber"
+            android:roundIcon="@mipmap/ic_launcher_amber_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityOrange"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_orange"
+            android:roundIcon="@mipmap/ic_launcher_orange_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityDeepOrange"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_deep_orange"
+            android:roundIcon="@mipmap/ic_launcher_deep_orange_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityBrown"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_brown"
+            android:roundIcon="@mipmap/ic_launcher_brown_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityGrey"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_grey"
+            android:roundIcon="@mipmap/ic_launcher_grey_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityBlueGrey"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue_grey"
+            android:roundIcon="@mipmap/ic_launcher_blue_grey_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name="com.opennotes.featureNode.presentation.MainActivityBlack"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_black"
+            android:roundIcon="@mipmap/ic_launcher_black_round"
+            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
     </application>
 

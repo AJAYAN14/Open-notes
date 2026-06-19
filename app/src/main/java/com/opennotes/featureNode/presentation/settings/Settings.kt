@@ -18,14 +18,19 @@
 
 package com.opennotes.featureNode.presentation.settings
 
+import com.opennotes.featureNode.domain.model.AppIcon
+
 enum class ThemeMode {
     SYSTEM,
     LIGHT,
     DARK,
 }
 
+
+
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val appIcon: AppIcon = AppIcon.DEFAULT,
     val blackTheme: Boolean = false,
     val biometricLock: Boolean = false,
     val colorScheme: Long = 0L,

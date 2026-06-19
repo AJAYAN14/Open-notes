@@ -43,6 +43,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -55,6 +56,7 @@ fun AppearanceSettingsScreen(
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -144,7 +146,19 @@ fun AppearanceSettingsScreen(
                         )
                     },
                     isFirst = false,
-                    isLast = true,
+                    isLast = false,
+                )
+            }
+            item {
+                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
+            }
+            item {
+                AppIconPicker(
+                    currentIcon = settings.appIcon,
+                    onIconChange = { selectedIcon ->
+                        viewModel.setAppIcon(selectedIcon)
+                        AppIconManager.setAppIcon(context, selectedIcon)
+                    }
                 )
             }
         }

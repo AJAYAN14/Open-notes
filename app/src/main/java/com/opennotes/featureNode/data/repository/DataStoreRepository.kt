@@ -24,6 +24,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.opennotes.featureNode.domain.model.AppIcon
 import com.opennotes.featureNode.presentation.settings.Settings
 import com.opennotes.featureNode.presentation.settings.ThemeMode
 import kotlinx.coroutines.flow.Flow
@@ -43,6 +44,7 @@ class DataStoreRepository
         companion object {
             // New theme settings
             private val THEME_MODE = stringPreferencesKey("theme_mode")
+            private val APP_ICON = stringPreferencesKey("app_icon")
             private val BLACK_THEME = booleanPreferencesKey("black_theme")
 
             private val COLOR_SCHEME = stringPreferencesKey("color_scheme")
@@ -59,30 +61,32 @@ class DataStoreRepository
          * Save the whole Settings object
          */
         suspend fun saveSettings(settings: Settings) {
-            dataStore.edit { prefs ->
-                prefs[THEME_MODE] = settings.themeMode.name
-                prefs[BLACK_THEME] = settings.blackTheme
-                prefs[BIOMETRIC_LOCK] = settings.biometricLock
-                prefs[COLOR_SCHEME] = settings.colorScheme.toString()
-                prefs[DYNAMIC_COLOR] = settings.dynamicColor
+            dataStore.edit { preferences ->
+                preferences[THEME_MODE] = settings.themeMode.name
+                preferences[APP_ICON] = settings.appIcon.name
+                preferences[BLACK_THEME] = settings.blackTheme
+                preferences[COLOR_SCHEME] = settings.colorScheme.toString()
+                preferences[DYNAMIC_COLOR] = settings.dynamicColor
+                preferences[BIOMETRIC_LOCK] = settings.biometricLock
+
                 // Also update legacy fields for compatibility
                 when (settings.themeMode) {
                     ThemeMode.SYSTEM -> {
-                        prefs[AUTOMATIC_THEME] = true
-                        prefs[DARK_THEME] = false
-                        prefs[LIGHT_THEME] = false
+                        preferences[AUTOMATIC_THEME] = true
+                        preferences[DARK_THEME] = false
+                        preferences[LIGHT_THEME] = false
                     }
 
                     ThemeMode.LIGHT -> {
-                        prefs[AUTOMATIC_THEME] = false
-                        prefs[DARK_THEME] = false
-                        prefs[LIGHT_THEME] = true
+                        preferences[AUTOMATIC_THEME] = false
+                        preferences[DARK_THEME] = false
+                        preferences[LIGHT_THEME] = true
                     }
 
                     ThemeMode.DARK -> {
-                        prefs[AUTOMATIC_THEME] = false
-                        prefs[DARK_THEME] = true
-                        prefs[LIGHT_THEME] = false
+                        preferences[AUTOMATIC_THEME] = false
+                        preferences[DARK_THEME] = true
+                        preferences[LIGHT_THEME] = false
                     }
                 }
             }
@@ -99,34 +103,36 @@ class DataStoreRepository
                     } else {
                         throw exception
                     }
-                }.map { prefs ->
-                    val defaultSettings = Settings()
-
-                    // Try to read new theme mode first
-                    val themeModeString = prefs[THEME_MODE]
+                }
+                .map { preferences ->
+                    val themeModeName = preferences[THEME_MODE] ?: ThemeMode.SYSTEM.name
                     val themeMode =
-                        if (themeModeString != null) {
-                            try {
-                                ThemeMode.valueOf(themeModeString)
-                            } catch (_: IllegalArgumentException) {
-                                // If migration needed from legacy settings
-                                migrateLegacyThemeMode(prefs, defaultSettings)
-                            }
-                        } else {
-                            // Migration from legacy settings
-                            migrateLegacyThemeMode(prefs, defaultSettings)
+                        try {
+                            ThemeMode.valueOf(themeModeName)
+                        } catch (e: IllegalArgumentException) {
+                            ThemeMode.SYSTEM
                         }
+
+                    val appIconName = preferences[APP_ICON] ?: AppIcon.DEFAULT.name
+                    val appIcon =
+                        try {
+                            AppIcon.valueOf(appIconName)
+                        } catch (e: IllegalArgumentException) {
+                            AppIcon.DEFAULT
+                        }
+
+                    val blackTheme = preferences[BLACK_THEME] ?: false
+                    val colorScheme = preferences[COLOR_SCHEME]?.toLongOrNull() ?: 0L
+                    val dynamicColor = preferences[DYNAMIC_COLOR] ?: true
+                    val biometricLock = preferences[BIOMETRIC_LOCK] ?: false
 
                     Settings(
                         themeMode = themeMode,
-                        blackTheme = prefs[BLACK_THEME] ?: defaultSettings.blackTheme,
-                        biometricLock = prefs[BIOMETRIC_LOCK] ?: defaultSettings.biometricLock,
-                        colorScheme = prefs[COLOR_SCHEME]?.toLongOrNull() ?: 0L,
-                        dynamicColor = prefs[DYNAMIC_COLOR] ?: defaultSettings.dynamicColor,
-                        // Legacy fields for compatibility
-                        darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
-                        systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,
-                        lightTheme = prefs[LIGHT_THEME] ?: defaultSettings.lightTheme,
+                        appIcon = appIcon,
+                        blackTheme = blackTheme,
+                        colorScheme = colorScheme,
+                        dynamicColor = dynamicColor,
+                        biometricLock = biometricLock,
                     )
                 }
 
