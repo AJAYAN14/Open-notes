@@ -20,10 +20,10 @@ package com.opennotes.featureNode.data.datasource
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.opennotes.featureNode.domain.model.Note
+
 
 @Database(
-    entities = [Note::class],
+    entities = [NoteEntity::class],
     version = 2,
 )
 abstract class NoteDatabase : RoomDatabase() {

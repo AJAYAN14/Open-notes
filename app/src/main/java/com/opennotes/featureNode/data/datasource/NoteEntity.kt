@@ -16,25 +16,37 @@
  *
  */
 
-package com.opennotes.featureNode.data.repository
+package com.opennotes.featureNode.data.datasource
 
-import com.google.gson.GsonBuilder
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.opennotes.featureNode.domain.model.Note
 
-// In your data/repository directory
-
-interface JsonHandler {
-    fun <T> toJson(data: T): String
-
-    fun fromJsonToNoteMapList(json: String): List<Map<String, Any?>>
+@Entity(tableName = "Note")
+data class NoteEntity(
+    val title: String,
+    val content: String,
+    val timestamp: Long,
+    val color: Int,
+    @PrimaryKey val id: Int? = null,
+) {
+    fun toNote(): Note {
+        return Note(
+            title = title,
+            content = content,
+            timestamp = timestamp,
+            color = color,
+            id = id,
+        )
+    }
 }
 
-class GsonJsonHandler : JsonHandler {
-    private val gson = GsonBuilder().create()
-
-    override fun <T> toJson(data: T): String = gson.toJson(data)
-
-    override fun fromJsonToNoteMapList(json: String): List<Map<String, Any?>> {
-        val noteListType = object : com.google.gson.reflect.TypeToken<List<Map<String, Any?>>>() {}.type
-        return gson.fromJson(json, noteListType)
-    }
+fun Note.toNoteEntity(): NoteEntity {
+    return NoteEntity(
+        title = title,
+        content = content,
+        timestamp = timestamp,
+        color = color,
+        id = id,
+    )
 }

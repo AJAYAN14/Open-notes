@@ -23,26 +23,26 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.opennotes.featureNode.domain.model.Note
+
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    @Query(value = "SELECT * FROM note")
-    fun getNotes(): Flow<List<Note>>
+    @Query(value = "SELECT * FROM Note")
+    fun getNotes(): Flow<List<NoteEntity>>
 
-    @Query(value = "SELECT * FROM note WHERE id=:id")
-    suspend fun getNoteById(id: Int): Note?
+    @Query(value = "SELECT * FROM Note WHERE id=:id")
+    suspend fun getNoteById(id: Int): NoteEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNote(note: Note)
+    suspend fun insertNote(note: NoteEntity)
 
     @Delete
-    suspend fun deleteNote(note: Note)
+    suspend fun deleteNote(note: NoteEntity)
 
-    @Query("SELECT * FROM note WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%'")
-    fun searchNotes(query: String): Flow<List<Note>>
+    @Query("SELECT * FROM Note WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%'")
+    fun searchNotes(query: String): Flow<List<NoteEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(notes: List<Note>)
+    suspend fun insertAll(notes: List<NoteEntity>)
 }

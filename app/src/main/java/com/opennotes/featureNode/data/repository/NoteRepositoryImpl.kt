@@ -22,25 +22,28 @@ import com.opennotes.featureNode.data.datasource.NoteDao
 import com.opennotes.featureNode.domain.model.Note
 import com.opennotes.featureNode.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import com.opennotes.featureNode.data.datasource.NoteEntity
+import com.opennotes.featureNode.data.datasource.toNoteEntity
 
 class NoteRepositoryImpl(
     private val dao: NoteDao,
 ) : NoteRepository {
-    override fun getAllNotes(): Flow<List<Note>> = dao.getNotes()
+    override fun getAllNotes(): Flow<List<Note>> = dao.getNotes().map { entities -> entities.map { it.toNote() } }
 
-    override suspend fun getNoteById(id: Int): Note? = dao.getNoteById(id)
+    override suspend fun getNoteById(id: Int): Note? = dao.getNoteById(id)?.toNote()
 
     override suspend fun insertNote(note: Note) {
-        dao.insertNote(note)
+        dao.insertNote(note.toNoteEntity())
     }
 
     override suspend fun deleteNote(note: Note) {
-        dao.deleteNote(note)
+        dao.deleteNote(note.toNoteEntity())
     }
 
-    override fun searchNotes(query: String): Flow<List<Note>> = dao.searchNotes(query)
+    override fun searchNotes(query: String): Flow<List<Note>> = dao.searchNotes(query).map { entities -> entities.map { it.toNote() } }
 
     override suspend fun insertNotes(notes: List<Note>) {
-        dao.insertAll(notes)
+        dao.insertAll(notes.map { it.toNoteEntity() })
     }
 }
