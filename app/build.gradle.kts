@@ -72,7 +72,7 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
+
     implementation(libs.androidx.material3)
     debugImplementation(libs.compose.ui.tooling)
     androidTestImplementation(platform(libs.compose.bom))

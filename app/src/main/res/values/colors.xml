@@ -1,2 +1,23 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources><color name="ic_launcher_background_black">#000000</color><color name="ic_launcher_background_red">#F44336</color><color name="ic_launcher_background_pink">#E91E63</color><color name="ic_launcher_background_purple">#9C27B0</color><color name="ic_launcher_background_deep_purple">#673AB7</color><color name="ic_launcher_background_indigo">#3F51B5</color><color name="ic_launcher_background_blue">#2196F3</color><color name="ic_launcher_background_light_blue">#03A9F4</color><color name="ic_launcher_background_cyan">#00BCD4</color><color name="ic_launcher_background_teal">#009688</color><color name="ic_launcher_background_green">#4CAF50</color><color name="ic_launcher_background_light_green">#8BC34A</color><color name="ic_launcher_background_lime">#CDDC39</color><color name="ic_launcher_background_yellow">#FFEB3B</color><color name="ic_launcher_background_amber">#FFC107</color><color name="ic_launcher_background_orange">#FF9800</color><color name="ic_launcher_background_deep_orange">#FF5722</color><color name="ic_launcher_background_brown">#795548</color><color name="ic_launcher_background_grey">#9E9E9E</color><color name="ic_launcher_background_blue_grey">#607D8B</color></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background_black">#000000</color>
+    <color name="ic_launcher_background_red">#F44336</color>
+    <color name="ic_launcher_background_pink">#E91E63</color>
+    <color name="ic_launcher_background_purple">#9C27B0</color>
+    <color name="ic_launcher_background_deep_purple">#673AB7</color>
+    <color name="ic_launcher_background_indigo">#3F51B5</color>
+    <color name="ic_launcher_background_blue">#2196F3</color>
+    <color name="ic_launcher_background_light_blue">#03A9F4</color>
+    <color name="ic_launcher_background_cyan">#00BCD4</color>
+    <color name="ic_launcher_background_teal">#009688</color>
+    <color name="ic_launcher_background_green">#4CAF50</color>
+    <color name="ic_launcher_background_light_green">#8BC34A</color>
+    <color name="ic_launcher_background_lime">#CDDC39</color>
+    <color name="ic_launcher_background_yellow">#FFEB3B</color>
+    <color name="ic_launcher_background_amber">#FFC107</color>
+    <color name="ic_launcher_background_orange">#FF9800</color>
+    <color name="ic_launcher_background_deep_orange">#FF5722</color>
+    <color name="ic_launcher_background_brown">#795548</color>
+    <color name="ic_launcher_background_grey">#9E9E9E</color>
+    <color name="ic_launcher_background_blue_grey">#607D8B</color>
+</resources>
