@@ -20,8 +20,8 @@ android {
         applicationId = "com.opennotes"
         minSdk = 26
         targetSdk = 36
-        versionCode = 11
-        versionName = "1.3.7"
+        versionCode = 12
+        versionName = "1.3.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -72,7 +72,8 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
+
+    implementation(libs.androidx.material3)
     debugImplementation(libs.compose.ui.tooling)
     androidTestImplementation(platform(libs.compose.bom))
     implementation(libs.material.kolor)
@@ -100,6 +101,7 @@ dependencies {
     implementation(libs.biometric)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
+    implementation(libs.coil.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso)

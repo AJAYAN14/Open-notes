@@ -20,21 +20,21 @@ package com.opennotes.di
 
 import android.app.Application
 import androidx.room.Room
-import com.opennotes.feature_node.data.data_source.NoteDatabase
-import com.opennotes.feature_node.data.repository.AndroidFileHandler
-import com.opennotes.feature_node.data.repository.FileHandler
-import com.opennotes.feature_node.data.repository.GsonJsonHandler
-import com.opennotes.feature_node.data.repository.JsonHandler
-import com.opennotes.feature_node.data.repository.NoteRepositoryImpl
-import com.opennotes.feature_node.domain.repository.NoteRepository
-import com.opennotes.feature_node.domain.use_case.AddNote
-import com.opennotes.feature_node.domain.use_case.DeleteNote
-import com.opennotes.feature_node.domain.use_case.ExportUseCases
-import com.opennotes.feature_node.domain.use_case.GetNote
-import com.opennotes.feature_node.domain.use_case.GetNotes
-import com.opennotes.feature_node.domain.use_case.ImportUseCases
-import com.opennotes.feature_node.domain.use_case.NoteUseCases
-import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
+import com.opennotes.notes.data.datasource.NoteDatabase
+import com.opennotes.notes.data.repository.AndroidFileHandler
+import com.opennotes.notes.data.repository.FileHandler
+import com.opennotes.notes.data.repository.GsonJsonHandler
+import com.opennotes.notes.data.repository.JsonHandler
+import com.opennotes.notes.data.repository.NoteRepositoryImpl
+import com.opennotes.notes.domain.repository.NoteRepository
+import com.opennotes.notes.domain.usecase.AddNote
+import com.opennotes.notes.domain.usecase.DeleteNote
+import com.opennotes.notes.domain.usecase.ExportUseCases
+import com.opennotes.notes.domain.usecase.GetNote
+import com.opennotes.notes.domain.usecase.GetNotes
+import com.opennotes.notes.domain.usecase.ImportUseCases
+import com.opennotes.notes.domain.usecase.NoteUseCases
+import com.opennotes.notes.domain.usecase.SearchNotesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,7 +52,8 @@ object AppModule {
                 app,
                 NoteDatabase::class.java,
                 NoteDatabase.DATABASE_NAME,
-            ).build()
+            ).addMigrations(NoteDatabase.MIGRATION_2_3)
+            .build()
 
     @Provides
     @Singleton

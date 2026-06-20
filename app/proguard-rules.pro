@@ -8,7 +8,7 @@
 -keepnames class com.google.gson.JsonDeserializer
 -keepnames class com.google.gson.JsonSerializer
 
--keep class com.opennotes.feature_node.domain.model.** { *; }
+-keep class com.opennotes.featureNode.domain.model.** { *; }
 
--keep class com.opennotes.feature_node.data.repository.GsonJsonHandler { *; }
--keep interface com.opennotes.feature_node.data.repository.JsonHandler { *; }
+-keep class com.opennotes.featureNode.data.repository.GsonJsonHandler { *; }
+-keep interface com.opennotes.featureNode.data.repository.JsonHandler { *; }
