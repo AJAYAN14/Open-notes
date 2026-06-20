@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.biometric)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
+    implementation(libs.coil.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso)

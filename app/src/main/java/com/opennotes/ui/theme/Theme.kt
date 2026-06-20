@@ -20,8 +20,8 @@ package com.opennotes.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -30,8 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.dynamicColorScheme
-import com.opennotes.featureNode.domain.model.Settings
-import com.opennotes.featureNode.domain.model.ThemeMode
+import com.opennotes.settings.domain.model.Settings
+import com.opennotes.settings.domain.model.ThemeMode
 
 // AMOLED Color Scheme - preserves Material Design colors with black background
 private val AmoledColorScheme =
@@ -92,8 +92,8 @@ private val LightColorScheme =
     )
 
 private val AppTypography = Apptypography
-private val AppShapes = Shapes()
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun OpenNotesTheme(
     settings: Settings,
@@ -157,10 +157,9 @@ fun OpenNotesTheme(
             initialColorScheme
         }
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
-        shapes = AppShapes,
         content = content,
     )
 }

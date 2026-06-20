@@ -31,7 +31,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name="com.opennotes.featureNode.presentation.MainActivity"
+            android:name="com.opennotes.notes.presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.OpenNotes">
@@ -49,7 +49,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -57,7 +57,7 @@
         </activity-alias>
 
         <activity
-            android:name=".featureNode.widget.NotesWidgetConfigActivity"
+            android:name=".widget.NotesWidgetConfigActivity"
             android:exported="true"
             android:theme="@style/Theme.OpenNotes">
             <intent-filter>
@@ -76,7 +76,7 @@
         </provider>
 
         <receiver
-            android:name=".featureNode.widget.NotesWidgetReceiver"
+            android:name=".widget.NotesWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -87,7 +87,7 @@
         </receiver>
 
         <receiver
-            android:name=".featureNode.widget.AddNoteReceiver"
+            android:name=".widget.AddNoteReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -106,7 +106,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_red"
             android:roundIcon="@mipmap/ic_launcher_red_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -119,7 +119,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_pink"
             android:roundIcon="@mipmap/ic_launcher_pink_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -132,7 +132,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_purple"
             android:roundIcon="@mipmap/ic_launcher_purple_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -145,7 +145,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_deep_purple"
             android:roundIcon="@mipmap/ic_launcher_deep_purple_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -158,7 +158,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_indigo"
             android:roundIcon="@mipmap/ic_launcher_indigo_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -171,7 +171,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_blue"
             android:roundIcon="@mipmap/ic_launcher_blue_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -184,7 +184,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_light_blue"
             android:roundIcon="@mipmap/ic_launcher_light_blue_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -197,7 +197,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_cyan"
             android:roundIcon="@mipmap/ic_launcher_cyan_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -210,7 +210,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_teal"
             android:roundIcon="@mipmap/ic_launcher_teal_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -223,7 +223,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_green"
             android:roundIcon="@mipmap/ic_launcher_green_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -236,7 +236,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_light_green"
             android:roundIcon="@mipmap/ic_launcher_light_green_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -249,7 +249,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_lime"
             android:roundIcon="@mipmap/ic_launcher_lime_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -262,7 +262,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_yellow"
             android:roundIcon="@mipmap/ic_launcher_yellow_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -275,7 +275,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_amber"
             android:roundIcon="@mipmap/ic_launcher_amber_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -288,7 +288,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_orange"
             android:roundIcon="@mipmap/ic_launcher_orange_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -301,7 +301,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_deep_orange"
             android:roundIcon="@mipmap/ic_launcher_deep_orange_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -314,7 +314,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_brown"
             android:roundIcon="@mipmap/ic_launcher_brown_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -327,7 +327,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_grey"
             android:roundIcon="@mipmap/ic_launcher_grey_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -340,7 +340,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_blue_grey"
             android:roundIcon="@mipmap/ic_launcher_blue_grey_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -352,7 +352,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_black"
             android:roundIcon="@mipmap/ic_launcher_black_round"
-            android:targetActivity="com.opennotes.featureNode.presentation.MainActivity">
+            android:targetActivity="com.opennotes.notes.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
