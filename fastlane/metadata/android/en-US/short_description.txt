@@ -1,1 +1,1 @@
-Private,Minimal note taking app.
+A minimalist, secure, and fully offline notes app.
