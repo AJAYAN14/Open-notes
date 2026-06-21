@@ -1,7 +1,6 @@
+# OpenNotes [<img src="https://shields.rbtlog.dev/simple/com.opennotes" alt="RB Status" height="80">](https://shields.rbtlog.dev/com.opennotes)
 
-#  OpenNotes   [<img src="https://shields.rbtlog.dev/simple/com.opennotes" alt="RB Status" height="80">](https://shields.rbtlog.dev/com.opennotes)
-
-**A simple note-taking app.**
+**A minimalist, secure, and fully offline notes app.**
 
 
 ## Built using
@@ -12,12 +11,14 @@
 
 ## ✨ Features
 
-- Create and edit notes with a clean, modern interface
-- Organize your thoughts with a user-friendly design
-- Regular updates and improvements
-- Zero Permissions Required
-
-Perfect for students, professionals, and anyone who needs to jot down ideas, reminders, or important information quickly and easily. The app is completely open source, ensuring transparency and allowing community contributions to improve the experience for everyone.  
+- **Native Markdown rendering** for rich text formatting, including headers, checklists, code blocks, and quotes.
+- **Seamless image support** to embed photos directly alongside your text.
+- **Organization tools** that allow you to color-code, pin, and sort your notes.
+- **Home screen widgets** for quick access to your most important notes.
+- **Built-in privacy options** to lock the app behind biometric authentication and block the Android system from taking screenshots of your data.
+- **Extensive personalization** with dark and light themes, plus the ability to choose your favorite color for the home screen icon.
+- **Full offline backups** that let you export and import your complete note library as a single ZIP file.
+- **Completely free and open-source** with zero invasive permissions.
 
 
 ---
@@ -29,7 +30,14 @@ Perfect for students, professionals, and anyone who needs to jot down ideas, rem
 [<img src="https://github.com/vishal2376/snaptick/assets/38159691/f502e2ec-dbf4-4ed6-b23f-a47b74080fea" height="80">](https://github.com/Fandroid745/Open-notes/releases)
 
 
+---
 
+## Screenshots
+
+| | |
+|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/d34a6de6-57ab-4a04-a8e7-c8b2875a7e7a" width="300" alt="Dashboard" /> | <img src="https://github.com/user-attachments/assets/b7b94e0f-f685-41a4-8637-b9683ca46231" width="300" alt="Note Editor" /> |
+| <img src="https://github.com/user-attachments/assets/b6e44e15-062e-4eb2-830d-198aa45f83aa" width="300" alt="Appearance Settings" /> | <img src="https://github.com/user-attachments/assets/8c26bc2e-4ca9-44bd-83ed-f7a99cca1b1c" width="300" alt="Widgets" /> |
 
 ---
 
@@ -41,13 +49,8 @@ All changes should be committed to the dev branch, not main.
 
 ---
 
-
-
-
 ## Inspiration
 
 - [EasyNotes](https://github.com/Kin69/EasyNotes?tab=readme-ov-file)
 
 ---
-
-
