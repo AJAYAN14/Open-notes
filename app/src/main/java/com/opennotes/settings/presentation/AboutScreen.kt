@@ -171,7 +171,7 @@ fun AboutScreen(navController: NavController) {
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "OpenNotes",
+                                    text = "Open Notes",
                                     style =
                                         MaterialTheme.typography.headlineSmall.copy(
                                             fontWeight = FontWeight.SemiBold,
