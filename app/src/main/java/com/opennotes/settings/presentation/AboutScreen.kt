@@ -19,6 +19,7 @@
 package com.opennotes.settings.presentation
 
 import androidx.compose.foundation.background
+import com.opennotes.util.AppConfig
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -204,46 +205,48 @@ fun AboutScreen(navController: NavController) {
                         )
                     }
 
-                    Card(
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 4.dp,
-                                topEnd = 4.dp,
-                                bottomStart = 12.dp,
-                                bottomEnd = 12.dp,
-                            ),
-                        colors =
-                            CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            ),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        ListItem(
-                            modifier =
-                                Modifier.clickable {
-                                    uriHandler.openUri("https://github.com/sponsors/Fandroid745")
-                                },
-                            leadingContent = {
-                                Icon(
-                                    imageVector = Icons.Default.Support,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
-                            },
-                            headlineContent = { Text("Support me on Github Sponsors") },
-                            supportingContent = { Text("Monthly or one-time-directly funds development") },
-                            trailingContent = {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            },
-                            colors =
-                                ListItemDefaults.colors(
-                                    containerColor = Color.Transparent,
+                    if (AppConfig.showDonations) {
+                        Card(
+                            shape =
+                                RoundedCornerShape(
+                                    topStart = 4.dp,
+                                    topEnd = 4.dp,
+                                    bottomStart = 12.dp,
+                                    bottomEnd = 12.dp,
                                 ),
-                        )
+                            colors =
+                                CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                ),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            ListItem(
+                                modifier =
+                                    Modifier.clickable {
+                                        uriHandler.openUri("https://github.com/sponsors/Fandroid745")
+                                    },
+                                leadingContent = {
+                                    Icon(
+                                        imageVector = Icons.Default.Support,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                    )
+                                },
+                                headlineContent = { Text("Support me on Github Sponsors") },
+                                supportingContent = { Text("Monthly or one-time-directly funds development") },
+                                trailingContent = {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                },
+                                colors =
+                                    ListItemDefaults.colors(
+                                        containerColor = Color.Transparent,
+                                    ),
+                            )
+                        }
                     }
                 }
             }
