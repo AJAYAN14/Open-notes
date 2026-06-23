@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -227,11 +228,10 @@ fun AddEditNoteScreen(
             )
         },
         bottomBar = {
-            if (!WindowInsets.isImeVisible) {
-                BottomAppBar(
-                    containerColor = backgroundColor,
-                    contentColor = contentColor,
-                ) {
+            BottomAppBar(
+                containerColor = backgroundColor,
+                contentColor = contentColor,
+            ) {
                     FilledIconButton(
                         onClick = { showColorPicker = true },
                         colors =
@@ -267,7 +267,6 @@ fun AddEditNoteScreen(
                         )
                     }
                 }
-            }
         },
     ) { paddingValues ->
         CompositionLocalProvider(
@@ -284,6 +283,7 @@ fun AddEditNoteScreen(
                         .fillMaxSize()
                         .background(backgroundColor)
                         .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues)
                         .imePadding()
                         .padding(16.dp)
                         .clickable(
