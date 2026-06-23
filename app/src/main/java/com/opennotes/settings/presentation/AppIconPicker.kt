@@ -111,7 +111,7 @@ fun AppIconPicker(
 
     if (pendingIcon != null) {
         AlertDialog(
-            onDismissRequest = { },
+            onDismissRequest = { pendingIcon = null },
             title = { Text("Change App Icon?") },
             text = {
                 Text("Changing the app icon requires the app to restart. Your home screen may momentarily refresh. Do you wish to proceed?")
@@ -119,12 +119,13 @@ fun AppIconPicker(
             confirmButton = {
                 TextButton(onClick = {
                     pendingIcon?.let { onIconChange(it) }
+                    pendingIcon = null
                 }) {
                     Text("Restart")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { }) {
+                TextButton(onClick = { pendingIcon = null }) {
                     Text("Cancel")
                 }
             },
