@@ -211,8 +211,8 @@ fun AboutScreen(navController: NavController) {
                                 RoundedCornerShape(
                                     topStart = 4.dp,
                                     topEnd = 4.dp,
-                                    bottomStart = 12.dp,
-                                    bottomEnd = 12.dp,
+                                    bottomStart = 4.dp,
+                                    bottomEnd = 4.dp,
                                 ),
                             colors =
                                 CardDefaults.cardColors(
@@ -248,36 +248,40 @@ fun AboutScreen(navController: NavController) {
                             )
                         }
                     }
-                }
-            }
 
-            item {
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        ),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable { showLicenseBottomSheet = true },
-                ) {
-                    ListItem(
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Default.Gavel,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        },
-                        headlineContent = { Text("License") },
-                        supportingContent = { Text("GPL-3.0 License") },
-                        colors =
-                            ListItemDefaults.colors(
-                                containerColor = Color.Transparent,
+                    Card(
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 4.dp,
+                                topEnd = 4.dp,
+                                bottomStart = 12.dp,
+                                bottomEnd = 12.dp,
                             ),
-                    )
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            ),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { showLicenseBottomSheet = true },
+                    ) {
+                        ListItem(
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Gavel,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            },
+                            headlineContent = { Text("License") },
+                            supportingContent = { Text("GPL-3.0 License") },
+                            colors =
+                                ListItemDefaults.colors(
+                                    containerColor = Color.Transparent,
+                                ),
+                        )
+                    }
                 }
             }
         }
