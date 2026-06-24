@@ -77,6 +77,7 @@
 
         <receiver
             android:name=".widget.NotesWidgetReceiver"
+            android:label="Notes"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -88,6 +89,7 @@
 
         <receiver
             android:name=".widget.AddNoteReceiver"
+            android:label="Add Note"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
