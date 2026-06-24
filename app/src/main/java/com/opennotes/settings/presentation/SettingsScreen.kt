@@ -31,7 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -242,7 +242,7 @@ fun SettingsScreen(
                 SettingItem(
                     title = "Privacy",
                     subtitle = "Biometric lock",
-                    icon = Icons.Default.Fingerprint,
+                    icon = Icons.Default.Lock,
                     onClick = { navController.navigate(Screen.PrivacySettingsScreen.route) },
                     isFirst = true,
                     isLast = true,
