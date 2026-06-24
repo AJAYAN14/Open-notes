@@ -36,13 +36,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -56,6 +54,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.BottomAppBar
@@ -85,7 +84,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -95,7 +94,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.opennotes.notes.presentation.addEditNote.components.FormatToolbar
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownField
+import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownFormatter
 import com.opennotes.ui.theme.NoteColorPalette
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -106,6 +107,7 @@ fun AddEditNoteScreen(
     navController: NavController,
     noteColor: Int?,
     isDarkTheme: Boolean,
+    modifier: Modifier = Modifier,
     viewModel: AddEditNoteViewModel = hiltViewModel(),
 ) {
     val titleState = viewModel.noteTitle.value
@@ -113,6 +115,10 @@ fun AddEditNoteScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     var isPreviewMode by remember { mutableStateOf(false) }
+
+    var contentTextFieldValue by remember {
+        mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(text = contentState.text))
+    }
 
     val photoPickerLauncher =
         rememberLauncherForActivityResult(
@@ -130,14 +136,6 @@ fun AddEditNoteScreen(
         }
 
     val noteBackgroundAnimatable = remember { Animatable(Color(resolvedColorInt)) }
-
-    LaunchedEffect(resolvedColorInt) {
-        noteBackgroundAnimatable.animateTo(Color(resolvedColorInt))
-    }
-
-    LaunchedEffect(isDarkTheme) {
-        viewModel.applyDefaultColor(isDarkTheme)
-    }
 
     val backgroundColor = noteBackgroundAnimatable.value
 
@@ -162,22 +160,39 @@ fun AddEditNoteScreen(
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = event.message)
-                }
+    var showColorPicker by remember { mutableStateOf(false) }
+    var showFormatToolbar by remember { mutableStateOf(false) }
 
-                is AddEditNoteViewModel.UiEvent.SavedNote -> {
-                    navController.navigateUp()
+    Box(modifier = modifier) {
+        LaunchedEffect(contentState.text) {
+            if (contentState.text != contentTextFieldValue.text) {
+                contentTextFieldValue = contentTextFieldValue.copy(text = contentState.text)
+            }
+        }
+
+        LaunchedEffect(resolvedColorInt) {
+            noteBackgroundAnimatable.animateTo(Color(resolvedColorInt))
+        }
+
+        LaunchedEffect(isDarkTheme) {
+            viewModel.applyDefaultColor(isDarkTheme)
+        }
+
+        LaunchedEffect(key1 = true) {
+            viewModel.eventFlow.collectLatest { event ->
+                when (event) {
+                    is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
+                        snackbarHostState.showSnackbar(message = event.message)
+                    }
+
+                    is AddEditNoteViewModel.UiEvent.SavedNote -> {
+                        navController.navigateUp()
+                    }
                 }
             }
         }
-    }
-    var showColorPicker by remember { mutableStateOf(false) }
 
-    Scaffold(
+        Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
@@ -228,10 +243,22 @@ fun AddEditNoteScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = backgroundColor,
-                contentColor = contentColor,
+            Column(
+                modifier = Modifier.background(backgroundColor),
             ) {
+                if (showFormatToolbar) {
+                    FormatToolbar(
+                        contentColor = contentColor,
+                        onFormatClick = { format ->
+                            contentTextFieldValue = MarkdownFormatter.injectMarkdown(format, contentTextFieldValue)
+                            viewModel.onEvent(AddEditNoteEvent.EnteredContent(contentTextFieldValue.text))
+                        },
+                    )
+                }
+                BottomAppBar(
+                    containerColor = backgroundColor,
+                    contentColor = contentColor,
+                ) {
                     FilledIconButton(
                         onClick = { showColorPicker = true },
                         colors =
@@ -266,7 +293,23 @@ fun AddEditNoteScreen(
                             modifier = Modifier.size(28.dp),
                         )
                     }
+                    FilledIconButton(
+                        onClick = { showFormatToolbar = !showFormatToolbar },
+                        colors =
+                            IconButtonDefaults.filledIconButtonColors(
+                                containerColor = if (showFormatToolbar) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                                contentColor = contentColor,
+                            ),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.TextFields,
+                            contentDescription = "Format text",
+                            tint = contentColor,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
                 }
+            }
         },
     ) { paddingValues ->
         CompositionLocalProvider(
@@ -282,10 +325,6 @@ fun AddEditNoteScreen(
                     Modifier
                         .fillMaxSize()
                         .background(backgroundColor)
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                        .imePadding()
-                        .padding(16.dp)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
@@ -293,13 +332,17 @@ fun AddEditNoteScreen(
                             if (!isPreviewMode) {
                                 contentFocusRequester.requestFocus()
                             }
-                        },
+                        }
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues)
+                        .imePadding()
+                        .padding(16.dp),
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 MarkdownField(
                     titleText = titleState.text,
-                    contentText = contentState.text,
+                    contentTextFieldValue = contentTextFieldValue,
                     contentColor = contentColor,
                     isPreviewMode = isPreviewMode,
                     interactionSource = interactionSource,
@@ -307,7 +350,10 @@ fun AddEditNoteScreen(
                     titleFocusRequester = titleFocusRequester,
                     onTitleChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
                     onTitleFocusChange = { viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it)) },
-                    onContentChange = { viewModel.onEvent(AddEditNoteEvent.EnteredContent(it)) },
+                    onContentChange = { 
+                        contentTextFieldValue = it
+                        viewModel.onEvent(AddEditNoteEvent.EnteredContent(it.text)) 
+                    },
                     onContentFocusChange = {
                         viewModel.onEvent(
                             AddEditNoteEvent.ChangeContentFocus(
@@ -363,7 +409,10 @@ fun AddEditNoteScreen(
                         modifier =
                             Modifier
                                 .size(48.dp)
-                                .scale(scale)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
                                 .shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
                                 .clip(CircleShape)
                                 .background(color)
@@ -396,5 +445,6 @@ fun AddEditNoteScreen(
                 }
             }
         }
+    }
     }
 }

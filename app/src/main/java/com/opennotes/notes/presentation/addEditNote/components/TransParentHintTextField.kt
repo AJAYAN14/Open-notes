@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 
 @Composable
 fun TransParentHintTextField(
@@ -62,6 +63,48 @@ fun TransParentHintTextField(
                 modifier = Modifier,
             ) {
                 if (text.isEmpty()) {
+                    Text(
+                        text = hint,
+                        style = textStyle,
+                        color = Color.DarkGray,
+                    )
+                }
+
+                innerTextField()
+            }
+        },
+    )
+}
+
+@Composable
+fun TransParentHintTextField(
+    textFieldValue: TextFieldValue,
+    hint: String,
+    modifier: Modifier = Modifier,
+    onValueChange: (TextFieldValue) -> Unit,
+    textStyle: TextStyle = TextStyle(),
+    singleLine: Boolean = false,
+    onFocusChange: (FocusState) -> Unit,
+    focusRequester: FocusRequester,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    BasicTextField(
+        value = textFieldValue,
+        onValueChange = onValueChange,
+        singleLine = singleLine,
+        textStyle = textStyle,
+        cursorBrush = SolidColor(textStyle.color),
+        interactionSource = interactionSource,
+        modifier =
+            modifier
+                .focusRequester(focusRequester)
+                .onFocusChanged(onFocusChange),
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier,
+            ) {
+                if (textFieldValue.text.isEmpty()) {
                     Text(
                         text = hint,
                         style = textStyle,
