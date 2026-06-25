@@ -138,7 +138,10 @@ fun AddEditNoteScreen(
     var showReminderDialog by remember { mutableStateOf(false) }
 
     var contentTextFieldValue by remember {
-        mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(text = contentState.text))
+        mutableStateOf(
+            androidx.compose.ui.text.input
+                .TextFieldValue(text = contentState.text),
+        )
     }
 
     val photoPickerLauncher =
@@ -219,126 +222,22 @@ fun AddEditNoteScreen(
         }
 
         Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text("") },
-                navigationIcon = {
-                    IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back",
-                            tint = contentColor,
-                        )
-                    }
-                },
-                actions = {
-                    FilledIconButton(
-                        onClick = { isPreviewMode = !isPreviewMode },
-                        colors =
-                            IconButtonDefaults.filledIconButtonColors(
-                                containerColor = contentColor.copy(alpha = 0.15f),
-                                contentColor = contentColor,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
-                            tint = contentColor,
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    FilledIconButton(
-                        onClick = { showReminderDialog = true },
-                        colors =
-                            IconButtonDefaults.filledIconButtonColors(
-                                containerColor = if (viewModel.noteReminderTime.value != null) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
-                                contentColor = contentColor,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
-                            contentDescription = "Set reminder",
-                            tint = contentColor,
-                        )
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = backgroundColor,
-                    ),
-            )
-        },
-        bottomBar = {
-            Column(
-                modifier = Modifier.background(backgroundColor),
-            ) {
-                if (showFormatToolbar) {
-                    FormatToolbar(
-                        contentColor = contentColor,
-                        onFormatClick = { format ->
-                            contentTextFieldValue = MarkdownFormatter.injectMarkdown(format, contentTextFieldValue)
-                            viewModel.onEvent(AddEditNoteEvent.EnteredContent(contentTextFieldValue.text))
-                        },
-                    )
-                }
-                BottomAppBar(
-                    containerColor = backgroundColor,
-                    contentColor = contentColor,
-                ) {
-                    FilledIconButton(
-                        onClick = { showColorPicker = true },
-                        colors =
-                            IconButtonDefaults.filledIconButtonColors(
-                                containerColor = contentColor.copy(alpha = 0.15f),
-                                contentColor = contentColor,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Palette,
-                            contentDescription = "Change color",
-                            tint = contentColor,
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
-                    FilledIconButton(
-                        onClick = {
-                            photoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                TopAppBar(
+                    title = { Text("") },
+                    navigationIcon = {
+                        IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Go back",
+                                tint = contentColor,
                             )
-                        },
-                        colors =
-                            IconButtonDefaults.filledIconButtonColors(
-                                containerColor = contentColor.copy(alpha = 0.15f),
-                                contentColor = contentColor,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Image,
-                            contentDescription = "Add image",
-                            tint = contentColor,
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
-                    FilledIconButton(
-                        onClick = { showFormatToolbar = !showFormatToolbar },
-                        colors =
-                            IconButtonDefaults.filledIconButtonColors(
-                                containerColor = if (showFormatToolbar) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
-                                contentColor = contentColor,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.TextFields,
-                            contentDescription = "Format text",
-                            tint = contentColor,
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Box {
+                        }
+                    },
+                    actions = {
                         FilledIconButton(
-                            onClick = { showMenu = true },
+                            onClick = { isPreviewMode = !isPreviewMode },
                             colors =
                                 IconButtonDefaults.filledIconButtonColors(
                                     containerColor = contentColor.copy(alpha = 0.15f),
@@ -346,232 +245,341 @@ fun AddEditNoteScreen(
                                 ),
                         ) {
                             Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More options",
+                                imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
+                                tint = contentColor,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        FilledIconButton(
+                            onClick = { showReminderDialog = true },
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = if (viewModel.noteReminderTime.value != null) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                                    contentColor = contentColor,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
+                                contentDescription = "Set reminder",
+                                tint = contentColor,
+                            )
+                        }
+                    },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = backgroundColor,
+                        ),
+                )
+            },
+            bottomBar = {
+                Column(
+                    modifier = Modifier.background(backgroundColor),
+                ) {
+                    if (showFormatToolbar) {
+                        FormatToolbar(
+                            contentColor = contentColor,
+                            onFormatClick = { format ->
+                                contentTextFieldValue = MarkdownFormatter.injectMarkdown(format, contentTextFieldValue)
+                                viewModel.onEvent(AddEditNoteEvent.EnteredContent(contentTextFieldValue.text))
+                            },
+                        )
+                    }
+                    BottomAppBar(
+                        containerColor = backgroundColor,
+                        contentColor = contentColor,
+                    ) {
+                        FilledIconButton(
+                            onClick = { showColorPicker = true },
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = contentColor.copy(alpha = 0.15f),
+                                    contentColor = contentColor,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Palette,
+                                contentDescription = "Change color",
                                 tint = contentColor,
                                 modifier = Modifier.size(28.dp),
                             )
                         }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false },
+                        FilledIconButton(
+                            onClick = {
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                                )
+                            },
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = contentColor.copy(alpha = 0.15f),
+                                    contentColor = contentColor,
+                                ),
                         ) {
-                            DropdownMenuItem(
-                                text = { Text("Note info") },
-                                onClick = {
-                                    showMenu = false
-                                    showInfoDialog = true
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Info,
-                                        contentDescription = null,
-                                    )
-                                },
+                            Icon(
+                                imageVector = Icons.Default.Image,
+                                contentDescription = "Add image",
+                                tint = contentColor,
+                                modifier = Modifier.size(28.dp),
                             )
-                            DropdownMenuItem(
-                                text = { Text("Share note") },
-                                onClick = {
-                                    showMenu = false
-                                    val sendIntent = Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TITLE, titleState.text)
-                                        putExtra(Intent.EXTRA_TEXT, "${titleState.text}\n\n${contentState.text}")
-                                        type = "text/plain"
-                                    }
-                                    val shareIntent = Intent.createChooser(sendIntent, "Share note via")
-                                    context.startActivity(shareIntent)
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Share,
-                                        contentDescription = null,
-                                    )
-                                },
+                        }
+                        FilledIconButton(
+                            onClick = { showFormatToolbar = !showFormatToolbar },
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = if (showFormatToolbar) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                                    contentColor = contentColor,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TextFields,
+                                contentDescription = "Format text",
+                                tint = contentColor,
+                                modifier = Modifier.size(28.dp),
                             )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box {
+                            FilledIconButton(
+                                onClick = { showMenu = true },
+                                colors =
+                                    IconButtonDefaults.filledIconButtonColors(
+                                        containerColor = contentColor.copy(alpha = 0.15f),
+                                        contentColor = contentColor,
+                                    ),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "More options",
+                                    tint = contentColor,
+                                    modifier = Modifier.size(28.dp),
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false },
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Note info") },
+                                    onClick = {
+                                        showMenu = false
+                                        showInfoDialog = true
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Info,
+                                            contentDescription = null,
+                                        )
+                                    },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Share note") },
+                                    onClick = {
+                                        showMenu = false
+                                        val sendIntent =
+                                            Intent().apply {
+                                                action = Intent.ACTION_SEND
+                                                putExtra(Intent.EXTRA_TITLE, titleState.text)
+                                                putExtra(Intent.EXTRA_TEXT, "${titleState.text}\n\n${contentState.text}")
+                                                type = "text/plain"
+                                            }
+                                        val shareIntent = Intent.createChooser(sendIntent, "Share note via")
+                                        context.startActivity(shareIntent)
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Share,
+                                            contentDescription = null,
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
                 }
-            }
-        },
-    ) { paddingValues ->
-        CompositionLocalProvider(
-            LocalContentColor provides contentColor,
-            LocalTextSelectionColors provides
-                TextSelectionColors(
-                    handleColor = contentColor,
-                    backgroundColor = contentColor.copy(alpha = 0.4f),
-                ),
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(backgroundColor)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) {
-                            if (!isPreviewMode) {
-                                contentFocusRequester.requestFocus()
-                            }
-                        }
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                        .imePadding()
-                        .padding(16.dp),
+            },
+        ) { paddingValues ->
+            CompositionLocalProvider(
+                LocalContentColor provides contentColor,
+                LocalTextSelectionColors provides
+                    TextSelectionColors(
+                        handleColor = contentColor,
+                        backgroundColor = contentColor.copy(alpha = 0.4f),
+                    ),
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(backgroundColor)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                            ) {
+                                if (!isPreviewMode) {
+                                    contentFocusRequester.requestFocus()
+                                }
+                            }.padding(paddingValues)
+                            .consumeWindowInsets(paddingValues)
+                            .imePadding()
+                            .padding(16.dp),
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                MarkdownField(
-                    titleText = titleState.text,
-                    contentTextFieldValue = contentTextFieldValue,
-                    contentColor = contentColor,
-                    isPreviewMode = isPreviewMode,
-                    interactionSource = interactionSource,
-                    contentFocusRequester = contentFocusRequester,
-                    titleFocusRequester = titleFocusRequester,
-                    onTitleChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
-                    onTitleFocusChange = { viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it)) },
-                    onContentChange = { 
-                        contentTextFieldValue = it
-                        viewModel.onEvent(AddEditNoteEvent.EnteredContent(it.text)) 
-                    },
-                    onContentFocusChange = {
-                        viewModel.onEvent(
-                            AddEditNoteEvent.ChangeContentFocus(
-                                it,
-                            ),
-                        )
-                    },
+                    MarkdownField(
+                        titleText = titleState.text,
+                        contentTextFieldValue = contentTextFieldValue,
+                        contentColor = contentColor,
+                        isPreviewMode = isPreviewMode,
+                        interactionSource = interactionSource,
+                        contentFocusRequester = contentFocusRequester,
+                        titleFocusRequester = titleFocusRequester,
+                        onTitleChange = { viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it)) },
+                        onTitleFocusChange = { viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it)) },
+                        onContentChange = {
+                            contentTextFieldValue = it
+                            viewModel.onEvent(AddEditNoteEvent.EnteredContent(it.text))
+                        },
+                        onContentFocusChange = {
+                            viewModel.onEvent(
+                                AddEditNoteEvent.ChangeContentFocus(
+                                    it,
+                                ),
+                            )
+                        },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                    )
+                }
+            }
+        }
+
+        if (showColorPicker) {
+            ModalBottomSheet(
+                onDismissRequest = { showColorPicker = false },
+                containerColor = backgroundColor,
+            ) {
+                Text(
+                    text = "Color",
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+
+                LazyRow(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .weight(1f),
-                )
-            }
-        }
-    }
-
-    if (showColorPicker) {
-        ModalBottomSheet(
-            onDismissRequest = { showColorPicker = false },
-            containerColor = backgroundColor,
-        ) {
-            Text(
-                text = "Color",
-                style =
-                    MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            )
-
-            LazyRow(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 32.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                items(noteColors) { color ->
-                    val colorInt = remember(color) { color.toArgb() }
-                    val isSelected = viewModel.noteColor.value == colorInt
-                    val scale by animateFloatAsState(
-                        targetValue = if (isSelected) 1.2f else 1f,
-                        animationSpec =
-                            spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                stiffness = Spring.StiffnessMedium,
-                            ),
-                        label = "scale",
-                    )
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier =
-                            Modifier
-                                .size(48.dp)
-                                .graphicsLayer {
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                                .shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
-                                .clip(CircleShape)
-                                .background(color)
-                                .border(
-                                    width = if (isSelected) 3.dp else 0.dp,
-                                    color = if (isSelected) contentColor else Color.Transparent,
-                                    shape = CircleShape,
-                                ).clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = ripple(bounded = true),
-                                ) {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    scope.launch {
-                                        noteBackgroundAnimatable.animateTo(
-                                            targetValue = Color(colorInt),
-                                            animationSpec = tween(durationMillis = 500),
-                                        )
-                                    }
-                                    viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
-                                },
-                    ) {
-                        if (isSelected) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "Selected",
-                                tint = contentColor,
-                                modifier = Modifier.size(20.dp),
-                            )
+                            .padding(bottom = 32.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(noteColors) { color ->
+                        val colorInt = remember(color) { color.toArgb() }
+                        val isSelected = viewModel.noteColor.value == colorInt
+                        val scale by animateFloatAsState(
+                            targetValue = if (isSelected) 1.2f else 1f,
+                            animationSpec =
+                                spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium,
+                                ),
+                            label = "scale",
+                        )
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier =
+                                Modifier
+                                    .size(48.dp)
+                                    .graphicsLayer {
+                                        scaleX = scale
+                                        scaleY = scale
+                                    }.shadow(if (isSelected) 8.dp else 4.dp, CircleShape)
+                                    .clip(CircleShape)
+                                    .background(color)
+                                    .border(
+                                        width = if (isSelected) 3.dp else 0.dp,
+                                        color = if (isSelected) contentColor else Color.Transparent,
+                                        shape = CircleShape,
+                                    ).clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = ripple(bounded = true),
+                                    ) {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        scope.launch {
+                                            noteBackgroundAnimatable.animateTo(
+                                                targetValue = Color(colorInt),
+                                                animationSpec = tween(durationMillis = 500),
+                                            )
+                                        }
+                                        viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
+                                    },
+                        ) {
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Selected",
+                                    tint = contentColor,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    if (showInfoDialog) {
-        val timestamp = viewModel.noteTimestamp.value
-        val dateString = remember(timestamp) {
-            timestamp?.formatToDateTime() ?: "Not saved yet"
-        }
-        val wordCount = remember(contentState.text) {
-            contentState.text.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
-        }
-        val charCount = remember(contentState.text) {
-            contentState.text.length
-        }
-        AlertDialog(
-            onDismissRequest = { showInfoDialog = false },
-            title = { Text(text = "Note info") },
-            text = {
-                Column {
-                    Text(text = "Created: $dateString", style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Words: $wordCount", style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Characters: $charCount", style = MaterialTheme.typography.bodyMedium)
+        if (showInfoDialog) {
+            val timestamp = viewModel.noteTimestamp.value
+            val dateString =
+                remember(timestamp) {
+                    timestamp?.formatToDateTime() ?: "Not saved yet"
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = { showInfoDialog = false }) {
-                    Text("OK", color = contentColor)
+            val wordCount =
+                remember(contentState.text) {
+                    contentState.text
+                        .split("\\s+".toRegex())
+                        .filter { it.isNotBlank() }
+                        .size
                 }
-            },
-            containerColor = backgroundColor,
-            titleContentColor = contentColor,
-            textContentColor = contentColor.copy(alpha = 0.8f),
-        )
-    }
-    if (showReminderDialog) {
-        ReminderDialog(
-            reminderTime = viewModel.noteReminderTime.value,
-            onReminderSet = { time -> viewModel.onEvent(AddEditNoteEvent.SetReminder(time)) },
-            onDismiss = { showReminderDialog = false },
-            backgroundColor = backgroundColor,
-            contentColor = contentColor
-        )
-    }
+            val charCount =
+                remember(contentState.text) {
+                    contentState.text.length
+                }
+            AlertDialog(
+                onDismissRequest = { showInfoDialog = false },
+                title = { Text(text = "Note info") },
+                text = {
+                    Column {
+                        Text(text = "Created: $dateString", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Words: $wordCount", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Characters: $charCount", style = MaterialTheme.typography.bodyMedium)
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showInfoDialog = false }) {
+                        Text("OK", color = contentColor)
+                    }
+                },
+                containerColor = backgroundColor,
+                titleContentColor = contentColor,
+                textContentColor = contentColor.copy(alpha = 0.8f),
+            )
+        }
+        if (showReminderDialog) {
+            ReminderDialog(
+                reminderTime = viewModel.noteReminderTime.value,
+                onReminderSet = { time -> viewModel.onEvent(AddEditNoteEvent.SetReminder(time)) },
+                onDismiss = { showReminderDialog = false },
+                backgroundColor = backgroundColor,
+                contentColor = contentColor,
+            )
+        }
     }
 }

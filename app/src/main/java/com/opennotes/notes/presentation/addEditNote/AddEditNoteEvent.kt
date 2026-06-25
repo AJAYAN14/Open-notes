@@ -20,7 +20,7 @@ package com.opennotes.notes.presentation.addEditNote
 
 import androidx.compose.ui.focus.FocusState
 
-sealed class    AddEditNoteEvent {
+sealed class AddEditNoteEvent {
     data class EnteredTitle(
         val value: String,
     ) : AddEditNoteEvent()

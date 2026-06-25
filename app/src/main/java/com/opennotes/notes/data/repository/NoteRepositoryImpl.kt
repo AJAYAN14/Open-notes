@@ -32,9 +32,7 @@ class NoteRepositoryImpl(
 
     override suspend fun getNoteById(id: Int): Note? = dao.getNoteById(id)?.toNote()
 
-    override suspend fun insertNote(note: Note): Int {
-        return dao.insertNote(note.toNoteEntity()).toInt()
-    }
+    override suspend fun insertNote(note: Note): Int = dao.insertNote(note.toNoteEntity()).toInt()
 
     override suspend fun deleteNote(note: Note) {
         dao.deleteNote(note.toNoteEntity())

@@ -18,6 +18,7 @@
 
 package com.opennotes.notes.presentation.addEditNote
 
+import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,24 +26,22 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.opennotes.notes.data.repository.FileHandler
-import com.opennotes.notes.domain.model.InvalidNoteException
-import com.opennotes.notes.domain.model.Note
-import com.opennotes.notes.domain.usecase.NoteUseCases
-import com.opennotes.ui.theme.NoteColorPalette
-import android.app.Application
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.opennotes.notes.data.repository.FileHandler
+import com.opennotes.notes.domain.model.Note
+import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.notes.presentation.reminder.ReminderWorker
-import java.util.concurrent.TimeUnit
+import com.opennotes.ui.theme.NoteColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -93,31 +92,38 @@ class AddEditNoteViewModel
 
         private fun triggerAutoSave() {
             autoSaveJob?.cancel()
-            autoSaveJob = viewModelScope.launch {
-                delay(1000L)
-                saveNoteInternal()
-            }
+            autoSaveJob =
+                viewModelScope.launch {
+                    delay(1000L)
+                    saveNoteInternal()
+                }
         }
 
-        private fun scheduleReminderWork(noteId: Int, triggerTime: Long) {
+        private fun scheduleReminderWork(
+            noteId: Int,
+            triggerTime: Long,
+        ) {
             val delay = triggerTime - System.currentTimeMillis()
             if (delay <= 0) return
 
-            val data = Data.Builder()
-                .putInt("NOTE_ID", noteId)
-                .putString("NOTE_TITLE", noteTitle.value.text.takeIf { it.isNotBlank() } ?: "Reminder")
-                .putString("NOTE_CONTENT", noteContent.value.text.takeIf { it.isNotBlank() } ?: "Open note to view details")
-                .build()
+            val data =
+                Data
+                    .Builder()
+                    .putInt("NOTE_ID", noteId)
+                    .putString("NOTE_TITLE", noteTitle.value.text.takeIf { it.isNotBlank() } ?: "Reminder")
+                    .putString("NOTE_CONTENT", noteContent.value.text.takeIf { it.isNotBlank() } ?: "Open note to view details")
+                    .build()
 
-            val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
-                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                .setInputData(data)
-                .build()
+            val workRequest =
+                OneTimeWorkRequestBuilder<ReminderWorker>()
+                    .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                    .setInputData(data)
+                    .build()
 
             WorkManager.getInstance(application).enqueueUniqueWork(
                 "reminder_work_$noteId",
                 ExistingWorkPolicy.REPLACE,
-                workRequest
+                workRequest,
             )
         }
 
@@ -132,15 +138,16 @@ class AddEditNoteViewModel
                 return null
             }
             try {
-                val note = Note(
-                    title = title,
-                    content = content,
-                    color = noteColor.value,
-                    timestamp = System.currentTimeMillis(),
-                    isPinned = currentIsPinned,
-                    reminderTime = noteReminderTime.value,
-                    id = currentNoteId,
-                )
+                val note =
+                    Note(
+                        title = title,
+                        content = content,
+                        color = noteColor.value,
+                        timestamp = System.currentTimeMillis(),
+                        isPinned = currentIsPinned,
+                        reminderTime = noteReminderTime.value,
+                        id = currentNoteId,
+                    )
                 val insertedId = noteUseCases.addNote(note)
                 if (currentNoteId == null) {
                     currentNoteId = insertedId

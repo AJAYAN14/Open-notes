@@ -91,9 +91,8 @@ fun AppIconPicker(
                                 .border(
                                     width = 1.dp,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                                    shape = CircleShape
-                                )
-                                .background(color)
+                                    shape = CircleShape,
+                                ).background(color)
                                 .clickable {
                                     if (currentIcon != icon) {
                                         pendingIcon = icon

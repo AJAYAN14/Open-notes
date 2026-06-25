@@ -13,12 +13,14 @@ enum class MarkdownFormat {
     CHECKLIST,
     STRIKETHROUGH,
     QUOTE,
-    CODE_BLOCK
+    CODE_BLOCK,
 }
 
 object MarkdownFormatter {
-
-    fun injectMarkdown(format: MarkdownFormat, currentValue: TextFieldValue): TextFieldValue {
+    fun injectMarkdown(
+        format: MarkdownFormat,
+        currentValue: TextFieldValue,
+    ): TextFieldValue {
         val text = currentValue.text
         val selection = currentValue.selection
 
@@ -36,7 +38,10 @@ object MarkdownFormatter {
         }
     }
 
-    private fun toggleOrInsertCheckbox(text: String, selection: TextRange): TextFieldValue {
+    private fun toggleOrInsertCheckbox(
+        text: String,
+        selection: TextRange,
+    ): TextFieldValue {
         // Find the start and end of the current line
         var lineStart = text.lastIndexOf('\n', selection.min - 1)
         if (lineStart == -1) lineStart = 0 else lineStart += 1
@@ -73,26 +78,36 @@ object MarkdownFormatter {
         }
     }
 
-    private fun wrapSelection(text: String, selection: TextRange, prefixWrapper: String, suffixWrapper: String = prefixWrapper): TextFieldValue {
+    private fun wrapSelection(
+        text: String,
+        selection: TextRange,
+        prefixWrapper: String,
+        suffixWrapper: String = prefixWrapper,
+    ): TextFieldValue {
         val start = selection.min
         val end = selection.max
 
         val selectedText = text.substring(start, end)
         val newText = text.substring(0, start) + prefixWrapper + selectedText + suffixWrapper + text.substring(end)
 
-        val newCursorPos = if (start == end) {
-            start + prefixWrapper.length
-        } else {
-            end + prefixWrapper.length + suffixWrapper.length
-        }
+        val newCursorPos =
+            if (start == end) {
+                start + prefixWrapper.length
+            } else {
+                end + prefixWrapper.length + suffixWrapper.length
+            }
 
         return TextFieldValue(
             text = newText,
-            selection = TextRange(newCursorPos)
+            selection = TextRange(newCursorPos),
         )
     }
 
-    private fun injectPrefix(text: String, selection: TextRange, prefix: String): TextFieldValue {
+    private fun injectPrefix(
+        text: String,
+        selection: TextRange,
+        prefix: String,
+    ): TextFieldValue {
         // Find the start of the current line
         var lineStart = text.lastIndexOf('\n', selection.min - 1)
         if (lineStart == -1) lineStart = 0 else lineStart += 1
@@ -104,19 +119,22 @@ object MarkdownFormatter {
             val newText = text.substring(0, lineStart) + prefix + text.substring(lineStart)
             TextFieldValue(
                 text = newText,
-                selection = TextRange(selection.min + prefix.length)
+                selection = TextRange(selection.min + prefix.length),
             )
         } else {
             // There's already content on this line — insert on a new line after the cursor
             val newText = text.substring(0, selection.min) + "\n" + prefix + text.substring(selection.min)
             TextFieldValue(
                 text = newText,
-                selection = TextRange(selection.min + 1 + prefix.length)
+                selection = TextRange(selection.min + 1 + prefix.length),
             )
         }
     }
 
-    private fun injectNumberedListItem(text: String, selection: TextRange): TextFieldValue {
+    private fun injectNumberedListItem(
+        text: String,
+        selection: TextRange,
+    ): TextFieldValue {
         val cursorPos = selection.min
 
         // Find start of the current line
@@ -124,20 +142,33 @@ object MarkdownFormatter {
         val currentLine = text.substring(lineStart, cursorPos).trim()
 
         // If the current line is itself a numbered item, next should be +1
-        val currentNumber = Regex("^(\\d+)\\.").find(currentLine)?.groupValues?.get(1)?.toIntOrNull()
+        val currentNumber =
+            Regex("^(\\d+)\\.")
+                .find(currentLine)
+                ?.groupValues
+                ?.get(1)
+                ?.toIntOrNull()
 
-        val nextNumber = if (currentNumber != null) {
-            currentNumber + 1
-        } else {
-            // Scan backwards through all lines before cursor for the last numbered list item
-            val lastNumbered = text.substring(0, lineStart)
-                .lines()
-                .lastOrNull { Regex("^\\d+\\.").containsMatchIn(it.trim()) }
-            val lastNumber = lastNumbered?.trim()?.let {
-                Regex("^(\\d+)\\.").find(it)?.groupValues?.get(1)?.toIntOrNull()
+        val nextNumber =
+            if (currentNumber != null) {
+                currentNumber + 1
+            } else {
+                // Scan backwards through all lines before cursor for the last numbered list item
+                val lastNumbered =
+                    text
+                        .substring(0, lineStart)
+                        .lines()
+                        .lastOrNull { Regex("^\\d+\\.").containsMatchIn(it.trim()) }
+                val lastNumber =
+                    lastNumbered?.trim()?.let {
+                        Regex("^(\\d+)\\.")
+                            .find(it)
+                            ?.groupValues
+                            ?.get(1)
+                            ?.toIntOrNull()
+                    }
+                (lastNumber ?: 0) + 1
             }
-            (lastNumber ?: 0) + 1
-        }
 
         return injectPrefix(text, selection, "$nextNumber. ")
     }

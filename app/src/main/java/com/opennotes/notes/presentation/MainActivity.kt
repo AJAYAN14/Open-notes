@@ -24,14 +24,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

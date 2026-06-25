@@ -169,27 +169,31 @@ fun String.stripMarkdown(): String {
 
         var processedLine = line
 
-            val trimmedLine = processedLine.trim()
-            when {
-                trimmedLine.startsWith("#") -> {
-                    processedLine = trimmedLine.dropWhile { it == '#' }.trim()
-                }
-                trimmedLine.startsWith(">") -> {
-                    processedLine = processedLine.dropWhile { it == '>' }.trim()
-                }
-                trimmedLine.matches(Regex("^([\\-*]\\s*)?\\[[ xX]]( .*)?")) -> {
-                    val isChecked = processedLine.contains(Regex("\\[[Xx]]"))
-                    val text = trimmedLine.replace(Regex("^([\\-*]\\s*)?\\[[ xX]] ?"), "").trim()
-                    processedLine = (if (isChecked) "[✓] " else "[ ] ") + text
-                }
-                trimmedLine.startsWith("- ") || trimmedLine.startsWith("+ ") || trimmedLine.startsWith("* ") ||
-                trimmedLine == "-" || trimmedLine == "+" || trimmedLine == "*" -> {
-                    processedLine = "• " + if (trimmedLine.length > 2) trimmedLine.drop(2).trim() else ""
-                }
-                processedLine.matches(Regex("^\\d+\\. .*")) || processedLine.matches(Regex("^\\d+\\.$")) -> {
-                    processedLine = if (processedLine.contains(". ")) processedLine.substringAfter(". ") else ""
-                }
+        val trimmedLine = processedLine.trim()
+        when {
+            trimmedLine.startsWith("#") -> {
+                processedLine = trimmedLine.dropWhile { it == '#' }.trim()
             }
+            trimmedLine.startsWith(">") -> {
+                processedLine = processedLine.dropWhile { it == '>' }.trim()
+            }
+            trimmedLine.matches(Regex("^([\\-*]\\s*)?\\[[ xX]]( .*)?")) -> {
+                val isChecked = processedLine.contains(Regex("\\[[Xx]]"))
+                val text = trimmedLine.replace(Regex("^([\\-*]\\s*)?\\[[ xX]] ?"), "").trim()
+                processedLine = (if (isChecked) "[✓] " else "[ ] ") + text
+            }
+            trimmedLine.startsWith("- ") ||
+                trimmedLine.startsWith("+ ") ||
+                trimmedLine.startsWith("* ") ||
+                trimmedLine == "-" ||
+                trimmedLine == "+" ||
+                trimmedLine == "*" -> {
+                processedLine = "• " + if (trimmedLine.length > 2) trimmedLine.drop(2).trim() else ""
+            }
+            processedLine.matches(Regex("^\\d+\\. .*")) || processedLine.matches(Regex("^\\d+\\.$")) -> {
+                processedLine = if (processedLine.contains(". ")) processedLine.substringAfter(". ") else ""
+            }
+        }
 
         // Apply inline markdown stripping to the processed line
         processedLine =

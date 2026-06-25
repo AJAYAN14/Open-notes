@@ -19,7 +19,6 @@
 package com.opennotes.settings.presentation
 
 import androidx.compose.foundation.background
-import com.opennotes.util.AppConfig
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -70,6 +69,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.opennotes.R
+import com.opennotes.util.AppConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

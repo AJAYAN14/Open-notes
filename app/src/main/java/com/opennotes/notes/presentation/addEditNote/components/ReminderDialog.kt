@@ -33,7 +33,7 @@ fun ReminderDialog(
     onDismiss: () -> Unit,
     backgroundColor: Color,
     contentColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     var hasNotificationPermission by remember {
@@ -42,18 +42,19 @@ fun ReminderDialog(
                 ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
             } else {
                 true
-            }
+            },
         )
     }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasNotificationPermission = isGranted
-        if (!isGranted) {
-            onDismiss()
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            hasNotificationPermission = isGranted
+            if (!isGranted) {
+                onDismiss()
+            }
         }
-    }
 
     // Request permission immediately if not granted
     LaunchedEffect(hasNotificationPermission) {
@@ -72,10 +73,11 @@ fun ReminderDialog(
 
     if (!showM3ReminderDialog && reminderTime != null) {
         // Show Options Dialog
-        val reminderString = remember(reminderTime) {
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-            sdf.format(Date(reminderTime))
-        }
+        val reminderString =
+            remember(reminderTime) {
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+                sdf.format(Date(reminderTime))
+            }
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(text = "Note Reminder") },
@@ -89,7 +91,7 @@ fun ReminderDialog(
                     onClick = {
                         onReminderSet(null)
                         onDismiss()
-                    }
+                    },
                 ) {
                     Text("Remove", color = contentColor)
                 }
@@ -98,7 +100,7 @@ fun ReminderDialog(
                 TextButton(
                     onClick = {
                         showM3ReminderDialog = true
-                    }
+                    },
                 ) {
                     Text("Change", color = contentColor)
                 }
@@ -109,9 +111,10 @@ fun ReminderDialog(
         )
     } else {
         // Show Date and Time selection dialog
-        val initialCal = remember(reminderTime) {
-            Calendar.getInstance().apply { timeInMillis = reminderTime ?: System.currentTimeMillis() }
-        }
+        val initialCal =
+            remember(reminderTime) {
+                Calendar.getInstance().apply { timeInMillis = reminderTime ?: System.currentTimeMillis() }
+            }
 
         var selectedDateMillis by remember { mutableStateOf(reminderTime ?: System.currentTimeMillis()) }
         var selectedHour by remember { mutableIntStateOf(initialCal.get(Calendar.HOUR_OF_DAY)) }
@@ -124,9 +127,10 @@ fun ReminderDialog(
 
         val sdfDate = remember { SimpleDateFormat("MMMM d", Locale.getDefault()) }
         val dateText = remember(selectedDateMillis) { sdfDate.format(Date(selectedDateMillis)) }
-        val timeText = remember(selectedHour, selectedMinute) {
-            String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
-        }
+        val timeText =
+            remember(selectedHour, selectedMinute) {
+                String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+            }
 
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -134,26 +138,26 @@ fun ReminderDialog(
                 Text(
                     text = "Pick a date & time",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = contentColor
+                    color = contentColor,
                 )
             },
             text = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     // Date field
                     ReminderDropdownField(
                         value = dateText,
                         onClick = { showSubDatePicker = true },
-                        contentColor = contentColor
+                        contentColor = contentColor,
                     )
 
                     // Time field
                     ReminderDropdownField(
                         value = timeText,
                         onClick = { showSubTimePicker = true },
-                        contentColor = contentColor
+                        contentColor = contentColor,
                     )
 
                     // Repeat option
@@ -161,12 +165,12 @@ fun ReminderDialog(
                         ReminderDropdownField(
                             value = repeatOption,
                             onClick = { showRepeatMenu = true },
-                            contentColor = contentColor
+                            contentColor = contentColor,
                         )
                         DropdownMenu(
                             expanded = showRepeatMenu,
                             onDismissRequest = { showRepeatMenu = false },
-                            modifier = Modifier.background(backgroundColor)
+                            modifier = Modifier.background(backgroundColor),
                         ) {
                             val options = listOf("Does not repeat", "Daily", "Weekly", "Monthly")
                             options.forEach { option ->
@@ -175,7 +179,7 @@ fun ReminderDialog(
                                     onClick = {
                                         repeatOption = option
                                         showRepeatMenu = false
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -185,23 +189,24 @@ fun ReminderDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val calendar = Calendar.getInstance().apply {
-                            timeInMillis = selectedDateMillis
-                            set(Calendar.HOUR_OF_DAY, selectedHour)
-                            set(Calendar.MINUTE, selectedMinute)
-                            set(Calendar.SECOND, 0)
-                            set(Calendar.MILLISECOND, 0)
-                        }
+                        val calendar =
+                            Calendar.getInstance().apply {
+                                timeInMillis = selectedDateMillis
+                                set(Calendar.HOUR_OF_DAY, selectedHour)
+                                set(Calendar.MINUTE, selectedMinute)
+                                set(Calendar.SECOND, 0)
+                                set(Calendar.MILLISECOND, 0)
+                            }
                         onReminderSet(calendar.timeInMillis)
                         onDismiss()
-                    }
+                    },
                 ) {
                     Text("Save", color = contentColor)
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = onDismiss
+                    onClick = onDismiss,
                 ) {
                     Text("Cancel", color = contentColor)
                 }
@@ -212,9 +217,10 @@ fun ReminderDialog(
 
         // Nested Date Picker Dialog
         if (showSubDatePicker) {
-            val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = selectedDateMillis
-            )
+            val datePickerState =
+                rememberDatePickerState(
+                    initialSelectedDateMillis = selectedDateMillis,
+                )
             DatePickerDialog(
                 onDismissRequest = { showSubDatePicker = false },
                 confirmButton = {
@@ -222,7 +228,7 @@ fun ReminderDialog(
                         onClick = {
                             selectedDateMillis = datePickerState.selectedDateMillis ?: selectedDateMillis
                             showSubDatePicker = false
-                        }
+                        },
                     ) {
                         Text("OK", color = contentColor)
                     }
@@ -232,45 +238,49 @@ fun ReminderDialog(
                         Text("Cancel", color = contentColor)
                     }
                 },
-                colors = DatePickerDefaults.colors(
-                    containerColor = backgroundColor,
-                )
+                colors =
+                    DatePickerDefaults.colors(
+                        containerColor = backgroundColor,
+                    ),
             ) {
                 DatePicker(
                     state = datePickerState,
-                    colors = DatePickerDefaults.colors(
-                        containerColor = backgroundColor,
-                        titleContentColor = contentColor,
-                        headlineContentColor = contentColor,
-                    )
+                    colors =
+                        DatePickerDefaults.colors(
+                            containerColor = backgroundColor,
+                            titleContentColor = contentColor,
+                            headlineContentColor = contentColor,
+                        ),
                 )
             }
         }
 
         // Nested Time Picker Dialog with clock/keyboard toggle
         if (showSubTimePicker) {
-            val timePickerState = rememberTimePickerState(
-                initialHour = selectedHour,
-                initialMinute = selectedMinute,
-                is24Hour = false
-            )
+            val timePickerState =
+                rememberTimePickerState(
+                    initialHour = selectedHour,
+                    initialMinute = selectedMinute,
+                    is24Hour = false,
+                )
             var isClockMode by remember { mutableStateOf(false) }
 
-            val timePickerColors = TimePickerDefaults.colors(
-                clockDialColor = contentColor.copy(alpha = 0.05f),
-                clockDialSelectedContentColor = backgroundColor,
-                clockDialUnselectedContentColor = contentColor,
-                selectorColor = contentColor,
-                periodSelectorBorderColor = contentColor,
-                periodSelectorSelectedContainerColor = contentColor.copy(alpha = 0.15f),
-                periodSelectorUnselectedContainerColor = Color.Transparent,
-                periodSelectorSelectedContentColor = contentColor,
-                periodSelectorUnselectedContentColor = contentColor,
-                timeSelectorSelectedContainerColor = contentColor.copy(alpha = 0.15f),
-                timeSelectorUnselectedContainerColor = contentColor.copy(alpha = 0.05f),
-                timeSelectorSelectedContentColor = contentColor,
-                timeSelectorUnselectedContentColor = contentColor,
-            )
+            val timePickerColors =
+                TimePickerDefaults.colors(
+                    clockDialColor = contentColor.copy(alpha = 0.05f),
+                    clockDialSelectedContentColor = backgroundColor,
+                    clockDialUnselectedContentColor = contentColor,
+                    selectorColor = contentColor,
+                    periodSelectorBorderColor = contentColor,
+                    periodSelectorSelectedContainerColor = contentColor.copy(alpha = 0.15f),
+                    periodSelectorUnselectedContainerColor = Color.Transparent,
+                    periodSelectorSelectedContentColor = contentColor,
+                    periodSelectorUnselectedContentColor = contentColor,
+                    timeSelectorSelectedContainerColor = contentColor.copy(alpha = 0.15f),
+                    timeSelectorUnselectedContainerColor = contentColor.copy(alpha = 0.05f),
+                    timeSelectorSelectedContentColor = contentColor,
+                    timeSelectorUnselectedContentColor = contentColor,
+                )
 
             AlertDialog(
                 onDismissRequest = { showSubTimePicker = false },
@@ -280,7 +290,7 @@ fun ReminderDialog(
                             selectedHour = timePickerState.hour
                             selectedMinute = timePickerState.minute
                             showSubTimePicker = false
-                        }
+                        },
                     ) {
                         Text("OK", color = contentColor)
                     }
@@ -294,32 +304,34 @@ fun ReminderDialog(
                 text = {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         if (isClockMode) {
                             TimePicker(
                                 state = timePickerState,
-                                colors = timePickerColors
+                                colors = timePickerColors,
                             )
                         } else {
                             TimeInput(
                                 state = timePickerState,
-                                colors = timePickerColors
+                                colors = timePickerColors,
                             )
                         }
                         // Clock / Keyboard toggle icon at the bottom left
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start
+                            horizontalArrangement = Arrangement.Start,
                         ) {
                             IconButton(onClick = { isClockMode = !isClockMode }) {
                                 Icon(
-                                    imageVector = if (isClockMode)
-                                        Icons.Default.Edit
-                                    else
-                                        Icons.Default.AccessTime,
+                                    imageVector =
+                                        if (isClockMode) {
+                                            Icons.Default.Edit
+                                        } else {
+                                            Icons.Default.AccessTime
+                                        },
                                     contentDescription = if (isClockMode) "Switch to keyboard" else "Switch to clock",
-                                    tint = contentColor
+                                    tint = contentColor,
                                 )
                             }
                         }
@@ -337,36 +349,38 @@ private fun ReminderDropdownField(
     value: String,
     onClick: () -> Unit,
     contentColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 12.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(vertical = 12.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyLarge,
-                color = contentColor
+                color = contentColor,
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = "Dropdown",
-                tint = contentColor
+                tint = contentColor,
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(contentColor.copy(alpha = 0.2f))
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(contentColor.copy(alpha = 0.2f)),
         )
     }
 }
