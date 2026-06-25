@@ -31,6 +31,8 @@ import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.ui.theme.NoteColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -76,6 +78,41 @@ class AddEditNoteViewModel
 
         private var currentNoteId: Int? = null
         private var currentIsPinned: Boolean = false
+        private var autoSaveJob: Job? = null
+
+        private fun triggerAutoSave() {
+            autoSaveJob?.cancel()
+            autoSaveJob = viewModelScope.launch {
+                delay(1000L)
+                saveNoteInternal()
+            }
+        }
+
+        private suspend fun saveNoteInternal(): Int? {
+            val title = noteTitle.value.text
+            val content = noteContent.value.text
+            if (title.isBlank() && content.isBlank()) {
+                return null
+            }
+            try {
+                val note = Note(
+                    title = title,
+                    content = content,
+                    color = noteColor.value,
+                    timestamp = System.currentTimeMillis(),
+                    isPinned = currentIsPinned,
+                    id = currentNoteId,
+                )
+                val insertedId = noteUseCases.addNote(note)
+                if (currentNoteId == null) {
+                    currentNoteId = insertedId
+                }
+                return insertedId
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return null
+            }
+        }
 
         init {
             savedStateHandle.get<Int>("noteId")?.let { noteId ->
@@ -123,6 +160,7 @@ class AddEditNoteViewModel
                 is AddEditNoteEvent.EnteredTitle -> {
                     _noteTitle.value = noteTitle.value.copy(text = event.value)
                     savedStateHandle["title"] = event.value // persist to SavedStateHandle
+                    triggerAutoSave()
                 }
                 is AddEditNoteEvent.ChangeTitleFocus -> {
                     _noteTitle.value =
@@ -133,29 +171,27 @@ class AddEditNoteViewModel
                 is AddEditNoteEvent.EnteredContent -> {
                     _noteContent.value = _noteContent.value.copy(text = event.value)
                     savedStateHandle["content"] = event.value // persist to SavedStateHandle
+                    triggerAutoSave()
                 }
                 is AddEditNoteEvent.ChangeColor -> {
                     _noteColor.intValue = event.color
                     savedStateHandle["color"] = event.color // persist to SavedStateHandle
+                    triggerAutoSave()
                 }
                 is AddEditNoteEvent.SaveNote -> {
+                    autoSaveJob?.cancel()
                     viewModelScope.launch {
-                        try {
-                            noteUseCases.addNote(
-                                Note(
-                                    title = noteTitle.value.text,
-                                    content = noteContent.value.text,
-                                    color = noteColor.value,
-                                    timestamp = System.currentTimeMillis(),
-                                    isPinned = currentIsPinned,
-                                    id = currentNoteId,
-                                ),
-                            )
+                        if (noteTitle.value.text.isBlank() && noteContent.value.text.isBlank()) {
                             _eventFlow.emit(UiEvent.SavedNote)
-                        } catch (e: InvalidNoteException) {
+                            return@launch
+                        }
+                        val resultId = saveNoteInternal()
+                        if (resultId != null) {
+                            _eventFlow.emit(UiEvent.SavedNote)
+                        } else {
                             _eventFlow.emit(
                                 UiEvent.ShowSnackbar(
-                                    message = e.message ?: "Couldn't save note",
+                                    message = "Couldn't save note",
                                 ),
                             )
                         }

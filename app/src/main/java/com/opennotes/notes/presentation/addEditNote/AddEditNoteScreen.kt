@@ -85,6 +85,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import com.opennotes.notes.presentation.util.formatToDateTime
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -209,13 +210,17 @@ fun AddEditNoteScreen(
             }
         }
 
+        BackHandler {
+            viewModel.onEvent(AddEditNoteEvent.SaveNote)
+        }
+
         Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back",
