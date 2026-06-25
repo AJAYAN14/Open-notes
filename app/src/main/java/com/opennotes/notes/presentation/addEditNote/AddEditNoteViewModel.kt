@@ -30,6 +30,13 @@ import com.opennotes.notes.domain.model.InvalidNoteException
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.ui.theme.NoteColorPalette
+import android.app.Application
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.opennotes.notes.presentation.reminder.ReminderWorker
+import java.util.concurrent.TimeUnit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -45,6 +52,7 @@ class AddEditNoteViewModel
         private val noteUseCases: NoteUseCases,
         private val fileHandler: FileHandler,
         private val savedStateHandle: SavedStateHandle,
+        private val application: Application,
     ) : ViewModel() {
         private val _noteTitle =
             mutableStateOf(
@@ -73,6 +81,9 @@ class AddEditNoteViewModel
         private val _noteTimestamp = mutableStateOf<Long?>(null)
         val noteTimestamp: State<Long?> = _noteTimestamp
 
+        private val _noteReminderTime = mutableStateOf<Long?>(null)
+        val noteReminderTime: State<Long?> = _noteReminderTime
+
         private val _eventFlow = MutableSharedFlow<UiEvent>()
         val eventFlow = _eventFlow.asSharedFlow()
 
@@ -88,6 +99,32 @@ class AddEditNoteViewModel
             }
         }
 
+        private fun scheduleReminderWork(noteId: Int, triggerTime: Long) {
+            val delay = triggerTime - System.currentTimeMillis()
+            if (delay <= 0) return
+
+            val data = Data.Builder()
+                .putInt("NOTE_ID", noteId)
+                .putString("NOTE_TITLE", noteTitle.value.text.takeIf { it.isNotBlank() } ?: "Reminder")
+                .putString("NOTE_CONTENT", noteContent.value.text.takeIf { it.isNotBlank() } ?: "Open note to view details")
+                .build()
+
+            val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .setInputData(data)
+                .build()
+
+            WorkManager.getInstance(application).enqueueUniqueWork(
+                "reminder_work_$noteId",
+                ExistingWorkPolicy.REPLACE,
+                workRequest
+            )
+        }
+
+        private fun cancelReminderWork(noteId: Int) {
+            WorkManager.getInstance(application).cancelUniqueWork("reminder_work_$noteId")
+        }
+
         private suspend fun saveNoteInternal(): Int? {
             val title = noteTitle.value.text
             val content = noteContent.value.text
@@ -101,6 +138,7 @@ class AddEditNoteViewModel
                     color = noteColor.value,
                     timestamp = System.currentTimeMillis(),
                     isPinned = currentIsPinned,
+                    reminderTime = noteReminderTime.value,
                     id = currentNoteId,
                 )
                 val insertedId = noteUseCases.addNote(note)
@@ -122,6 +160,7 @@ class AddEditNoteViewModel
                             currentNoteId = note.id
                             currentIsPinned = note.isPinned
                             _noteTimestamp.value = note.timestamp
+                            _noteReminderTime.value = note.reminderTime
                             if (savedStateHandle.get<String>("title") == null) {
                                 _noteTitle.value =
                                     noteTitle.value.copy(
@@ -223,6 +262,23 @@ class AddEditNoteViewModel
                         } catch (e: Exception) {
                             e.printStackTrace()
                             _eventFlow.emit(UiEvent.ShowSnackbar("Failed to insert image: ${e.message}"))
+                        }
+                    }
+                }
+                is AddEditNoteEvent.SetReminder -> {
+                    viewModelScope.launch {
+                        _noteReminderTime.value = event.timestamp
+                        val noteId = saveNoteInternal()
+                        if (noteId != null) {
+                            if (event.timestamp != null) {
+                                scheduleReminderWork(noteId, event.timestamp)
+                                _eventFlow.emit(UiEvent.ShowSnackbar("Reminder set successfully"))
+                            } else {
+                                cancelReminderWork(noteId)
+                                _eventFlow.emit(UiEvent.ShowSnackbar("Reminder removed"))
+                            }
+                        } else {
+                            _eventFlow.emit(UiEvent.ShowSnackbar("Cannot set reminder on empty note"))
                         }
                     }
                 }

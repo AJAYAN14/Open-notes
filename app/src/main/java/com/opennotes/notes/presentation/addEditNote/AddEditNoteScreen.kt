@@ -18,6 +18,8 @@
 
 package com.opennotes.notes.presentation.addEditNote
 
+import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,6 +45,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -51,9 +54,13 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -76,16 +83,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import android.content.Intent
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.material3.ripple
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
-import com.opennotes.notes.presentation.util.formatToDateTime
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -97,19 +95,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.opennotes.notes.presentation.addEditNote.components.FormatToolbar
+import com.opennotes.notes.presentation.addEditNote.components.ReminderDialog
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownField
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownFormatter
+import com.opennotes.notes.presentation.util.formatToDateTime
 import com.opennotes.ui.theme.NoteColorPalette
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -132,6 +135,7 @@ fun AddEditNoteScreen(
     var isPreviewMode by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
+    var showReminderDialog by remember { mutableStateOf(false) }
 
     var contentTextFieldValue by remember {
         mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(text = contentState.text))
@@ -240,6 +244,21 @@ fun AddEditNoteScreen(
                         Icon(
                             imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
+                            tint = contentColor,
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    FilledIconButton(
+                        onClick = { showReminderDialog = true },
+                        colors =
+                            IconButtonDefaults.filledIconButtonColors(
+                                containerColor = if (viewModel.noteReminderTime.value != null) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                                contentColor = contentColor,
+                            ),
+                    ) {
+                        Icon(
+                            imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
+                            contentDescription = "Set reminder",
                             tint = contentColor,
                         )
                     }
@@ -515,11 +534,7 @@ fun AddEditNoteScreen(
     if (showInfoDialog) {
         val timestamp = viewModel.noteTimestamp.value
         val dateString = remember(timestamp) {
-            if (timestamp != null) {
-                timestamp.formatToDateTime()
-            } else {
-                "Not saved yet"
-            }
+            timestamp?.formatToDateTime() ?: "Not saved yet"
         }
         val wordCount = remember(contentState.text) {
             contentState.text.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
@@ -547,6 +562,15 @@ fun AddEditNoteScreen(
             containerColor = backgroundColor,
             titleContentColor = contentColor,
             textContentColor = contentColor.copy(alpha = 0.8f),
+        )
+    }
+    if (showReminderDialog) {
+        ReminderDialog(
+            reminderTime = viewModel.noteReminderTime.value,
+            onReminderSet = { time -> viewModel.onEvent(AddEditNoteEvent.SetReminder(time)) },
+            onDismiss = { showReminderDialog = false },
+            backgroundColor = backgroundColor,
+            contentColor = contentColor
         )
     }
     }

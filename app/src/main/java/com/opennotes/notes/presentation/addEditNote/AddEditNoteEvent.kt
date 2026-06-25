@@ -46,4 +46,8 @@ sealed class    AddEditNoteEvent {
     ) : AddEditNoteEvent()
 
     object SaveNote : AddEditNoteEvent()
+
+    data class SetReminder(
+        val timestamp: Long?,
+    ) : AddEditNoteEvent()
 }
