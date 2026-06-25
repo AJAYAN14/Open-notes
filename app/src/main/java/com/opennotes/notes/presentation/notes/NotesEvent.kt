@@ -48,4 +48,6 @@ sealed class NotesEvent {
     object TogglePinSelectedNotes : NotesEvent()
 
     object DeleteSelectedNotes : NotesEvent()
+
+    object SelectAllNotes : NotesEvent()
 }

@@ -106,6 +106,10 @@ class NotesViewModel
                     _state.value = state.value.copy(selectedNotes = emptySet())
                 }
 
+                is NotesEvent.SelectAllNotes -> {
+                    _state.value = state.value.copy(selectedNotes = state.value.notes.toSet())
+                }
+
                 is NotesEvent.TogglePinSelectedNotes -> {
                     viewModelScope.launch {
                         val notesToUpdate = state.value.selectedNotes

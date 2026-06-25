@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
@@ -169,6 +170,12 @@ fun NotesScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.weight(1f).padding(start = 16.dp),
                             )
+                            IconButton(onClick = { viewModel.onEvent(NotesEvent.SelectAllNotes) }) {
+                                Icon(
+                                    imageVector = Icons.Default.SelectAll,
+                                    contentDescription = "Select all",
+                                )
+                            }
                             val allPinned = state.selectedNotes.all { it.isPinned }
                             IconButton(onClick = { viewModel.onEvent(NotesEvent.TogglePinSelectedNotes) }) {
                                 Icon(
