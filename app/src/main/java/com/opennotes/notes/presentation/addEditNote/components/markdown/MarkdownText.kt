@@ -35,6 +35,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -408,7 +409,7 @@ fun RenderMarkdownElement(
                         Modifier
                             .padding(top = 6.dp)
                             .clip(RoundedCornerShape(6.dp))
-                            .background(Color(0xFFE0E0E0))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                             .fillMaxWidth(),
                 ) {
                     Column {
@@ -417,7 +418,7 @@ fun RenderMarkdownElement(
                                 text = lang.uppercase(),
                                 fontSize = (fontSize.value - 2).sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF666666),
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )
                         }
