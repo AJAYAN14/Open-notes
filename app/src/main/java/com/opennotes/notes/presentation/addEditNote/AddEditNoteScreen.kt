@@ -243,23 +243,6 @@ fun AddEditNoteScreen(
                             tint = contentColor,
                         )
                     }
-                    FilledIconButton(
-                        onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            viewModel.onEvent(AddEditNoteEvent.SaveNote)
-                        },
-                        colors =
-                            IconButtonDefaults.filledIconButtonColors(
-                                containerColor = contentColor.copy(alpha = 0.15f),
-                                contentColor = contentColor,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = "Save Note",
-                            tint = contentColor,
-                        )
-                    }
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
