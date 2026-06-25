@@ -237,7 +237,7 @@ fun SettingsScreen(
             item {
                 SettingItem(
                     title = "Privacy",
-                    subtitle = "Biometric lock",
+                    subtitle = "Biometric lock, Secure Screen",
                     icon = Icons.Default.Lock,
                     onClick = { navController.navigate(Screen.PrivacySettingsScreen.route) },
                     isFirst = true,
