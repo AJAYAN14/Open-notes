@@ -78,6 +78,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.material3.ripple
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Info
@@ -123,6 +125,7 @@ fun AddEditNoteScreen(
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
     val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     var isPreviewMode by remember { mutableStateOf(false) }
@@ -199,6 +202,7 @@ fun AddEditNoteScreen(
                     }
 
                     is AddEditNoteViewModel.UiEvent.SavedNote -> {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         navController.navigateUp()
                     }
                 }
@@ -235,7 +239,10 @@ fun AddEditNoteScreen(
                         )
                     }
                     FilledIconButton(
-                        onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) },
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            viewModel.onEvent(AddEditNoteEvent.SaveNote)
+                        },
                         colors =
                             IconButtonDefaults.filledIconButtonColors(
                                 containerColor = contentColor.copy(alpha = 0.15f),
@@ -493,6 +500,7 @@ fun AddEditNoteScreen(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = ripple(bounded = true),
                                 ) {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     scope.launch {
                                         noteBackgroundAnimatable.animateTo(
                                             targetValue = Color(colorInt),

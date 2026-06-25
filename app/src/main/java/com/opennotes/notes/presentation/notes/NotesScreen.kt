@@ -40,6 +40,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,6 +59,7 @@ fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
+    val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val notesPendingDeleteState = remember { mutableStateOf<Set<Note>?>(null) }
@@ -162,7 +165,10 @@ fun NotesScreen(
                                     .height(56.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            IconButton(onClick = { viewModel.onEvent(NotesEvent.ClearSelection) }) {
+                            IconButton(onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.onEvent(NotesEvent.ClearSelection)
+                            }) {
                                 Icon(Icons.Default.Close, "Clear selection")
                             }
                             Text(
@@ -170,20 +176,29 @@ fun NotesScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.weight(1f).padding(start = 16.dp),
                             )
-                            IconButton(onClick = { viewModel.onEvent(NotesEvent.SelectAllNotes) }) {
+                            IconButton(onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.onEvent(NotesEvent.SelectAllNotes)
+                            }) {
                                 Icon(
                                     imageVector = Icons.Default.SelectAll,
                                     contentDescription = "Select all",
                                 )
                             }
                             val allPinned = state.selectedNotes.all { it.isPinned }
-                            IconButton(onClick = { viewModel.onEvent(NotesEvent.TogglePinSelectedNotes) }) {
+                            IconButton(onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.onEvent(NotesEvent.TogglePinSelectedNotes)
+                            }) {
                                 Icon(
                                     imageVector = if (allPinned) Icons.Outlined.PushPin else Icons.Filled.PushPin,
                                     contentDescription = "Toggle Pin",
                                 )
                             }
-                            IconButton(onClick = { notesPendingDeleteState.value = state.selectedNotes }) {
+                            IconButton(onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                notesPendingDeleteState.value = state.selectedNotes
+                            }) {
                                 Icon(Icons.Default.Delete, "Delete selected")
                             }
                         }
@@ -273,6 +288,7 @@ fun NotesScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 onNoteClick = {
                                     if (state.selectedNotes.isNotEmpty()) {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         viewModel.onEvent(NotesEvent.ToggleSelection(note))
                                     } else {
                                         navController.navigate(
@@ -282,6 +298,7 @@ fun NotesScreen(
                                     }
                                 },
                                 onLongClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     viewModel.onEvent(NotesEvent.ToggleSelection(note))
                                 },
                             )
@@ -308,6 +325,7 @@ fun NotesScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 onNoteClick = {
                                     if (state.selectedNotes.isNotEmpty()) {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         viewModel.onEvent(NotesEvent.ToggleSelection(note))
                                     } else {
                                         navController.navigate(
@@ -317,6 +335,7 @@ fun NotesScreen(
                                     }
                                 },
                                 onLongClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     viewModel.onEvent(NotesEvent.ToggleSelection(note))
                                 },
                             )
