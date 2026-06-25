@@ -28,6 +28,7 @@ private val toolbarItems = listOf(
     ToolbarItem(Icons.Rounded.StrikethroughS, "Strikethrough", MarkdownFormat.STRIKETHROUGH),
     ToolbarItem(Icons.Rounded.HMobiledata, "Heading 1", MarkdownFormat.H1),
     ToolbarItem(Icons.AutoMirrored.Rounded.FormatListBulleted, "Bullet List", MarkdownFormat.BULLET_LIST),
+    ToolbarItem(Icons.Rounded.FormatListNumbered, "Numbered List", MarkdownFormat.NUMBERED_LIST),
     ToolbarItem(Icons.Rounded.CheckBox, "Checklist", MarkdownFormat.CHECKLIST),
     ToolbarItem(Icons.Rounded.FormatQuote, "Quote", MarkdownFormat.QUOTE),
     ToolbarItem(Icons.Rounded.Code, "Code Block", MarkdownFormat.CODE_BLOCK),

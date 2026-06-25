@@ -9,6 +9,7 @@ enum class MarkdownFormat {
     H1,
     H2,
     BULLET_LIST,
+    NUMBERED_LIST,
     CHECKLIST,
     STRIKETHROUGH,
     QUOTE,
@@ -29,6 +30,7 @@ object MarkdownFormatter {
             MarkdownFormat.H1 -> injectPrefix(text, selection, "# ")
             MarkdownFormat.H2 -> injectPrefix(text, selection, "## ")
             MarkdownFormat.BULLET_LIST -> injectPrefix(text, selection, "- ")
+            MarkdownFormat.NUMBERED_LIST -> injectNumberedListItem(text, selection)
             MarkdownFormat.CHECKLIST -> injectPrefix(text, selection, "[ ] ")
             MarkdownFormat.QUOTE -> injectPrefix(text, selection, "> ")
         }
@@ -112,5 +114,31 @@ object MarkdownFormatter {
                 selection = TextRange(selection.min + 1 + prefix.length)
             )
         }
+    }
+
+    private fun injectNumberedListItem(text: String, selection: TextRange): TextFieldValue {
+        val cursorPos = selection.min
+
+        // Find start of the current line
+        val lineStart = text.lastIndexOf('\n', cursorPos - 1).let { if (it == -1) 0 else it + 1 }
+        val currentLine = text.substring(lineStart, cursorPos).trim()
+
+        // If the current line is itself a numbered item, next should be +1
+        val currentNumber = Regex("^(\\d+)\\.").find(currentLine)?.groupValues?.get(1)?.toIntOrNull()
+
+        val nextNumber = if (currentNumber != null) {
+            currentNumber + 1
+        } else {
+            // Scan backwards through all lines before cursor for the last numbered list item
+            val lastNumbered = text.substring(0, lineStart)
+                .lines()
+                .lastOrNull { Regex("^\\d+\\.").containsMatchIn(it.trim()) }
+            val lastNumber = lastNumbered?.trim()?.let {
+                Regex("^(\\d+)\\.").find(it)?.groupValues?.get(1)?.toIntOrNull()
+            }
+            (lastNumber ?: 0) + 1
+        }
+
+        return injectPrefix(text, selection, "$nextNumber. ")
     }
 }
