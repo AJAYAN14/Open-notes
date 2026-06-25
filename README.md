@@ -1,4 +1,4 @@
-# OpenNotes [<img src="https://shields.rbtlog.dev/simple/com.opennotes" alt="RB Status" height="80">](https://shields.rbtlog.dev/com.opennotes)
+# Open Notes [<img src="https://shields.rbtlog.dev/simple/com.opennotes" alt="RB Status" height="80">](https://shields.rbtlog.dev/com.opennotes)
 
 **A minimalist, secure, and fully offline notes app.**
 
@@ -11,7 +11,8 @@
 
 ## ✨ Features
 
-- **Native Markdown rendering** for rich text formatting, including headers, checklists, code blocks, and quotes.
+- **Native Markdown rendering** for rich text formatting, including headers, checklists, numbered lists, code blocks, and quotes.
+- **Set reminders** for your notes and receive timely notifications.
 - **Seamless image support** to embed photos directly alongside your text.
 - **Organization tools** that allow you to color-code, pin, and sort your notes.
 - **Home screen widgets** for quick access to your most important notes.
