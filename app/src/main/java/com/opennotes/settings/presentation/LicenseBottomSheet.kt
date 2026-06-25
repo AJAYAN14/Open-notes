@@ -379,7 +379,7 @@ fun LicenseBottomSheet(
         }
 
     ModalBottomSheet(
-        onDismissRequest = { (false) },
+        onDismissRequest = onDismissRequest,
         modifier = modifier,
     ) {
         LazyColumn(Modifier.padding(horizontal = 16.dp)) {

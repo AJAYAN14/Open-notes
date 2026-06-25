@@ -41,7 +41,7 @@ class NotesViewModel
     ) : ViewModel() {
         private val _state = mutableStateOf(NotesState())
         val state: State<NotesState> = _state
-        private var recentlyDeletedNote: Note? = null
+        private var recentlyDeletedNotes: List<Note> = emptyList()
         private var getNotesJob: Job? = null
 
         private val savedSortOrder =
@@ -59,14 +59,17 @@ class NotesViewModel
                 is NotesEvent.DeleteNote -> {
                     viewModelScope.launch {
                         noteUseCases.deleteNote(event.note)
-                        recentlyDeletedNote = event.note
+                        recentlyDeletedNotes = listOf(event.note)
                     }
                 }
 
                 is NotesEvent.RestoreNote -> {
                     viewModelScope.launch {
-                        noteUseCases.addNote(recentlyDeletedNote ?: return@launch)
-                        recentlyDeletedNote = null
+                        if (recentlyDeletedNotes.isEmpty()) return@launch
+                        recentlyDeletedNotes.forEach { note ->
+                            noteUseCases.addNote(note)
+                        }
+                        recentlyDeletedNotes = emptyList()
                     }
                 }
 
@@ -103,6 +106,10 @@ class NotesViewModel
                     _state.value = state.value.copy(selectedNotes = emptySet())
                 }
 
+                is NotesEvent.SelectAllNotes -> {
+                    _state.value = state.value.copy(selectedNotes = state.value.notes.toSet())
+                }
+
                 is NotesEvent.TogglePinSelectedNotes -> {
                     viewModelScope.launch {
                         val notesToUpdate = state.value.selectedNotes
@@ -116,11 +123,11 @@ class NotesViewModel
 
                 is NotesEvent.DeleteSelectedNotes -> {
                     viewModelScope.launch {
-                        val notesToDelete = state.value.selectedNotes
+                        val notesToDelete = state.value.selectedNotes.toList()
                         notesToDelete.forEach { note ->
                             noteUseCases.deleteNote(note)
                         }
-                        recentlyDeletedNote = null
+                        recentlyDeletedNotes = notesToDelete
                         _state.value = state.value.copy(selectedNotes = emptySet())
                     }
                 }

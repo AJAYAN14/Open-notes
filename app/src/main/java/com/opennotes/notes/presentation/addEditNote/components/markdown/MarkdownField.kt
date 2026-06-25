@@ -33,13 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.opennotes.notes.presentation.addEditNote.components.TransParentHintTextField
 
 @Composable
 fun MarkdownField(
     titleText: String,
-    contentText: String,
+    contentTextFieldValue: TextFieldValue,
     contentColor: Color,
     isPreviewMode: Boolean,
     interactionSource: MutableInteractionSource,
@@ -47,7 +48,7 @@ fun MarkdownField(
     titleFocusRequester: FocusRequester,
     onTitleChange: (String) -> Unit,
     onTitleFocusChange: (FocusState) -> Unit,
-    onContentChange: (String) -> Unit,
+    onContentChange: (TextFieldValue) -> Unit,
     onContentFocusChange: (FocusState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -72,14 +73,16 @@ fun MarkdownField(
             Spacer(modifier = Modifier.height(16.dp))
             MarkdownText(
                 radius = 8,
-                markdown = contentText.ifBlank { "No content to preview" },
+                markdown = contentTextFieldValue.text.ifBlank { "No content to preview" },
                 isPreview = false,
                 isEnabled = true,
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                onContentChange = {},
+                onContentChange = { newText ->
+                    onContentChange(TextFieldValue(text = newText))
+                },
                 settingsViewModel = null,
                 textColor = contentColor,
             )
@@ -108,7 +111,7 @@ fun MarkdownField(
                         ) { contentFocusRequester.requestFocus() },
             ) {
                 TransParentHintTextField(
-                    text = contentText,
+                    textFieldValue = contentTextFieldValue,
                     hint = "Content",
                     onValueChange = onContentChange,
                     onFocusChange = onContentFocusChange,

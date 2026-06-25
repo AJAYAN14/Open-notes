@@ -25,7 +25,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [NoteEntity::class],
-    version = 3,
+    version = 4,
 )
 abstract class NoteDatabase : RoomDatabase() {
     abstract val noteDao: NoteDao
@@ -37,6 +37,13 @@ abstract class NoteDatabase : RoomDatabase() {
             object : Migration(2, 3) {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL("ALTER TABLE Note ADD COLUMN isPinned INTEGER NOT NULL DEFAULT 0")
+                }
+            }
+
+        val MIGRATION_3_4 =
+            object : Migration(3, 4) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE Note ADD COLUMN reminderTime INTEGER")
                 }
             }
     }

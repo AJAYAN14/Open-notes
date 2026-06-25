@@ -99,7 +99,11 @@ class ListItemProcessor : MarkdownLineProcessor {
         return trimmed.startsWith("- ") ||
             trimmed.startsWith("+ ") ||
             trimmed.startsWith("* ") ||
-            trimmed.matches(Regex("^\\d+\\. .*"))
+            trimmed == "-" ||
+            trimmed == "+" ||
+            trimmed == "*" ||
+            trimmed.matches(Regex("^\\d+\\. .*")) ||
+            trimmed.matches(Regex("^\\d+\\.$"))
     }
 
     override fun processLine(
@@ -112,14 +116,16 @@ class ListItemProcessor : MarkdownLineProcessor {
                 trimmed.startsWith("- ") -> trimmed.removePrefix("- ").trim()
                 trimmed.startsWith("+ ") -> trimmed.removePrefix("+ ").trim()
                 trimmed.startsWith("* ") -> trimmed.removePrefix("* ").trim()
+                trimmed == "-" || trimmed == "+" || trimmed == "*" -> ""
                 trimmed.matches(Regex("^\\d+\\. .*")) -> {
                     trimmed.substringAfter(". ").trim()
                 }
+                trimmed.matches(Regex("^\\d+\\.$")) -> ""
 
                 else -> trimmed
             }
 
-        val isNumbered = trimmed.matches(Regex("^\\d+\\. .*"))
+        val isNumbered = trimmed.matches(Regex("^\\d+\\. .*")) || trimmed.matches(Regex("^\\d+\\.$"))
         val number =
             if (isNumbered) {
                 trimmed.substringBefore(".").toIntOrNull() ?: 1
@@ -163,24 +169,29 @@ fun String.stripMarkdown(): String {
 
         var processedLine = line
 
-        // Handle block-level formatting
+        val trimmedLine = processedLine.trim()
         when {
-            processedLine.trim().startsWith("#") -> {
-                processedLine = processedLine.trim().dropWhile { it == '#' }.trim()
+            trimmedLine.startsWith("#") -> {
+                processedLine = trimmedLine.dropWhile { it == '#' }.trim()
             }
-            processedLine.trim().startsWith(">") -> {
+            trimmedLine.startsWith(">") -> {
                 processedLine = processedLine.dropWhile { it == '>' }.trim()
             }
-            processedLine.trim().matches(Regex("^([\\-*]\\s*)?\\[[ xX]]( .*)?")) -> {
+            trimmedLine.matches(Regex("^([\\-*]\\s*)?\\[[ xX]]( .*)?")) -> {
                 val isChecked = processedLine.contains(Regex("\\[[Xx]]"))
-                val text = processedLine.trim().replace(Regex("^([\\-*]\\s*)?\\[[ xX]] ?"), "").trim()
+                val text = trimmedLine.replace(Regex("^([\\-*]\\s*)?\\[[ xX]] ?"), "").trim()
                 processedLine = (if (isChecked) "[✓] " else "[ ] ") + text
             }
-            processedLine.trim().startsWith("- ") || processedLine.trim().startsWith("+ ") || processedLine.trim().startsWith("* ") -> {
-                processedLine = "• " + processedLine.trim().drop(2)
+            trimmedLine.startsWith("- ") ||
+                trimmedLine.startsWith("+ ") ||
+                trimmedLine.startsWith("* ") ||
+                trimmedLine == "-" ||
+                trimmedLine == "+" ||
+                trimmedLine == "*" -> {
+                processedLine = "• " + if (trimmedLine.length > 2) trimmedLine.drop(2).trim() else ""
             }
-            processedLine.matches(Regex("^\\d+\\. .*")) -> {
-                processedLine = processedLine.substringAfter(". ")
+            processedLine.matches(Regex("^\\d+\\. .*")) || processedLine.matches(Regex("^\\d+\\.$")) -> {
+                processedLine = if (processedLine.contains(". ")) processedLine.substringAfter(". ") else ""
             }
         }
 

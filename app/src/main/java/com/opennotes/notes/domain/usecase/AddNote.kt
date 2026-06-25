@@ -26,10 +26,10 @@ class AddNote(
     private val repository: NoteRepository,
 ) {
     @Throws(InvalidNoteException::class)
-    suspend operator fun invoke(note: Note) {
+    suspend operator fun invoke(note: Note): Int {
         if (note.title.isBlank() && note.content.isBlank()) {
             throw InvalidNoteException("Either a title or content must be provided")
         }
-        repository.insertNote(note)
+        return repository.insertNote(note)
     }
 }

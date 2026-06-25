@@ -1,3 +1,21 @@
+/*
+ *
+ *  *  Copyright (c) 2026 Dhanush Sugganahalli <dhanush41230@gmail.com>
+ *  *
+ *  *  This program is free software; you can redistribute it and/or modify it under
+ *  *  the terms of the GNU General Public License as published by the Free Software
+ *  *  Foundation; either version 3 of the License, or (at your option) any later
+ *  *  version.
+ *  *
+ *  *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ *  *  PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *  *
+ *  *  You should have received a copy of the GNU General Public License along with
+ *  *  this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.opennotes.notes.domain.model
 
 enum class AppIcon(
@@ -20,7 +38,7 @@ enum class AppIcon(
     LIME("com.opennotes.featureNode.presentation.MainActivityLime", "Lime", 0xFFCDDC39),
     YELLOW("com.opennotes.featureNode.presentation.MainActivityYellow", "Yellow", 0xFFFFEB3B),
     AMBER("com.opennotes.featureNode.presentation.MainActivityAmber", "Amber", 0xFFFFC107),
-    ORANGE("com.opennotes.featureNode.presentation.MainActivityOrange", "Orange", 0xFFFF9800),
+
     DEEP_ORANGE("com.opennotes.featureNode.presentation.MainActivityDeepOrange", "Deep Orange", 0xFFFF5722),
     BROWN("com.opennotes.featureNode.presentation.MainActivityBrown", "Brown", 0xFF795548),
     GREY("com.opennotes.featureNode.presentation.MainActivityGrey", "Grey", 0xFF9E9E9E),

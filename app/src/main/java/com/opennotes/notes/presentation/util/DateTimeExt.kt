@@ -16,21 +16,13 @@
  *
  */
 
-package com.opennotes.notes.domain.repository
+package com.opennotes.notes.presentation.util
 
-import com.opennotes.notes.domain.model.Note
-import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-interface NoteRepository {
-    fun getAllNotes(): Flow<List<Note>>
-
-    suspend fun getNoteById(id: Int): Note?
-
-    suspend fun insertNote(note: Note): Int
-
-    suspend fun deleteNote(note: Note)
-
-    fun searchNotes(query: String): Flow<List<Note>>
-
-    suspend fun insertNotes(notes: List<Note>)
+fun Long.formatToDateTime(): String {
+    val sdf = SimpleDateFormat("MMM dd, yyyy • hh:mm a", Locale.getDefault())
+    return sdf.format(Date(this))
 }

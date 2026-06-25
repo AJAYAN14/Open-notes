@@ -52,7 +52,7 @@ object AppModule {
                 app,
                 NoteDatabase::class.java,
                 NoteDatabase.DATABASE_NAME,
-            ).addMigrations(NoteDatabase.MIGRATION_2_3)
+            ).addMigrations(NoteDatabase.MIGRATION_2_3, NoteDatabase.MIGRATION_3_4)
             .build()
 
     @Provides

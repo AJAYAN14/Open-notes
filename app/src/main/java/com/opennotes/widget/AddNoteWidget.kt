@@ -71,10 +71,10 @@ class AddNoteWidget : GlanceAppWidget() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Add a Note",
+                        text = "Add Note",
                         style =
                             TextStyle(
-                                fontSize = 16.sp,
+                                fontSize = 22.sp,
                                 color = GlanceTheme.colors.onPrimary,
                                 fontWeight = FontWeight.Medium,
                             ),

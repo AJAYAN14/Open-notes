@@ -5,6 +5,8 @@
     android:targetCellWidth="2"
     android:targetCellHeight="1"
     android:updatePeriodMillis="0"
+    android:initialLayout="@layout/add_note_widget_preview"
+    android:previewLayout="@layout/add_note_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen" />
 

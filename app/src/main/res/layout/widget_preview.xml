@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1E1E1E"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Single Note Checklist -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Grocery List"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+        
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <CheckBox
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:checked="true"
+            android:clickable="false"
+            android:buttonTint="#BBBBBB" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Milk"
+            android:textColor="#BBBBBB"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <CheckBox
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:checked="false"
+            android:clickable="false"
+            android:buttonTint="#BBBBBB" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Eggs"
+            android:textColor="#BBBBBB"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <CheckBox
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:checked="false"
+            android:clickable="false"
+            android:buttonTint="#BBBBBB" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Bread"
+            android:textColor="#BBBBBB"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

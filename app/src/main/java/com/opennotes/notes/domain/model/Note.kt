@@ -24,6 +24,7 @@ data class Note(
     val timestamp: Long,
     val color: Int,
     val isPinned: Boolean = false,
+    val reminderTime: Long? = null,
     val id: Int? = null,
 )
 

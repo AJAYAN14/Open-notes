@@ -16,21 +16,18 @@
  *
  */
 
-package com.opennotes.notes.domain.repository
+package com.opennotes.util
 
-import com.opennotes.notes.domain.model.Note
-import kotlinx.coroutines.flow.Flow
+import com.opennotes.BuildConfig
 
-interface NoteRepository {
-    fun getAllNotes(): Flow<List<Note>>
-
-    suspend fun getNoteById(id: Int): Note?
-
-    suspend fun insertNote(note: Note): Int
-
-    suspend fun deleteNote(note: Note)
-
-    fun searchNotes(query: String): Flow<List<Note>>
-
-    suspend fun insertNotes(notes: List<Note>)
+/**
+ * Global configuration constants for the app.
+ * Abstracts away build flavors and environment variables from the UI layers.
+ */
+object AppConfig {
+    /**
+     * Determines whether donation/sponsor links should be visible.
+     * Google Play Developer Policy strictly forbids external donation links.
+     */
+    val showDonations: Boolean = BuildConfig.FLAVOR != "playStore"
 }

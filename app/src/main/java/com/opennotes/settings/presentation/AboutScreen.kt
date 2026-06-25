@@ -69,6 +69,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.opennotes.R
+import com.opennotes.util.AppConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,7 +171,7 @@ fun AboutScreen(navController: NavController) {
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "OpenNotes",
+                                    text = "Open Notes",
                                     style =
                                         MaterialTheme.typography.headlineSmall.copy(
                                             fontWeight = FontWeight.SemiBold,
@@ -204,6 +205,50 @@ fun AboutScreen(navController: NavController) {
                         )
                     }
 
+                    if (AppConfig.showDonations) {
+                        Card(
+                            shape =
+                                RoundedCornerShape(
+                                    topStart = 4.dp,
+                                    topEnd = 4.dp,
+                                    bottomStart = 4.dp,
+                                    bottomEnd = 4.dp,
+                                ),
+                            colors =
+                                CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                ),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            ListItem(
+                                modifier =
+                                    Modifier.clickable {
+                                        uriHandler.openUri("https://github.com/sponsors/Fandroid745")
+                                    },
+                                leadingContent = {
+                                    Icon(
+                                        imageVector = Icons.Default.Support,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                    )
+                                },
+                                headlineContent = { Text("Support me on Github Sponsors") },
+                                supportingContent = { Text("Monthly or one-time-directly funds development") },
+                                trailingContent = {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                },
+                                colors =
+                                    ListItemDefaults.colors(
+                                        containerColor = Color.Transparent,
+                                    ),
+                            )
+                        }
+                    }
+
                     Card(
                         shape =
                             RoundedCornerShape(
@@ -216,65 +261,27 @@ fun AboutScreen(navController: NavController) {
                             CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                             ),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { showLicenseBottomSheet = true },
                     ) {
                         ListItem(
-                            modifier =
-                                Modifier.clickable {
-                                    uriHandler.openUri("https://github.com/sponsors/Fandroid745")
-                                },
                             leadingContent = {
                                 Icon(
-                                    imageVector = Icons.Default.Support,
+                                    imageVector = Icons.Default.Gavel,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                 )
                             },
-                            headlineContent = { Text("Support me on Github Sponsors") },
-                            supportingContent = { Text("Monthly or one-time-directly funds development") },
-                            trailingContent = {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            },
+                            headlineContent = { Text("License") },
+                            supportingContent = { Text("GPL-3.0 License") },
                             colors =
                                 ListItemDefaults.colors(
                                     containerColor = Color.Transparent,
                                 ),
                         )
                     }
-                }
-            }
-
-            item {
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        ),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable { showLicenseBottomSheet = true },
-                ) {
-                    ListItem(
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Default.Gavel,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        },
-                        headlineContent = { Text("License") },
-                        supportingContent = { Text("GPL-3.0 License") },
-                        colors =
-                            ListItemDefaults.colors(
-                                containerColor = Color.Transparent,
-                            ),
-                    )
                 }
             }
         }
