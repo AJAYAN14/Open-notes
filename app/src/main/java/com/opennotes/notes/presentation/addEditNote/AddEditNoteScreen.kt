@@ -57,7 +57,10 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -70,9 +73,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.ripple
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
+import com.opennotes.notes.presentation.util.formatToDateTime
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -112,9 +122,12 @@ fun AddEditNoteScreen(
 ) {
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     var isPreviewMode by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
+    var showInfoDialog by remember { mutableStateOf(false) }
 
     var contentTextFieldValue by remember {
         mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(text = contentState.text))
@@ -308,6 +321,62 @@ fun AddEditNoteScreen(
                             modifier = Modifier.size(28.dp),
                         )
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box {
+                        FilledIconButton(
+                            onClick = { showMenu = true },
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = contentColor.copy(alpha = 0.15f),
+                                    contentColor = contentColor,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                tint = contentColor,
+                                modifier = Modifier.size(28.dp),
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Note info") },
+                                onClick = {
+                                    showMenu = false
+                                    showInfoDialog = true
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = null,
+                                    )
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Share note") },
+                                onClick = {
+                                    showMenu = false
+                                    val sendIntent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        putExtra(Intent.EXTRA_TITLE, titleState.text)
+                                        putExtra(Intent.EXTRA_TEXT, "${titleState.text}\n\n${contentState.text}")
+                                        type = "text/plain"
+                                    }
+                                    val shareIntent = Intent.createChooser(sendIntent, "Share note via")
+                                    context.startActivity(shareIntent)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = null,
+                                    )
+                                },
+                            )
+                        }
+                    }
                 }
             }
         },
@@ -445,6 +514,44 @@ fun AddEditNoteScreen(
                 }
             }
         }
+    }
+
+    if (showInfoDialog) {
+        val timestamp = viewModel.noteTimestamp.value
+        val dateString = remember(timestamp) {
+            if (timestamp != null) {
+                timestamp.formatToDateTime()
+            } else {
+                "Not saved yet"
+            }
+        }
+        val wordCount = remember(contentState.text) {
+            contentState.text.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
+        }
+        val charCount = remember(contentState.text) {
+            contentState.text.length
+        }
+        AlertDialog(
+            onDismissRequest = { showInfoDialog = false },
+            title = { Text(text = "Note info") },
+            text = {
+                Column {
+                    Text(text = "Created: $dateString", style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "Words: $wordCount", style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = "Characters: $charCount", style = MaterialTheme.typography.bodyMedium)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showInfoDialog = false }) {
+                    Text("OK", color = contentColor)
+                }
+            },
+            containerColor = backgroundColor,
+            titleContentColor = contentColor,
+            textContentColor = contentColor.copy(alpha = 0.8f),
+        )
     }
     }
 }

@@ -68,6 +68,9 @@ class AddEditNoteViewModel
             )
         val noteColor: State<Int> = _noteColor
 
+        private val _noteTimestamp = mutableStateOf<Long?>(null)
+        val noteTimestamp: State<Long?> = _noteTimestamp
+
         private val _eventFlow = MutableSharedFlow<UiEvent>()
         val eventFlow = _eventFlow.asSharedFlow()
 
@@ -81,6 +84,7 @@ class AddEditNoteViewModel
                         noteUseCases.getNote(noteId)?.also { note ->
                             currentNoteId = note.id
                             currentIsPinned = note.isPinned
+                            _noteTimestamp.value = note.timestamp
                             if (savedStateHandle.get<String>("title") == null) {
                                 _noteTitle.value =
                                     noteTitle.value.copy(
