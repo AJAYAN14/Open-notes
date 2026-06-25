@@ -20,7 +20,7 @@ enum class AppIcon(
     LIME("com.opennotes.featureNode.presentation.MainActivityLime", "Lime", 0xFFCDDC39),
     YELLOW("com.opennotes.featureNode.presentation.MainActivityYellow", "Yellow", 0xFFFFEB3B),
     AMBER("com.opennotes.featureNode.presentation.MainActivityAmber", "Amber", 0xFFFFC107),
-    ORANGE("com.opennotes.featureNode.presentation.MainActivityOrange", "Orange", 0xFFFF9800),
+
     DEEP_ORANGE("com.opennotes.featureNode.presentation.MainActivityDeepOrange", "Deep Orange", 0xFFFF5722),
     BROWN("com.opennotes.featureNode.presentation.MainActivityBrown", "Brown", 0xFF795548),
     GREY("com.opennotes.featureNode.presentation.MainActivityGrey", "Grey", 0xFF9E9E9E),
