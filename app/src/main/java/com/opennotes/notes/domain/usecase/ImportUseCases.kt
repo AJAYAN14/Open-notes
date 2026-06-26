@@ -23,6 +23,7 @@ import com.opennotes.notes.data.repository.JsonHandler
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.domain.repository.NoteRepository
 import com.opennotes.notes.domain.util.ImportResult
+import kotlinx.serialization.json.*
 
 class ImportUseCases(
     private val repository: NoteRepository,
@@ -43,9 +44,9 @@ class ImportUseCases(
             }
 
             // Deserialize with validation - catch invalid JSON first
-            val rawNotes: List<Map<String, Any?>> =
+            val rawNotes =
                 try {
-                    jsonHandler.fromJsonToNoteMapList(notesJson)
+                    jsonHandler.parseToJsonArray(notesJson)
                 } catch (e: Exception) {
                     return ImportResult.Error("Invalid JSON format: ${e.message}")
                 }
@@ -56,11 +57,12 @@ class ImportUseCases(
 
             // Validate and construct trusted Note objects
             val validNotes =
-                rawNotes.mapNotNull { rawNote ->
-                    val title = (rawNote["title"] as? String)?.trim()
-                    val content = (rawNote["content"] as? String)?.trim()
-                    val timestamp = (rawNote["timestamp"] as? Number)?.toLong()
-                    val color = (rawNote["color"] as? Number)?.toInt()
+                rawNotes.mapNotNull { element ->
+                    val rawNote = element as? JsonObject ?: return@mapNotNull null
+                    val title = rawNote["title"]?.jsonPrimitive?.contentOrNull?.trim()
+                    val content = rawNote["content"]?.jsonPrimitive?.contentOrNull?.trim()
+                    val timestamp = rawNote["timestamp"]?.jsonPrimitive?.longOrNull
+                    val color = rawNote["color"]?.jsonPrimitive?.intOrNull
 
                     // Only create Note if all required fields are present and valid
                     if ((title?.isNotBlank() == true || content?.isNotBlank() == true) &&

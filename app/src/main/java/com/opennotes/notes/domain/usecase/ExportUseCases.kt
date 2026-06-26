@@ -40,7 +40,7 @@ class ExportUseCases(
                 return ExportResult.Error("No notes to export")
             }
 
-            val notesJson = jsonHandler.toJson(allNotes)
+            val notesJson = jsonHandler.serializeNotes(allNotes)
 
             val isSaved = fileHandler.exportBackupToZip(targetUriString, notesJson)
 

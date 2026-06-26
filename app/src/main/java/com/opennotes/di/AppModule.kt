@@ -23,8 +23,8 @@ import androidx.room.Room
 import com.opennotes.notes.data.datasource.NoteDatabase
 import com.opennotes.notes.data.repository.AndroidFileHandler
 import com.opennotes.notes.data.repository.FileHandler
-import com.opennotes.notes.data.repository.GsonJsonHandler
 import com.opennotes.notes.data.repository.JsonHandler
+import com.opennotes.notes.data.repository.KotlinxJsonHandler
 import com.opennotes.notes.data.repository.NoteRepositoryImpl
 import com.opennotes.notes.domain.repository.NoteRepository
 import com.opennotes.notes.domain.usecase.AddNote
@@ -64,10 +64,10 @@ object AppModule {
     @Singleton
     fun provideFileHandler(app: Application): FileHandler = AndroidFileHandler(app)
 
-    // CORRECTED: Provides the concrete GsonJsonHandler implementation
+    // CORRECTED: Provides the concrete KotlinxJsonHandler implementation
     @Provides
     @Singleton
-    fun provideJsonHandler(): JsonHandler = GsonJsonHandler()
+    fun provideJsonHandler(): JsonHandler = KotlinxJsonHandler()
 
     @Provides
     @Singleton

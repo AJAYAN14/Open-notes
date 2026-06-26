@@ -18,23 +18,25 @@
 
 package com.opennotes.notes.data.repository
 
-import com.google.gson.GsonBuilder
-
-// In your data/repository directory
+import com.opennotes.notes.domain.model.Note
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.*
 
 interface JsonHandler {
-    fun <T> toJson(data: T): String
+    fun serializeNotes(notes: List<Note>): String
 
-    fun fromJsonToNoteMapList(json: String): List<Map<String, Any?>>
+    fun parseToJsonArray(json: String): JsonArray
 }
 
-class GsonJsonHandler : JsonHandler {
-    private val gson = GsonBuilder().create()
+class KotlinxJsonHandler : JsonHandler {
+    private val jsonFormat =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+            isLenient = true
+        }
 
-    override fun <T> toJson(data: T): String = gson.toJson(data)
+    override fun serializeNotes(notes: List<Note>): String = jsonFormat.encodeToString(notes)
 
-    override fun fromJsonToNoteMapList(json: String): List<Map<String, Any?>> {
-        val noteListType = object : com.google.gson.reflect.TypeToken<List<Map<String, Any?>>>() {}.type
-        return gson.fromJson(json, noteListType)
-    }
+    override fun parseToJsonArray(json: String): JsonArray = jsonFormat.parseToJsonElement(json).jsonArray
 }
