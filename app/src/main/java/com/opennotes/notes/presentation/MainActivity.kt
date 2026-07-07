@@ -65,6 +65,7 @@ import com.opennotes.settings.presentation.BackupScreen
 import com.opennotes.settings.presentation.PrivacySettingsScreen
 import com.opennotes.settings.presentation.SettingsScreen
 import com.opennotes.settings.presentation.SettingsViewModel
+import com.opennotes.R
 import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -130,8 +131,8 @@ class MainActivity : FragmentActivity() {
                         val promptInfo =
                             BiometricPrompt.PromptInfo
                                 .Builder()
-                                .setTitle("Unlock OpenNotes")
-                                .setSubtitle("Confirm your identity to access your notes")
+                                .setTitle(getString(R.string.unlock_title))
+                                .setSubtitle(getString(R.string.unlock_subtitle))
                                 .setAllowedAuthenticators(
                                     BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                         BiometricManager.Authenticators.BIOMETRIC_WEAK or

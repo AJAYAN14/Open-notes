@@ -18,6 +18,8 @@
 
 package com.opennotes.notes.presentation.notes
 
+import com.opennotes.R
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -108,12 +110,12 @@ fun NotesScreen(
                         }
                     },
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { notesPendingDeleteState.value = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         )
@@ -134,7 +136,7 @@ fun NotesScreen(
                     )
                 },
                 text = {
-                    Text("New Note")
+                    Text(stringResource(R.string.new_note))
                 },
             )
         },
@@ -216,7 +218,7 @@ fun NotesScreen(
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Search,
-                                    contentDescription = "Search Notes",
+                                    contentDescription = stringResource(R.string.search_notes),
                                     modifier = Modifier.size(25.dp),
                                 )
                             },
@@ -238,7 +240,7 @@ fun NotesScreen(
                                     }
                                 }
                             },
-                            placeholder = { Text("Search Notes") },
+                            placeholder = { Text(stringResource(R.string.search_notes)) },
                             singleLine = true,
                             colors =
                                 OutlinedTextFieldDefaults.colors(

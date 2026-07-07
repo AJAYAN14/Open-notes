@@ -18,6 +18,8 @@
 
 package com.opennotes.notes.presentation.addEditNote
 
+import com.opennotes.R
+import androidx.compose.ui.res.stringResource
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -360,7 +362,7 @@ fun AddEditNoteScreen(
                                 onDismissRequest = { showMenu = false },
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Note info") },
+                                    text = { Text(stringResource(R.string.note_info)) },
                                     onClick = {
                                         showMenu = false
                                         showInfoDialog = true
@@ -373,7 +375,7 @@ fun AddEditNoteScreen(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Share note") },
+                                    text = { Text(stringResource(R.string.share_note)) },
                                     onClick = {
                                         showMenu = false
                                         val sendIntent =
@@ -552,7 +554,7 @@ fun AddEditNoteScreen(
                 }
             AlertDialog(
                 onDismissRequest = { showInfoDialog = false },
-                title = { Text(text = "Note info") },
+                title = { Text(text = stringResource(R.string.note_info)) },
                 text = {
                     Column {
                         Text(text = "Created: $dateString", style = MaterialTheme.typography.bodyMedium)
@@ -564,7 +566,7 @@ fun AddEditNoteScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = { showInfoDialog = false }) {
-                        Text("OK", color = contentColor)
+                        Text(stringResource(R.string.ok), color = contentColor)
                     }
                 },
                 containerColor = backgroundColor,

@@ -18,6 +18,8 @@
 
 package com.opennotes.notes.presentation.addEditNote.components
 
+import com.opennotes.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -111,7 +113,7 @@ fun ReminderDialog(
                         onDismiss()
                     },
                 ) {
-                    Text("Remove", color = contentColor)
+                    Text(stringResource(R.string.remove), color = contentColor)
                 }
             },
             confirmButton = {
@@ -120,7 +122,7 @@ fun ReminderDialog(
                         showM3ReminderDialog = true
                     },
                 ) {
-                    Text("Change", color = contentColor)
+                    Text(stringResource(R.string.change), color = contentColor)
                 }
             },
             containerColor = backgroundColor,
@@ -219,14 +221,14 @@ fun ReminderDialog(
                         onDismiss()
                     },
                 ) {
-                    Text("Save", color = contentColor)
+                    Text(stringResource(R.string.save), color = contentColor)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = onDismiss,
                 ) {
-                    Text("Cancel", color = contentColor)
+                    Text(stringResource(R.string.cancel), color = contentColor)
                 }
             },
             containerColor = backgroundColor,
@@ -248,12 +250,12 @@ fun ReminderDialog(
                             showSubDatePicker = false
                         },
                     ) {
-                        Text("OK", color = contentColor)
+                        Text(stringResource(R.string.ok), color = contentColor)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showSubDatePicker = false }) {
-                        Text("Cancel", color = contentColor)
+                        Text(stringResource(R.string.cancel), color = contentColor)
                     }
                 },
                 colors =
@@ -310,15 +312,15 @@ fun ReminderDialog(
                             showSubTimePicker = false
                         },
                     ) {
-                        Text("OK", color = contentColor)
+                        Text(stringResource(R.string.ok), color = contentColor)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showSubTimePicker = false }) {
-                        Text("Cancel", color = contentColor)
+                        Text(stringResource(R.string.cancel), color = contentColor)
                     }
                 },
-                title = { Text("Select time") },
+                title = { Text(stringResource(R.string.select_time)) },
                 text = {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
