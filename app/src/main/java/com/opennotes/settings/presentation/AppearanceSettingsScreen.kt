@@ -18,6 +18,7 @@
 
 package com.opennotes.settings.presentation
 
+import com.opennotes.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +65,7 @@ fun AppearanceSettingsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Appearance",
+                        text = stringResource(R.string.appearance_title),
                         style =
                             MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.Bold,
@@ -108,8 +110,8 @@ fun AppearanceSettingsScreen(
             }
             item {
                 SettingItem(
-                    title = "Dynamic Color",
-                    subtitle = "Adapt theme colors from your wallpaper",
+                    title = stringResource(R.string.dynamic_color_title),
+                    subtitle = stringResource(R.string.dynamic_color_subtitle),
                     icon = Icons.Default.Wallpaper,
                     trailing = {
                         SettingsSwitch(
@@ -136,8 +138,8 @@ fun AppearanceSettingsScreen(
             }
             item {
                 SettingItem(
-                    title = "Black Theme",
-                    subtitle = if (settings.blackTheme) "Use a pure black dark theme" else "Use regular dark colors",
+                    title = stringResource(R.string.black_theme_title),
+                    subtitle = if (settings.blackTheme) stringResource(R.string.black_theme_subtitle_enabled) else stringResource(R.string.black_theme_subtitle_disabled),
                     icon = Icons.Default.DarkMode,
                     trailing = {
                         SettingsSwitch(

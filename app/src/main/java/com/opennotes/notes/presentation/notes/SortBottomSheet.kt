@@ -34,8 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.opennotes.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +55,7 @@ fun SortBottomSheet(
                     .padding(bottom = 32.dp),
         ) {
             Text(
-                text = "Sort by",
+                text = stringResource(R.string.sort_by),
                 style =
                     MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
@@ -61,7 +63,7 @@ fun SortBottomSheet(
                 modifier = Modifier.padding(bottom = 12.dp),
             )
             SortOption(
-                label = "Newest first",
+                label = stringResource(R.string.sort_newest_first),
                 selected = currentSortOrder == SortOrder.DATE_CREATED_NEW,
                 onClick = {
                     onSortSelected(SortOrder.DATE_CREATED_NEW)
@@ -69,7 +71,7 @@ fun SortBottomSheet(
                 },
             )
             SortOption(
-                label = "Oldest first",
+                label = stringResource(R.string.sort_oldest_first),
                 selected = currentSortOrder == SortOrder.DATE_CREATED_OLD,
                 onClick = {
                     onSortSelected(SortOrder.DATE_CREATED_OLD)
@@ -77,7 +79,7 @@ fun SortBottomSheet(
                 },
             )
             SortOption(
-                label = "Title A–Z",
+                label = stringResource(R.string.sort_title_az),
                 selected = currentSortOrder == SortOrder.TITLE_A_Z,
                 onClick = {
                     onSortSelected(SortOrder.TITLE_A_Z)
@@ -85,7 +87,7 @@ fun SortBottomSheet(
                 },
             )
             SortOption(
-                label = "Title Z–A",
+                label = stringResource(R.string.sort_title_za),
                 selected = currentSortOrder == SortOrder.TITLE_Z_A,
                 onClick = {
                     onSortSelected(SortOrder.TITLE_Z_A)

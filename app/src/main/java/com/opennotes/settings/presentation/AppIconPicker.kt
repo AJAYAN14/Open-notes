@@ -18,6 +18,7 @@
 
 package com.opennotes.settings.presentation
 
+import com.opennotes.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -56,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.opennotes.notes.domain.model.AppIcon
 
@@ -69,7 +71,7 @@ fun AppIconPicker(
 
     Column(modifier = Modifier.fillMaxWidth()) {
         SettingItem(
-            title = "App Icon Color",
+            title = stringResource(R.string.app_icon_color_title),
             subtitle = currentIcon.title,
             icon = Icons.Default.AppShortcut,
             onClick = { isExpanded = !isExpanded },
@@ -135,21 +137,21 @@ fun AppIconPicker(
     if (pendingIcon != null) {
         AlertDialog(
             onDismissRequest = { pendingIcon = null },
-            title = { Text("Change App Icon?") },
+            title = { Text(stringResource(R.string.app_icon_change_title)) },
             text = {
-                Text("Changing the app icon requires the app to restart. Your home screen may momentarily refresh. Do you wish to proceed?")
+                Text(stringResource(R.string.app_icon_change_message))
             },
             confirmButton = {
                 TextButton(onClick = {
                     pendingIcon?.let { onIconChange(it) }
                     pendingIcon = null
                 }) {
-                    Text("Restart")
+                    Text(stringResource(R.string.app_icon_restart))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingIcon = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.app_icon_cancel))
                 }
             },
         )
