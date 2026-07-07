@@ -50,6 +50,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
+import com.opennotes.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -74,7 +76,7 @@ fun SettingsSwitch(
         thumbContent = {
             Icon(
                 imageVector = if (isChecked) Icons.Default.Check else Icons.Default.Close,
-                contentDescription = if (isChecked) "On" else "Off",
+                contentDescription = if (isChecked) stringResource(R.string.switch_on) else stringResource(R.string.switch_off),
                 modifier = Modifier.size(18.dp),
                 tint =
                     if (isChecked) {
@@ -136,7 +138,7 @@ fun SettingsScreen(
 
                     if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
                         scope.launch {
-                            snackbarHostState.showSnackbar("Biometric authentication is not available")
+                            snackbarHostState.showSnackbar(context.getString(R.string.error_biometric_unavailable))
                         }
                         viewModel.onBiometricAuthFailed()
                         return@collectLatest
@@ -166,9 +168,9 @@ fun SettingsScreen(
                     val promptInfo =
                         BiometricPrompt.PromptInfo
                             .Builder()
-                            .setTitle(if (enable) "Enable biometric lock" else "Disable biometric lock")
+                            .setTitle(if (enable) context.getString(R.string.biometric_enable_title) else context.getString(R.string.biometric_disable_title))
                             .setSubtitle(
-                                if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock",
+                                if (enable) context.getString(R.string.biometric_enable_subtitle) else context.getString(R.string.biometric_disable_subtitle),
                             ).setAllowedAuthenticators(
                                 BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                     BiometricManager.Authenticators.BIOMETRIC_WEAK or
@@ -188,7 +190,7 @@ fun SettingsScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
+                        text = stringResource(R.string.settings_title),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.headlineLarge,
                     )
@@ -214,8 +216,8 @@ fun SettingsScreen(
         ) {
             item {
                 SettingItem(
-                    title = "Backup and Restore",
-                    subtitle = "Export and import your notes",
+                    title = stringResource(R.string.settings_backup_restore_title),
+                    subtitle = stringResource(R.string.settings_backup_restore_subtitle),
                     icon = Icons.Default.Cloud,
                     onClick = { navController.navigate(Screen.BackupScreen.route) },
                     isFirst = true,
@@ -225,8 +227,8 @@ fun SettingsScreen(
 
             item {
                 SettingItem(
-                    title = "Appearance",
-                    subtitle = "Theme, Color scheme, Black Theme",
+                    title = stringResource(R.string.settings_appearance_title),
+                    subtitle = stringResource(R.string.settings_appearance_subtitle),
                     icon = Icons.Default.Palette,
                     onClick = { navController.navigate(Screen.AppearanceSettingsScreen.route) },
                     isFirst = true,
@@ -236,8 +238,8 @@ fun SettingsScreen(
 
             item {
                 SettingItem(
-                    title = "Privacy",
-                    subtitle = "Biometric lock, Secure Screen",
+                    title = stringResource(R.string.settings_privacy_title),
+                    subtitle = stringResource(R.string.settings_privacy_subtitle),
                     icon = Icons.Default.Lock,
                     onClick = { navController.navigate(Screen.PrivacySettingsScreen.route) },
                     isFirst = true,
@@ -247,8 +249,8 @@ fun SettingsScreen(
 
             item {
                 SettingItem(
-                    title = "About",
-                    subtitle = "Version $versionName",
+                    title = stringResource(R.string.settings_about_title),
+                    subtitle = stringResource(R.string.settings_about_subtitle, versionName),
                     icon = Icons.Default.Info,
                     onClick = {
                         navController.navigate(Screen.AboutScreen.route)

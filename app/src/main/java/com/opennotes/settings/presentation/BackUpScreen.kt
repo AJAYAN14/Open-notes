@@ -18,6 +18,7 @@
 
 package com.opennotes.settings.presentation
 
+import com.opennotes.R
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
@@ -101,7 +103,7 @@ fun BackupScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Backup and Restore",
+                        text = stringResource(R.string.settings_backup_restore_title),
                         style =
                             MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.SemiBold,
@@ -138,8 +140,8 @@ fun BackupScreen(
         ) {
             item {
                 SettingItem(
-                    title = "Export Notes",
-                    subtitle = "Save your notes to a ZIP archive",
+                    title = stringResource(R.string.export_notes_title),
+                    subtitle = stringResource(R.string.export_notes_subtitle),
                     icon = Icons.Default.CloudUpload,
                     onClick = { viewModel.onExportClick() },
                     isFirst = true,
@@ -148,8 +150,8 @@ fun BackupScreen(
             }
             item {
                 SettingItem(
-                    title = "Import Notes",
-                    subtitle = "Load notes from a JSON or ZIP backup",
+                    title = stringResource(R.string.import_notes_title),
+                    subtitle = stringResource(R.string.import_notes_subtitle),
                     icon = Icons.Default.CloudDownload,
                     onClick = { filePickerLauncher.launch(arrayOf("application/json", "application/zip", "application/x-zip-compressed")) },
                     isLast = true,

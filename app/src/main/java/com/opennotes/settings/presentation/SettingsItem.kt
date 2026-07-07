@@ -18,6 +18,7 @@
 
 package com.opennotes.settings.presentation
 
+import com.opennotes.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -109,7 +111,7 @@ fun SettingItem(
             } else {
                 Icon(
                     imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = "Navigate",
+                    contentDescription = stringResource(R.string.navigate_desc),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(40.dp),
                 )

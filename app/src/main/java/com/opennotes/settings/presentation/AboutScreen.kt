@@ -65,6 +65,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -93,7 +94,7 @@ fun AboutScreen(navController: NavController) {
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "About",
+                        text = stringResource(R.string.settings_about_title),
                         style =
                             MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.SemiBold,
@@ -171,7 +172,7 @@ fun AboutScreen(navController: NavController) {
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Open Notes",
+                                    text = stringResource(R.string.app_name),
                                     style =
                                         MaterialTheme.typography.headlineSmall.copy(
                                             fontWeight = FontWeight.SemiBold,
@@ -191,7 +192,7 @@ fun AboutScreen(navController: NavController) {
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.github),
-                                    contentDescription = "GitHub",
+                                    contentDescription = stringResource(R.string.github_content_desc),
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(40.dp),
                                 )
@@ -232,8 +233,8 @@ fun AboutScreen(navController: NavController) {
                                         tint = MaterialTheme.colorScheme.primary,
                                     )
                                 },
-                                headlineContent = { Text("Support me on Github Sponsors") },
-                                supportingContent = { Text("Monthly or one-time-directly funds development") },
+                                headlineContent = { Text(stringResource(R.string.support_github_sponsors)) },
+                                supportingContent = { Text(stringResource(R.string.support_github_description)) },
                                 trailingContent = {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
@@ -274,8 +275,8 @@ fun AboutScreen(navController: NavController) {
                                     tint = MaterialTheme.colorScheme.primary,
                                 )
                             },
-                            headlineContent = { Text("License") },
-                            supportingContent = { Text("GPL-3.0 License") },
+                            headlineContent = { Text(stringResource(R.string.license_label)) },
+                            supportingContent = { Text(stringResource(R.string.license_gpl)) },
                             colors =
                                 ListItemDefaults.colors(
                                     containerColor = Color.Transparent,

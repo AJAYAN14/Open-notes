@@ -18,6 +18,7 @@
 
 package com.opennotes.settings.presentation
 
+import com.opennotes.R
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
@@ -56,6 +57,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -98,7 +100,7 @@ fun PrivacySettingsScreen(
 
                     if (canAuthenticate != androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS) {
                         scope.launch {
-                            snackbarHostState.showSnackbar("Biometric authentication is not available")
+                            snackbarHostState.showSnackbar(context.getString(R.string.error_biometric_unavailable))
                         }
                         viewModel.onBiometricAuthFailed()
                         return@collectLatest
@@ -128,9 +130,9 @@ fun PrivacySettingsScreen(
                     val promptInfo =
                         androidx.biometric.BiometricPrompt.PromptInfo
                             .Builder()
-                            .setTitle(if (enable) "Enable biometric lock" else "Disable biometric lock")
+                            .setTitle(if (enable) context.getString(R.string.biometric_enable_title) else context.getString(R.string.biometric_disable_title))
                             .setSubtitle(
-                                if (enable) "Confirm your identity to enable app lock" else "Confirm your identity to disable app lock",
+                                if (enable) context.getString(R.string.biometric_enable_subtitle) else context.getString(R.string.biometric_disable_subtitle),
                             ).setAllowedAuthenticators(
                                 androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
                                     androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
@@ -151,7 +153,7 @@ fun PrivacySettingsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Privacy and Security",
+                        text = stringResource(R.string.privacy_title),
                         style =
                             MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.SemiBold,
@@ -187,12 +189,12 @@ fun PrivacySettingsScreen(
         ) {
             item {
                 SettingItem(
-                    title = "Biometric Lock",
+                    title = stringResource(R.string.biometric_lock_title),
                     subtitle =
                         if (settings.biometricLock) {
-                            "Fingerprint required when enabled"
+                            stringResource(R.string.biometric_lock_subtitle_enabled)
                         } else {
-                            "Require fingerprint to unlock app"
+                            stringResource(R.string.biometric_lock_subtitle_disabled)
                         },
                     icon = Icons.Default.Fingerprint,
                     trailing = {
@@ -209,8 +211,8 @@ fun PrivacySettingsScreen(
             }
             item {
                 SettingItem(
-                    title = "Secure Screen",
-                    subtitle = "Hide content in Recents and block screenshots",
+                    title = stringResource(R.string.secure_screen_title),
+                    subtitle = stringResource(R.string.secure_screen_subtitle),
                     icon = Icons.Default.Security,
                     trailing = {
                         SettingsSwitch(
