@@ -51,6 +51,14 @@ All changes should be committed to the dev branch, not main.
 
 ---
 
+## Translations
+
+Help translate Open Notes into your language on [Weblate](https://hosted.weblate.org/projects/open-notes/).
+
+[![Translation status](https://hosted.weblate.org/widget/open-notes/287x66-white.png)](https://hosted.weblate.org/engage/open-notes/)
+
+---
+
 ## Inspiration
 
 - [EasyNotes](https://github.com/Kin69/EasyNotes?tab=readme-ov-file)
