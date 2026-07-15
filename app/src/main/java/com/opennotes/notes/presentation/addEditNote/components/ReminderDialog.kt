@@ -100,10 +100,10 @@ fun ReminderDialog(
             }
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text(text = "Note Reminder") },
+            title = { Text(text = "笔记提醒") },
             text = {
                 Column {
-                    Text(text = "Reminder set for:\n$reminderString", style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "提醒时间：\n$reminderString", style = MaterialTheme.typography.bodyMedium)
                 }
             },
             dismissButton = {
@@ -139,7 +139,7 @@ fun ReminderDialog(
         var selectedDateMillis by remember { mutableStateOf(reminderTime ?: System.currentTimeMillis()) }
         var selectedHour by remember { mutableIntStateOf(initialCal.get(Calendar.HOUR_OF_DAY)) }
         var selectedMinute by remember { mutableIntStateOf(initialCal.get(Calendar.MINUTE)) }
-        var repeatOption by remember { mutableStateOf("Does not repeat") }
+        var repeatOption by remember { mutableStateOf("不重复") }
 
         var showSubDatePicker by remember { mutableStateOf(false) }
         var showSubTimePicker by remember { mutableStateOf(false) }
@@ -156,7 +156,7 @@ fun ReminderDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = "Pick a date & time",
+                    text = "选择日期和时间",
                     style = MaterialTheme.typography.headlineSmall,
                     color = contentColor,
                 )
@@ -192,7 +192,7 @@ fun ReminderDialog(
                             onDismissRequest = { showRepeatMenu = false },
                             modifier = Modifier.background(backgroundColor),
                         ) {
-                            val options = listOf("Does not repeat", "Daily", "Weekly", "Monthly")
+                            val options = listOf("不重复", "每天", "每周", "每月")
                             options.forEach { option ->
                                 DropdownMenuItem(
                                     text = { Text(option, color = contentColor) },
@@ -350,7 +350,7 @@ fun ReminderDialog(
                                         } else {
                                             Icons.Default.AccessTime
                                         },
-                                    contentDescription = if (isClockMode) "Switch to keyboard" else "Switch to clock",
+                                    contentDescription = if (isClockMode) "切换到键盘输入" else "切换到时钟选择",
                                     tint = contentColor,
                                 )
                             }
@@ -390,7 +390,7 @@ private fun ReminderDropdownField(
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown",
+                contentDescription = "下拉菜单",
                 tint = contentColor,
             )
         }

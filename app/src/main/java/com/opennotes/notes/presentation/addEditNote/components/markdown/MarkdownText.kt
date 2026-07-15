@@ -264,7 +264,7 @@ fun MarkdownContent(
 ) {
     if (content.isEmpty()) {
         Text(
-            text = "Content",
+            text = "内容",
             fontSize = fontSize,
             fontWeight = weight,
             color = Color.Gray,

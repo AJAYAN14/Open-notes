@@ -30,6 +30,10 @@ android {
         }
     }
 
+    androidResources {
+        localeFilters += listOf("zh", "zh-rCN", "zh-rTW", "zh-rHK")
+    }
+
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false

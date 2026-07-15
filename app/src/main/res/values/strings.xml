@@ -1,96 +1,79 @@
-<!--
-  ~ /*
-  ~  *  Copyright (c) 2026 Dhanush Sugganahalli <dhanush41230@gmail.com>
-  ~  *
-  ~  *  This program is free software; you can redistribute it and/or modify it under
-  ~  *  the terms of the GNU General Public License as published by the Free Software
-  ~  *  Foundation; either version 3 of the License, or (at your option) any later
-  ~  *  version.
-  ~  *
-  ~  *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
-  ~  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-  ~  *  PARTICULAR PURPOSE. See the GNU General Public License for more details.
-  ~  *
-  ~  *  You should have received a copy of the GNU General Public License along with
-  ~  *  this program.  If not, see <http://www.gnu.org/licenses/>.
-  ~  */
-  -->
-
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Open Notes</string>
-    <string name="error_file_is_empty">File is empty</string>
-    <string name="error_invalid_json">Invalid JSON format</string>
-    <string name="error_no_notes_found">No notes found in file</string>
-    <string name="error_no_valid_notes">No valid notes found</string>
-    <string name="error_invalid_note">Either a title or content must be provided</string>
-    <string name="unlock_title">Unlock OpenNotes</string>
-    <string name="unlock_subtitle">Confirm your identity to access your notes</string>
-    <string name="sort_by">Sort by</string>
-    <string name="sort_newest_first">Newest first</string>
-    <string name="sort_oldest_first">Oldest first</string>
-    <string name="sort_title_az">Title A–Z</string>
-    <string name="sort_title_za">Title Z–A</string>
-    <string name="app_icon_change_title">Change App Icon?</string>
-    <string name="app_icon_change_message">Changing the app icon requires the app to restart. Your home screen may momentarily refresh. Do you wish to proceed?</string>
-    <string name="app_icon_restart">Restart</string>
-    <string name="app_icon_cancel">Cancel</string>
-    <string name="support_github_sponsors">Support me on Github Sponsors</string>
-    <string name="support_github_description">Monthly or one-time-directly funds development</string>
-    <string name="license_label">License</string>
-    <string name="license_gpl">GPL-3.0 License</string>
-    <string name="delete">Delete</string>
-    <string name="cancel">Cancel</string>
-    <string name="new_note">New Note</string>
-    <string name="search_notes">Search Notes</string>
-    <string name="note_info">Note info</string>
-    <string name="share_note">Share note</string>
-    <string name="ok">OK</string>
-    <string name="remove">Remove</string>
-    <string name="change">Change</string>
-    <string name="save">Save</string>
-    <string name="select_time">Select time</string>
-    <string name="settings_title">Settings</string>
-    <string name="settings_backup_restore_title">Backup and Restore</string>
-    <string name="settings_backup_restore_subtitle">Export and import your notes</string>
-    <string name="settings_appearance_title">Appearance</string>
-    <string name="settings_appearance_subtitle">Theme, Color scheme, Black Theme</string>
-    <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy_subtitle">Biometric lock, Secure Screen</string>
-    <string name="settings_about_title">About</string>
-    <string name="settings_about_subtitle">Version %1$s</string>
-    <string name="error_biometric_unavailable">Biometric authentication is not available</string>
-    <string name="biometric_enable_title">Enable biometric lock</string>
-    <string name="biometric_disable_title">Disable biometric lock</string>
-    <string name="biometric_enable_subtitle">Confirm your identity to enable app lock</string>
-    <string name="biometric_disable_subtitle">Confirm your identity to disable app lock</string>
-    <string name="switch_on">On</string>
-    <string name="switch_off">Off</string>
-    <string name="appearance_title">Appearance</string>
-    <string name="dynamic_color_title">Dynamic Color</string>
-    <string name="dynamic_color_subtitle">Adapt theme colors from your wallpaper</string>
-    <string name="black_theme_title">Black Theme</string>
-    <string name="black_theme_subtitle_enabled">Use a pure black dark theme</string>
-    <string name="black_theme_subtitle_disabled">Use regular dark colors</string>
-    <string name="backup_restore_title">Backup and Restore</string>
-    <string name="export_notes_title">Export Notes</string>
-    <string name="export_notes_subtitle">Save your notes to a ZIP archive</string>
-    <string name="import_notes_title">Import Notes</string>
-    <string name="import_notes_subtitle">Load notes from a JSON or ZIP backup</string>
-    <string name="about_title">About</string>
+    <string name="error_file_is_empty">文件为空</string>
+    <string name="error_invalid_json">JSON 格式无效</string>
+    <string name="error_no_notes_found">文件中未找到笔记</string>
+    <string name="error_no_valid_notes">未找到有效的笔记</string>
+    <string name="error_invalid_note">必须提供标题或内容</string>
+    <string name="unlock_title">解锁 OpenNotes</string>
+    <string name="unlock_subtitle">确认身份以访问您的笔记</string>
+    <string name="sort_by">排序方式</string>
+    <string name="sort_newest_first">最新优先</string>
+    <string name="sort_oldest_first">最旧优先</string>
+    <string name="sort_title_az">标题 A–Z</string>
+    <string name="sort_title_za">标题 Z–A</string>
+    <string name="app_icon_change_title">更改应用图标？</string>
+    <string name="app_icon_change_message">更改应用图标需要重启应用。您的主屏幕可能会短暂刷新。是否继续？</string>
+    <string name="app_icon_restart">重启</string>
+    <string name="app_icon_cancel">取消</string>
+    <string name="support_github_sponsors">在 GitHub Sponsors 上支持我</string>
+    <string name="support_github_description">每月或一次性赞助直接支持开发</string>
+    <string name="license_label">许可证</string>
+    <string name="license_gpl">GPL-3.0 许可证</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="new_note">新建笔记</string>
+    <string name="search_notes">搜索笔记</string>
+    <string name="note_info">笔记信息</string>
+    <string name="share_note">分享笔记</string>
+    <string name="ok">确定</string>
+    <string name="remove">移除</string>
+    <string name="change">更改</string>
+    <string name="save">保存</string>
+    <string name="select_time">选择时间</string>
+    <string name="settings_title">设置</string>
+    <string name="settings_backup_restore_title">备份与恢复</string>
+    <string name="settings_backup_restore_subtitle">导出和导入您的笔记</string>
+    <string name="settings_appearance_title">外观</string>
+    <string name="settings_appearance_subtitle">主题、配色方案、纯黑主题</string>
+    <string name="settings_privacy_title">隐私</string>
+    <string name="settings_privacy_subtitle">生物识别锁、安全屏幕</string>
+    <string name="settings_about_title">关于</string>
+    <string name="settings_about_subtitle">版本 %1$s</string>
+    <string name="error_biometric_unavailable">生物识别不可用</string>
+    <string name="biometric_enable_title">启用生物识别锁</string>
+    <string name="biometric_disable_title">禁用生物识别锁</string>
+    <string name="biometric_enable_subtitle">确认身份以启用应用锁</string>
+    <string name="biometric_disable_subtitle">确认身份以禁用应用锁</string>
+    <string name="switch_on">开</string>
+    <string name="switch_off">关</string>
+    <string name="appearance_title">外观</string>
+    <string name="dynamic_color_title">动态颜色</string>
+    <string name="dynamic_color_subtitle">从您的壁纸提取主题颜色</string>
+    <string name="black_theme_title">纯黑主题</string>
+    <string name="black_theme_subtitle_enabled">使用纯黑深色主题</string>
+    <string name="black_theme_subtitle_disabled">使用常规深色主题</string>
+    <string name="backup_restore_title">备份与恢复</string>
+    <string name="export_notes_title">导出笔记</string>
+    <string name="export_notes_subtitle">将您的笔记保存为 ZIP 压缩包</string>
+    <string name="import_notes_title">导入笔记</string>
+    <string name="import_notes_subtitle">从 JSON 或 ZIP 备份加载笔记</string>
+    <string name="about_title">关于</string>
     <string name="github_content_desc">GitHub</string>
-    <string name="privacy_title">Privacy and Security</string>
-    <string name="biometric_lock_title">Biometric Lock</string>
-    <string name="biometric_lock_subtitle_enabled">Fingerprint required when enabled</string>
-    <string name="biometric_lock_subtitle_disabled">Require fingerprint to unlock app</string>
-    <string name="secure_screen_title">Secure Screen</string>
-    <string name="secure_screen_subtitle">Hide content in Recents and block screenshots</string>
-    <string name="color_scheme_title">Color Scheme</string>
-    <string name="dynamic_label">Dynamic</string>
-    <string name="color_label">Color</string>
-    <string name="theme_title">Theme</string>
-    <string name="app_icon_color_title">App Icon Color</string>
-    <string name="theme_system">System</string>
-    <string name="theme_light">Light</string>
-    <string name="theme_dark">Dark</string>
-    <string name="navigate_desc">Navigate</string>
+    <string name="privacy_title">隐私与安全</string>
+    <string name="biometric_lock_title">生物识别锁</string>
+    <string name="biometric_lock_subtitle_enabled">启用后需要指纹验证</string>
+    <string name="biometric_lock_subtitle_disabled">需要指纹才能解锁应用</string>
+    <string name="secure_screen_title">安全屏幕</string>
+    <string name="secure_screen_subtitle">在最近任务中隐藏内容并阻止截图</string>
+    <string name="color_scheme_title">配色方案</string>
+    <string name="dynamic_label">动态</string>
+    <string name="color_label">纯色</string>
+    <string name="theme_title">主题</string>
+    <string name="app_icon_color_title">应用图标颜色</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="navigate_desc">导航</string>
 </resources>

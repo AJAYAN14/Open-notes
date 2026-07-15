@@ -91,7 +91,7 @@ fun MarkdownField(
         Column(modifier = modifier) {
             TransParentHintTextField(
                 text = titleText,
-                hint = "Title",
+                hint = "标题",
                 onValueChange = onTitleChange,
                 onFocusChange = onTitleFocusChange,
                 singleLine = true,
@@ -112,7 +112,7 @@ fun MarkdownField(
             ) {
                 TransParentHintTextField(
                     textFieldValue = contentTextFieldValue,
-                    hint = "Content",
+                    hint = "内容",
                     onValueChange = onContentChange,
                     onFocusChange = onContentFocusChange,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),
